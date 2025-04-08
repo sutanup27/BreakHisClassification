@@ -1,1 +1,1 @@
-# BreakHisClassification
+# DDDwithPruningArchitectures

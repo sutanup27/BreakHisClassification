@@ -6,6 +6,9 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import *
 from torchvision.transforms import *
 from tqdm.auto import tqdm
+import copy
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def train(
@@ -20,8 +23,8 @@ def train(
   total_loss = 0
   for inputs, targets in tqdm(dataloader, desc=f'train epoch:{epoch}', leave=False):
     # Move the data from CPU to GPU
-    inputs = inputs.cuda()
-    targets = targets.cuda()
+    inputs = inputs.to(device)
+    targets = targets.to(device)
 
     # Reset the gradients (from the last iteration)
     optimizer.zero_grad()
@@ -45,18 +48,18 @@ def train(
   return total_loss/len(dataloader)
 
 def predict(model , input):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # model.to(device)
     # input_tensor = input_tensor.to(device)
 
     # Make prediction
     with torch.no_grad():
-        print(input.unsqueeze(0).shape)
+        print(input.to(device).unsqueeze(0).shape)
         output = model(input.unsqueeze(0))
 
     # Get predicted class
     predicted_class = torch.argmax(output, dim=1).item()
     return predicted_class
+
 
 @torch.inference_mode()
 def evaluate(
@@ -73,8 +76,8 @@ def evaluate(
   for inputs, targets in tqdm(dataloader, desc="eval", leave=False,
                               disable=not verbose):
     # Move the data from CPU to GPU
-    inputs = inputs.cuda()
-    targets = targets.cuda()
+    inputs = inputs.to(device)
+    targets = targets.to(device)
 
     # Inference
     outputs1 = model(inputs)
@@ -93,3 +96,50 @@ def evaluate(
     num_correct += (outputs == targets).sum()
 
   return (num_correct / num_samples * 100).item(), total_loss/len(dataloader)
+
+  
+
+def Training( model, train_dataloader, test_dataloader, criterion, optimizer, num_epochs=10,scheduler=None):
+    losses,test_losses,accs=[],[],[]
+    best_acc=0
+    best_model=None
+    for epoch_num in tqdm(range(1, num_epochs + 1)):
+        loss=train(model, train_dataloader, criterion, optimizer, epoch=epoch_num)
+        acc, val_loss = evaluate(model, test_dataloader, criterion)
+        print(f"Training Loss: {loss:.6f} ,Test Loss: {val_loss:.4f}, Test Accuracy {acc:.4f}")
+        if scheduler:
+            print(f"LR:{scheduler.get_last_lr()} ")
+        if acc>best_acc:
+            best_acc=acc
+            best_model=copy.deepcopy(model)
+        losses.append(loss)
+        test_losses.append(val_loss)
+        accs.append(acc)
+        if scheduler is not None:
+            scheduler.step()
+    return best_model, losses, test_losses, accs
+
+
+def TrainingPrunned(pruned_model,train_dataloader,test_dataloader,criterion, optimizer, pruner,scheduler=None,num_finetune_epochs=5,isCallback=True):
+    accuracies=[]
+    if scheduler:
+       scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, num_finetune_epochs)
+    best_accuracy = 0
+    best_model=None
+    print(f'Finetuning Fine-grained Pruned Sparse Model')
+    for epoch in range(num_finetune_epochs):
+        # At the end of each train iteration, we have to apply the pruning mask
+        #    to keep the model sparse during the training
+        if isCallback:
+           callbacks=[lambda: pruner.apply(pruned_model)]
+        else:
+           callbacks=None
+        train_loss=train(pruned_model, train_dataloader, criterion, optimizer, scheduler )
+        test_acc ,test_loss = evaluate(pruned_model, test_dataloader,criterion)
+        accuracies.append(test_acc)
+        is_best = test_acc > best_accuracy
+        if is_best:
+            best_accuracy = test_acc
+            best_model=copy.deepcopy(pruned_model)
+        print(f'    Epoch {epoch+1} Test accuracy:{test_acc:.2f}% / Best Accuracy: {best_accuracy:.2f}%, train loss: {train_loss:.4f}, test loss {test_loss:.4f}')
+    return best_accuracy, best_model, accuracies

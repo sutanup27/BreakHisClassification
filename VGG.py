@@ -25,8 +25,8 @@ from typing import Union,List
 from Utill import download_url,magnitude_based_prune
 
 class VGG(nn.Module):
-  #ARCH = [64, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M']
-  ARCH = [32 , 32, 'M', 64, 64,'M',128, 128, 'M', 256, 256, 'M', 512, 512]
+  ARCH = [64, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M']
+  #ARCH = [32 , 32, 'M', 64, 64,'M',128, 128, 'M', 256, 256, 'M', 512, 512]
 
   def __init__(self) -> None:
     super().__init__()
