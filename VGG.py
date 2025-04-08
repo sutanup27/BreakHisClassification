@@ -65,13 +65,6 @@ class VGG(nn.Module):
 #    x = self.fc1(x)
     x = self.fc2(x)
     return x
-  
-  def fine_grained_prune(tensor: torch.Tensor, sparsity : float, prune_type="magnitude_based"):
-    if prune_type=="magnitude_based" :
-        return magnitude_based_prune(tensor,sparsity)
-    else:
-        print("Wrong prune type is passed")
-        return tensor
 
 
 def recover_model(PATH,model):

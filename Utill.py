@@ -93,24 +93,12 @@ def fine_grained_prune(tensor: torch.Tensor, sparsity : float, prune_type="magni
         print("Wrong prune type is passed")
         return tensor
         
-class FineGrainedPruner:
-    def __init__(self, model, sparsity_dict):
-        self.masks = FineGrainedPruner.prune(model, sparsity_dict)
-
-    @torch.no_grad()
-    def apply(self, model):
-        for name, param in model.named_parameters():
-            if name in self.masks:
-                param *= self.masks[name]
-
-    @staticmethod
-    @torch.no_grad()
-    def prune(model, sparsity_dict):
-        masks = dict()
-        for name, param in model.named_parameters():
-            if param.dim() > 1: # we only prune conv and fc weights
-                masks[name] = fine_grained_prune(param, sparsity_dict[name])
-        return masks
+def fine_grained_prune(tensor: torch.Tensor, sparsity : float, prune_type="magnitude_based"):
+    if prune_type=="magnitude_based" :
+        return magnitude_based_prune(tensor,sparsity)
+    else:
+        print("Wrong prune type is passed")
+        return tensor
     
 
 @torch.no_grad()
@@ -162,6 +150,49 @@ def plot_sensitivity_scan(model, sparsities, accuracies, dense_model_accuracy):
     fig.subplots_adjust(top=0.925)
     plt.show()
 
-    def recover_model(PATH,model):
+def recover_model(PATH,model):
         cp = torch.load(download_url(PATH), map_location="cpu")
         return model.load_state_dict(cp)
+
+def plot_weight_distribution(model, bins=256, count_nonzero_only=False):
+    fig, axes = plt.subplots(9,6, figsize=(15, 20))
+    axes = axes.ravel()
+    plot_index = 0
+    for name, param in model.named_parameters():
+        if param.dim() > 1:
+            ax = axes[plot_index]
+            if count_nonzero_only:
+                param_cpu = param.detach().view(-1).cpu()
+                param_cpu = param_cpu[param_cpu != 0].view(-1)
+                ax.hist(param_cpu, bins=bins, density=True,
+                        color = 'blue', alpha = 0.5)
+            else:
+                ax.hist(param.detach().view(-1).cpu(), bins=bins, density=True,
+                        color = 'blue', alpha = 0.5)
+            ax.set_xlabel(name)
+            ax.set_ylabel('density')
+            plot_index += 1
+    fig.suptitle('Histogram of Weights')
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.925)
+    plt.show()
+
+class FineGrainedPruner:
+    def __init__(self, model, sparsity_dict):
+        self.masks = FineGrainedPruner.prune(model, sparsity_dict)
+
+    @torch.no_grad()
+    def apply(self, model):
+        for name, param in model.named_parameters():
+            if name in self.masks:
+                param *= self.masks[name]
+
+    @staticmethod
+    @torch.no_grad()
+    def prune(model, sparsity_dict):
+        masks = dict()
+        for name, param in model.named_parameters():
+            if param.dim() > 1: # we only prune conv and fc weights
+                masks[name] = fine_grained_prune(param, sparsity_dict[name],prune_type="magnitude_based")
+        return masks
+    
