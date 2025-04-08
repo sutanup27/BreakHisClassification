@@ -35,7 +35,7 @@ seed=0
 random.seed(seed)
 np.random.seed(seed)
 
-magf='200X'
+magf='400X'
 
 path='H:\sutanu\BreaKHis\BreaKHis_v2'
 sub_dirs=['400X','200X','100X','40X']
@@ -60,12 +60,12 @@ optimizer = SGD(
   weight_decay=5e-4,
 )
 
-lambda_lr = lambda epoch: math.sqrt(.1) ** (epoch // 6)
+lambda_lr = lambda epoch: math.sqrt(.1) ** (epoch // 7)
 #lambda_lr = lambda epoch: 0.1 ** (epoch // 5)
 scheduler=LambdaLR(optimizer,lambda_lr)
 # scheduler = CosineAnnealingLR(optimizer, T_max=50)
 
-best_model, losses, test_losses, accs=Training( model, dataloader['train'], dataloader['test'], criterion, optimizer, num_epochs=30,scheduler=scheduler)
+best_model, losses, test_losses, accs=Training( model, dataloader['train'], dataloader['test'], criterion, optimizer, num_epochs=40,scheduler=scheduler)
 
 model=copy.deepcopy(best_model)
 metric,_ = evaluate(model, dataloader["test"])
@@ -75,3 +75,4 @@ plot_accuracy(accs)
 plot_loss(losses,test_losses)
 
 torch.save(model.state_dict(), f'./checkpoint/{magf}/resnet18_{metric}.pth')
+
