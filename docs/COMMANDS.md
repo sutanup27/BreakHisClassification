@@ -34,7 +34,7 @@ breakhis --help
 The declared tested Python range is 3.13. Module commands can also be launched
 outside the repository after editable installation. Explicit relative argument
 paths are relative to the current working directory; default artifact paths are
-resolved against this repository.
+resolved against this repository. Default checkpoints are resolved against its parent directory.
 
 ## Supported commands
 
@@ -43,13 +43,13 @@ Prepare the patient manifest first; see [DATASETS.md](DATASETS.md).
 ```powershell
 python -m breakhis prepare-data --seed 0
 
-python -m breakhis train --dataset breakhis --source breakhis_v2 --magnification 40X --model vgg --epochs 20 --output checkpoint/40X/vgg/baseline.pth
+python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X --model vgg --epochs 20 --output ../checkpoint/binary/40X/vgg/baseline.pth
 
-python -m breakhis prune --dataset breakhis --source breakhis_v2 --magnification 40X --checkpoint checkpoint/40X/vgg/baseline.pth --sparsity 0.5 --output checkpoint/40X/vgg/pruned.pth
+python -m breakhis prune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline.pth --sparsity 0.5 --output ../checkpoint/binary/40X/vgg/pruned.pth
 
-python -m breakhis finetune --dataset breakhis --source breakhis_v2 --magnification 40X --checkpoint checkpoint/40X/vgg/pruned.pth --epochs 5 --output checkpoint/40X/vgg/finetuned.pth
+python -m breakhis finetune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/pruned.pth --epochs 5 --output ../checkpoint/binary/40X/vgg/finetuned.pth
 
-python -m breakhis evaluate --dataset breakhis --source breakhis_v2 --magnification 40X --checkpoint checkpoint/40X/vgg/finetuned.pth --output artifacts/final-test.json
+python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/finetuned.pth --output artifacts/final-test.json
 ```
 
 Supported baseline architectures are VGG and torchvision ResNet18 (`resnet` is
@@ -92,6 +92,28 @@ reserved test set. Use `breakhis.data.get_split_loaders` for explicit access to
 all three named splits. Changing split fractions requires rebuilding the manifest.
 
 ## Checkpoints and limits
+
+Checkpoint storage is alongside the dataset and codebase directories:
+
+```text
+BreakHis/
+  Dataset/
+  BreakHisClassification/
+  checkpoint/
+    binary/
+      40X/vgg/train.pth
+      40X/vgg/prune.pth
+      40X/vgg/finetune.pth
+      legacy/             # Existing files; provenance is not inferred
+    multiclass/           # Reserved for future multiclass training
+```
+
+Training, pruning, fine-tuning, and interrupted saves use this layout. A bare
+`--output baseline.pth` saves inside `checkpoint/binary/`; an explicit path must
+stay inside the task directory. Outputs outside that directory are rejected.
+Evaluation `--output` remains a report path. Checkpoint inputs can be anywhere.
+The default source is now `cancer_binary`; the local v2 copy was removed.
+Multiclass training is not yet supported, but its checkpoint directory is separate.
 
 New commands save state dictionaries with architecture, labels, dataset source,
 magnification, preprocessing, manifest hash, and epoch metadata. Loading rejects

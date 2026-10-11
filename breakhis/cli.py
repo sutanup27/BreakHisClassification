@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def add_data_options(parser):
     parser.add_argument('--dataset',choices=['breakhis'],required=True)
     parser.add_argument('--manifest',type=Path,default=ROOT/'artifacts/data/manifest.json')
-    parser.add_argument('--source',choices=['breakhis_v2','cancer_binary'],default='breakhis_v2')
+    parser.add_argument('--source',choices=['breakhis_v2','cancer_binary'],default='cancer_binary')
     parser.add_argument('--magnification',choices=['40X','100X','200X','400X','all'],default='40X')
     parser.add_argument('--data-root',type=Path,help='Override this source root after relocating data')
     parser.add_argument('--batch-size',type=int,default=32)
@@ -32,7 +32,7 @@ def main(argv=None):
     for name in ('train','evaluate','prune','finetune'):
         command = commands.add_parser(name)
         add_data_options(command)
-        command.add_argument('--output',type=Path)
+        command.add_argument('--output',type=Path,help='Evaluation report path, or checkpoint filename/path inside the parent checkpoint/binary directory')
         if name in ('train','finetune'):
             command.add_argument('--epochs',type=int,default=20)
             command.add_argument('--learning-rate',type=float,default=.001)
@@ -54,6 +54,12 @@ def main(argv=None):
         parser.error('batch size and epochs must be positive; workers must be nonnegative')
     if args.command=='prune' and not 0<=args.sparsity<=1:
         parser.error('sparsity must be between zero and one')
+    from .paths import checkpoint_output
+    if args.command=='train':
+        try:
+            checkpoint_output(args.source,args.magnification,args.model,args.command,args.output)
+        except ValueError as error:
+            parser.error(str(error))
     import torch
     from torch import nn
     from .data import get_split_loaders
@@ -87,7 +93,10 @@ def main(argv=None):
             args.output.parent.mkdir(parents=True,exist_ok=True)
             args.output.write_text(json.dumps(report,indent=2)+'\n')
         return
-    output = args.output or ROOT/'checkpoint'/args.magnification/architecture/f'{args.command}.pth'
+    try:
+        output = checkpoint_output(args.source,args.magnification,architecture,args.command,args.output)
+    except ValueError as error:
+        parser.error(str(error))
     if args.command=='prune':
         from torch.nn.utils import prune
         for module in model.modules():
