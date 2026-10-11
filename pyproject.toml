@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools==78.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "breakhis-classification"
+version = "0.1.0"
+description = "Patient-separated BreaKHis classification and pruning experiments"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "torch==2.11.0", "torchvision==0.26.0", "numpy==2.5.2",
+    "matplotlib==3.11.2", "tqdm==4.70.1", "pillow==12.3.0",
+    "scikit-learn==1.9.1", "torchprofile==0.1.0",
+]
+
+[project.scripts]
+breakhis = "breakhis.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["breakhis*"]

@@ -16,17 +16,17 @@ Eight-class classification is a future extension, not part of the initial binary
 
 | Area | Status |
 | --- | --- |
-| Separate BreaKHis and CIFAR workflows | Implemented locally; full runtime verification pending |
+| Separate BreaKHis and CIFAR workflows | Stage 1 complete; real BreaKHis batch and forward-pass checks passed |
 | Explicit primary dataset selection and label-derived class count | Implemented locally |
-| Workflow separation checks | Eight checks passed using dataset doubles and CLI/static checks |
+| Regression checks | Fifteen Stage 3/4 tests passed in CPU and CUDA environments |
 | Existing Python files | Syntax checked; this does not prove runtime correctness |
-| Python environment | User activated `.venv313` using Python 3.13; dependency installation remains unconfirmed |
-| PyTorch | Last check found no `torch` or `torchvision` in `.venv313` |
-| Full baseline training and pruning | Not verified |
+| Python environment | Stage 2 complete; existing CUDA and fresh CPU environments verified with Python 3.13.14 |
+| PyTorch | Verified PyTorch 2.11.0+cu128 and CUDA execution in `.venv313` |
+| Full baseline training and pruning | Tiny real-data train/prune/fine-tune/test smoke passed; full baseline quality remains unverified |
 
 ## Stage 1 — Separate dataset workflows
 
-**Status:** Implemented locally; runtime acceptance pending.
+**Status:** Complete; runtime acceptance verified on 11 October 2026.
 
 **Issues addressed:** Mixed BreaKHis/CIFAR experiments and incorrect classifier class counts.
 
@@ -39,7 +39,22 @@ Eight-class classification is a future extension, not part of the initial binary
 - [x] Validate that the primary dataset has `benign` and `malignant` folders.
 - [x] Require explicit CIFAR selection in the isolated CIFAR loader; make downloads opt-in.
 - [x] Document supported commands and the limitations of preserved legacy experiments.
-- [ ] Verify a real torchvision batch and a two-class forward pass after dependencies are installed.
+- [x] Verify a real torchvision batch and a two-class forward pass after dependencies are installed.
+
+### Verification evidence
+
+- Loaded actual `BreaKHis_v2/40X` training and test batches with labels
+  `benign` and `malignant`.
+- VGG and ResNet18 each returned finite outputs shaped `(2, 2)` for a batch of
+  two images, using CUDA in `.venv313`.
+- Training inputs were `(2, 3, 224, 224)`; test inputs were `(2, 3, 460, 700)`.
+  These were the dimensions at Stage 1 acceptance. The later evaluation
+  performance change standardized both outputs to 224×224.
+- The primary loader rejected `dataset="cifar10"`.
+- All eight workflow separation checks passed again.
+- The ResNet smoke check used `weights=None` to avoid downloading pretrained
+  weights. This verifies data routing and classifier dimensions, not the full
+  pretrained training command or model quality.
 
 ### Target
 
@@ -52,21 +67,41 @@ files remain preserved, and primary training does not depend on them.
 
 ## Stage 2 — Establish a reproducible environment
 
-**Status:** Pending; virtual environment activation is complete.
+**Status:** Complete; verified on 11 October 2026.
 
 **Issues addressed:** Missing dependencies, machine-specific CUDA nightly pins,
 and missing declared imports.
 
 ### Steps
 
-- [ ] Confirm `.venv313` uses the intended Python executable and pip.
-- [ ] Install a compatible stable PyTorch/torchvision pair for the local NVIDIA GPU.
-- [ ] Install the dependencies imported by supported primary commands.
-- [ ] Remove unnecessary imports; declare any dependencies that remain required.
-- [ ] Replace the existing nightly environment snapshot with a tested dependency specification.
-- [ ] Document CPU and GPU setup separately, including the tested Python version.
-- [ ] Exclude virtual environments and generated files from Git.
-- [ ] Verify imports, CUDA availability, and a small tensor operation.
+- [x] Confirm `.venv313` uses the intended Python executable and pip.
+- [x] Install a compatible stable PyTorch/torchvision pair for the local NVIDIA GPU.
+- [x] Install the dependencies imported by supported primary commands.
+- [x] Remove unnecessary imports; declare any dependencies that remain required.
+- [x] Replace the existing nightly environment snapshot with a tested dependency specification.
+- [x] Document CPU and GPU setup separately, including the tested Python version.
+- [x] Exclude virtual environments and generated files from Git.
+- [x] Verify imports, CUDA availability, and a small tensor operation.
+
+### Verification evidence
+
+- Existing `.venv313`: Python 3.13.14, PyTorch 2.11.0+cu128, torchvision 0.26.0+cu128,
+  CUDA runtime 12.8, cuDNN 9.19.0, RTX 5070 Ti, driver 610.88.
+- Fresh `.venv-stage2-cpu`: created separately and installed successfully from
+  `requirements-torch-cpu.txt` followed by `requirements.txt` with `constraints.txt`.
+  PyTorch 2.11.0+cpu and torchvision 0.26.0+cpu verified.
+- Both environments passed primary-module imports, tensor multiplication, image
+  preprocessing, a finite two-class VGG forward pass, and `pip check`.
+- All eleven regression tests passed in both environments.
+- The fresh environment contains neither pygame nor OpenCV; primary imports
+  and regression tests still passed after unused imports were removed.
+- A dry run confirmed the compatibility `requirement.txt` matches the existing
+  CUDA installation without requesting package changes.
+- `git check-ignore` confirmed exclusion of virtual environments, checkpoints,
+  and generated verification reports. Reports are saved in ignored
+  `artifacts/stage2-cpu.json` and `artifacts/stage2-cuda.json`.
+- CPU installation was tested from scratch. CUDA execution was tested in the
+  existing user environment; a second CUDA installation was not created.
 
 ### Target
 
@@ -74,23 +109,41 @@ A fresh environment can install the documented dependencies and run the primary
 imports without errors. Record the tested Python, PyTorch, torchvision, CUDA
 runtime, and driver versions. Confirm GPU execution with a tensor computation.
 
-**Files:** `requirement.txt` or its documented replacement, `.gitignore`, `README.md`.
+**Files:** `requirements.txt`, `constraints.txt`, `requirements-torch-cpu.txt`,
+`requirements-torch-cu128.txt`, compatibility `requirement.txt`, `.gitignore`,
+`docs/ENVIRONMENT.md`, `tools/check_environment.py`, `README.md`, cleaned primary imports.
 
 ## Stage 3 — Repair package imports and command structure
 
-**Status:** Pending.
+**Status:** Complete for the supported command surface; verified on 11 October 2026.
 
 **Issues addressed:** Missing `PruningNAS` package references, duplicate modules,
 import side effects, and inconsistent launch locations.
 
 ### Steps
 
-- [ ] Choose one package name and use it consistently in supported modules.
-- [ ] Replace stale imports and consolidate duplicate training, model, and utility implementations.
-- [ ] Move execution into explicit functions guarded by `if __name__ == "__main__"`.
-- [ ] Provide documented entry points for training, evaluation, pruning, and fine-tuning.
-- [ ] Define which architectures and legacy experiments are supported.
-- [ ] Keep compatibility wrappers only where they preserve a documented interface.
+- [x] Choose one package name and use it consistently in supported modules.
+- [x] Replace stale imports and consolidate duplicate training, model, and utility implementations.
+- [x] Move execution into explicit functions guarded by `if __name__ == "__main__"`.
+- [x] Provide documented entry points for training, evaluation, pruning, and fine-tuning.
+- [x] Define which architectures and legacy experiments are supported.
+- [x] Keep compatibility wrappers only where they preserve a documented interface.
+
+### Verification evidence
+
+- Canonical implementations reside in `breakhis`; root/`Models`/`Utills` modules
+  are compatibility imports. Duplicate VGG and training definitions were consolidated.
+- No `PruningNAS` imports remain in the canonical package. CIFAR reference
+  notebooks remain explicitly outside the supported workflow.
+- Editable installation and the `breakhis` executable succeeded without dependency changes.
+- All five commands expose working help: prepare-data, train, evaluate, prune, finetune.
+- Import tests prohibit checkpoint loads, image scans, plot display, or output on import.
+- A 12-image real-data GPU smoke ran all four model commands and reloaded checkpoints.
+- Fifteen regression tests passed in both the existing CUDA and isolated CPU environments.
+- Supported architectures: VGG and torchvision ResNet18. Supported pruning:
+  built-in L1 unstructured masks. Custom architectures/channel pruning remain experimental.
+- Old whole-model checkpoints require explicit migration; new commands do not
+  silently load them. See `docs/COMMANDS.md` for compatibility changes.
 
 ### Target
 
@@ -98,26 +151,51 @@ Supported modules import without starting training, loading checkpoints, opening
 plots, or downloading data. Every documented command launches from its documented
 working directory without `ModuleNotFoundError`.
 
-**Files:** `__init__.py`, primary command scripts, `Models/`, `Utills/`, `Testing/`.
+**Files:** `breakhis/`, `pyproject.toml`, primary compatibility scripts, `Models/`,
+`Utills/`, `Testing/`, `docs/COMMANDS.md`, import/command regression tests.
 
 ## Stage 4 — Audit datasets and create patient-separated splits
 
-**Status:** Pending.
+**Status:** Complete for the local filename-based patient/slide grouping policy;
+verified on 11 October 2026.
 
 **Issues addressed:** Possible patient leakage, class imbalance, uncertain duplicate
 content, and confusion between the two local dataset copies.
 
 ### Steps
 
-- [ ] Select and record the dataset source for each experiment.
-- [ ] Inventory supported image files and check that images decode successfully.
-- [ ] Compare the two local dataset copies using filenames and content hashes;
+- [x] Select and record the dataset source for each experiment.
+- [x] Inventory supported image files and check that images decode successfully.
+- [x] Compare the two local dataset copies using filenames and content hashes;
       investigate count differences rather than assuming every file is an image.
-- [ ] Create a manifest with path, label, magnification, patient ID, and content hash.
-- [ ] Validate patient ID extraction against filenames or dataset metadata.
-- [ ] Generate train/validation/test splits grouped by patient with a saved seed.
-- [ ] Keep a patient's images together across magnifications when experiments combine them.
-- [ ] Report split sizes and class distributions, and check for overlapping patients and duplicates.
+- [x] Create a manifest with path, label, magnification, patient ID, and content hash.
+- [x] Validate patient ID extraction against filenames or dataset metadata.
+- [x] Generate train/validation/test splits grouped by patient with a saved seed.
+- [x] Keep a patient's images together across magnifications when experiments combine them.
+- [x] Report split sizes and class distributions, and check for overlapping patients and duplicates.
+
+### Verification evidence
+
+- All 7,900 BreaKHis images and both 7,909-image cancer representations decoded;
+  no corruption exclusions were needed. Each source has 125 repeated decoded images,
+  excluded from its training manifest without modifying originals.
+- All 7,900 shared binary filenames differ in decoded pixels; cancer images are
+  224×224, while BreaKHis is mostly 700×460. Cancer has nine additional filenames.
+- Seed-zero group-stratified allocation gives 57 training, 13 validation, and
+  11 test patient/slide groups. All four magnifications share those assignments.
+- The identifier rule preserves the full YEAR-SLIDE_ID including suffix letters,
+  following the official filename structure. The local census is 81 groups; no
+  independent patient-to-slide metadata is available to verify distinct people.
+- Exact decoded-content links also keep matching images together across splits.
+  Audit reports zero patient overlap and zero exact-content overlap.
+- Saved reports include source choice, class/image distributions, patient counts,
+  hashes, dimensions, and duplicate exclusions. Loading checks for modified files.
+- Regression tests cover reproducible grouping, cross-patient duplicate linkage,
+  label conflicts, corrupt images, missing manifests, and file changes.
+- Primary training now uses saved training/validation splits. Reserved test
+  evaluation is a separate command. See `docs/DATASETS.md`.
+- Real batches from all three splits of both binary sources, combining all
+  magnifications, produced finite two-class ResNet18 outputs.
 
 ### Target
 
@@ -129,13 +207,14 @@ excluded. Reusing a manifest reproduces the same experiment data.
 
 - `../Dataset/BreaKHis_v2/<magnification>/`: two classes; current default.
 - `../Dataset/dataset_cancer_v1/classificacao_binaria/<magnification>/`: two classes;
-  selectable through `--data-root`.
+  selected with `--source cancer_binary`; `--data-root` can relocate that source.
 - `../Dataset/dataset_cancer_v1/classificacao_multiclasse/<magnification>/`: eight
   classes; currently rejected by the primary binary loader.
 
 Both binary dataset roots have 40X, 100X, 200X, and 400X folders.
 
-**Files:** `DataPreprocessing.py`, future manifest/split utilities, saved split metadata.
+**Files:** `breakhis/manifest.py`, `breakhis/data.py`, `breakhis/cli.py`,
+`docs/DATASETS.md`, generated `artifacts/data/manifest.json` and `audit.json`, tests.
 
 ## Stage 5 — Standardize preprocessing and baseline training
 
@@ -146,15 +225,17 @@ fragile best-model tracking, and device handling.
 
 ### Steps
 
-- [ ] Define an input size and normalization policy appropriate to the chosen model.
-- [ ] Separate training augmentation from deterministic validation/test transforms.
-- [ ] Use the saved patient splits rather than creating image-level random splits.
-- [ ] Select the best checkpoint using validation performance only.
-- [ ] Reserve the test split for final evaluation after model decisions are complete.
-- [ ] Initialize best-model tracking so the first valid epoch is retained, even at zero accuracy.
+- [x] Define an input size and normalization policy appropriate to the chosen model:
+      resize the shorter edge to 256, crop to 224×224, and retain ImageNet normalization.
+- [x] Separate training augmentation from deterministic validation/test transforms:
+      random training crops/flips and deterministic evaluation center crops.
+- [x] Use the saved patient splits rather than creating image-level random splits.
+- [x] Select the best checkpoint using validation performance only.
+- [x] Reserve the test split for final evaluation after model decisions are complete.
+- [x] Initialize best-model tracking so the first valid epoch is retained, even at zero accuracy, in supported commands.
 - [ ] Reject invalid epoch counts, empty splits, and nonfinite training values clearly.
 - [ ] Pass the device consistently and make loss aggregation sample-weighted.
-- [ ] Run a small baseline smoke test before a full experiment.
+- [x] Run a small baseline smoke test before a full experiment.
 
 ### Target
 

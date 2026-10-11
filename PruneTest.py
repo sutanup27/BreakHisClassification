@@ -3,8 +3,6 @@ from matplotlib import pyplot as plt
 import torch
 from Model_Evaluation import get_sparsity
 from Utill import fine_grained_prune
-seed=0
-random.seed(seed)
 
 def test_fine_grained_prune(
     test_tensor=torch.tensor([[-0.46, -0.40, 0.39, 0.19, 0.37],
@@ -59,7 +57,6 @@ def test_fine_grained_prune(
         else:
             print('* Test failed.')
 
-##################### YOUR CODE STARTS HERE #####################
-target_sparsity = .75 # please modify the value of target_sparsity
-##################### YOUR CODE ENDS HERE #####################
-test_fine_grained_prune(target_sparsity=target_sparsity, target_nonzeros=6)
+
+if __name__ == "__main__":
+    test_fine_grained_prune(target_sparsity=.75, target_nonzeros=6)

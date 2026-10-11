@@ -1,5 +1,14 @@
-"""Compatibility entry point for BreaKHis ResNet training."""
-from Train import main
+"""Compatibility command; prefer python -m breakhis train."""
+import sys
+from breakhis.cli import main as command_main
 
-if __name__ == "__main__":
-    main(default_model="resnet")
+
+def main():
+    args = sys.argv[1:]
+    if '--model' not in args:
+        args += ['--model', 'resnet']
+    command_main(['train', *args])
+
+
+if __name__ == '__main__':
+    main()

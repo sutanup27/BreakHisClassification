@@ -29950,3 +29950,25 @@ venv/Lib/site-packages/torch/include/torch/csrc/jit/passes/peephole_non_tensor.h
 venv/Lib/site-packages/torch/include/torch/csrc/jit/passes/peephole.h
 
 
+
+# Generated Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local environments and experiment artifacts
+.venv*/
+venv/
+env/
+checkpoint/
+checkpoints/
+runs/
+output/
+artifacts/
+.pytest_cache/
+.ipynb_checkpoints/
+*.log
+
+# Packaging output
+*.egg-info/
+build/
+dist/
