@@ -11,9 +11,11 @@ from torch.nn.utils import prune
 from .models.vgg import VGG
 
 
-def create_model(architecture, classes=2, pretrained=False):
+def create_model(architecture, classes=2, pretrained=False, channels=None):
     if architecture == 'vgg':
-        return VGG(classes=classes)
+        return VGG(classes=classes, channels=channels)
+    if channels is not None:
+        raise ValueError('Channel configurations are supported only for VGG')
     if architecture in ('resnet', 'resnet18'):
         from torchvision.models import resnet18
         model = resnet18(weights='DEFAULT' if pretrained else None)
@@ -74,12 +76,21 @@ def save_checkpoint(path, model, architecture, metadata, epoch=0, *,
     path.parent.mkdir(parents=True, exist_ok=True)
     classes = classes or ['benign', 'malignant']
     masks = [key.removesuffix('.weight_mask') for key in model.state_dict() if key.endswith('.weight_mask')]
+    architecture_config = {'classes': len(classes)}
+    if isinstance(model, VGG) and model.channels != [value for value in VGG.ARCH if value != 'M']:
+        architecture_config['channels'] = model.channels
+    pruning_config = {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}
+    if hasattr(model, 'channel_pruning'):
+        if masks:
+            raise ValueError('Mixed channel and weight-mask checkpoints are unsupported')
+        architecture_config['channels'] = model.channels
+        pruning_config.update(type='channel', channel_config=model.channel_pruning)
     payload = dict(format_version=2, architecture=architecture,
-                   architecture_config={'classes': len(classes)}, classes=list(classes),
+                   architecture_config=architecture_config, classes=list(classes),
                    class_to_idx={label: index for index, label in enumerate(classes)},
                    state_dict=cpu_state(model.state_dict()), metadata=metadata, epoch=epoch,
                    config=config or {}, training_state=state,
-                   pruning={'type': 'unstructured' if masks else 'dense', 'masked_modules': masks},
+                   pruning=pruning_config,
                    runtime={'python': platform.python_version(), 'torch': str(torch.__version__),
                             'cuda': torch.version.cuda})
     temp = path.with_suffix(path.suffix + '.tmp')
@@ -114,13 +125,30 @@ def read_checkpoint(path):
         raise ValueError('Invalid checkpoint weights or metadata')
     if payload['format_version'] == 2:
         expected = {label: index for index, label in enumerate(payload['classes'])}
-        if payload.get('class_to_idx') != expected or payload.get('architecture_config') != {'classes': len(expected)}:
+        architecture_config = payload.get('architecture_config', {})
+        if payload.get('class_to_idx') != expected or architecture_config.get('classes') != len(expected) or set(architecture_config) - {'classes', 'channels'}:
             raise ValueError('Checkpoint label mapping or architecture configuration is inconsistent')
+        channels = architecture_config.get('channels')
+        if channels is not None and (payload['architecture'] != 'vgg' or not isinstance(channels, list) or len(channels) != 8
+                or any(isinstance(value, bool) or not isinstance(value, int) or value < 1 for value in channels)):
+            raise ValueError('Invalid VGG checkpoint channel configuration')
         if not isinstance(payload.get('config'), dict):
             raise ValueError('Invalid checkpoint configuration')
         masks = [key.removesuffix('.weight_mask') for key in payload['state_dict'] if key.endswith('.weight_mask')]
-        if payload.get('pruning') != {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}:
+        pruning_config = payload.get('pruning', {})
+        expected_pruning = {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}
+        if pruning_config.get('type') == 'channel':
+            channel_config = pruning_config.get('channel_config', {})
+            if masks or channels is None or channel_config.get('channels') != channels or channel_config.get('method') != 'l1-output-channel':
+                raise ValueError('Inconsistent channel pruning metadata')
+            from .pruning import validate_channel_config
+            validate_channel_config(channel_config, channels)
+            expected_pruning = {'type': 'channel', 'masked_modules': [], 'channel_config': channel_config}
+        if pruning_config != expected_pruning:
             raise ValueError('Checkpoint pruning configuration is inconsistent')
+        for key, mask in payload['state_dict'].items():
+            if key.endswith('.weight_mask') and not torch.all((mask == 0) | (mask == 1)):
+                raise ValueError('Checkpoint pruning masks must be binary')
     if not all(isinstance(value, torch.Tensor) and torch.isfinite(value).all()
                for value in payload['state_dict'].values()):
         raise ValueError('Checkpoint contains invalid or nonfinite weights')
@@ -129,12 +157,18 @@ def read_checkpoint(path):
 
 def load_checkpoint(path, device='cpu', *, payload=None):
     payload = payload if payload is not None else read_checkpoint(path)
-    model = create_model(payload['architecture'], len(payload['classes']))
+    options = {}
+    channels = payload.get('architecture_config', {}).get('channels')
+    if channels is not None:
+        options['channels'] = channels
+    model = create_model(payload['architecture'], len(payload['classes']), **options)
     modules = dict(model.named_modules())
     for key in payload['state_dict']:
         if key.endswith('.weight_orig'):
             prune.identity(modules[key.removesuffix('.weight_orig')], 'weight')
     model.load_state_dict(payload['state_dict'], strict=True)
+    if payload.get('pruning', {}).get('type') == 'channel':
+        model.channel_pruning = payload['pruning']['channel_config']
     return model.to(device), payload
 
 

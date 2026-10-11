@@ -47,20 +47,21 @@ Checkpoints use tensors and standard Python values, loaded with
 | Field | Contents |
 | --- | --- |
 | `format_version` | `2`; format `1` remains readable for weights-only workflows |
-| `architecture`, `architecture_config` | Supported constructor identifier and output class count |
+| `architecture`, `architecture_config` | Supported constructor identifier, class count, and optional VGG channel widths |
 | `classes`, `class_to_idx` | Ordered class names and corresponding numeric labels |
 | `state_dict` | CPU tensors, including weights, batch-normalization buffers, pruning originals and masks |
 | `metadata` | Source, magnification, preprocessing description/configuration, manifest hash/path, dataset root, and split-selection policy |
 | `epoch` | Completed epoch number; partial interrupted files use the last completed epoch number |
 | `config` | Resolved command configuration |
-| `pruning` | Dense/unstructured designation and masked module names |
+| `pruning` | Dense/unstructured/channel designation, masks or validated retained-channel configuration |
 | `runtime` | Python, PyTorch, and CUDA runtime versions |
 | `training_state` | Optimizer, scheduler, best accuracy, planned epochs, RNGs, device, and resume-boundary policy; absent for pruning and partial weights |
 
 Writes use a temporary sibling file and atomic replacement. Dense and supported
 unstructured models reconstruct from their declared architecture; mask hooks are
-reinstalled before loading state. Channel-pruned architecture reconstruction is
-not yet supported because structured pruning remains Stage 7 work.
+reinstalled before loading state. VGG channel models reconstruct from saved widths
+and retained-channel metadata. Residual/depthwise channel models and mixed
+channel/mask checkpoints remain unsupported.
 
 Version 1 checkpoints can be evaluated, pruned, or used to start a new fine-tuning
 run. They cannot resume exactly. Legacy whole-model pickles are rejected rather

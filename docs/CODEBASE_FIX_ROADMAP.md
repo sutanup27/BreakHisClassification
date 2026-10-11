@@ -320,23 +320,24 @@ checkpoint/resume tests, README and `docs/CHECKPOINTS.md`.
 
 ## Stage 7 — Repair pruning and fine-tuning
 
-**Status:** Pending.
+**Status:** Complete for supported unstructured VGG/ResNet18 and sequential VGG channel pruning; verified on 11 October 2026.
 
 **Issues addressed:** Unused pruning callbacks, incorrect scheduler argument,
 undefined pruning variables, and unverified structural pruning.
 
 ### Steps
 
-- [ ] Pass mask callbacks to training and reapply masks after optimizer updates.
-- [ ] Pass the actual epoch into training and step the supplied scheduler correctly.
-- [ ] Define or reconstruct `pruner` and callback selection before fine-tuning.
-- [ ] Standardize return values across training implementations and their callers.
-- [ ] Validate sparsity boundaries, tiny tensors, tied weights, and missing layer settings.
-- [ ] Verify channel dimensions through convolutions, batch normalization, residual
-      connections, depthwise operations, and classifiers for each supported architecture.
-- [ ] Implement fine-grained pruning on the verified baseline first; add channel pruning next.
-- [ ] Select pruning ratios and fine-tuned checkpoints using validation data only.
-- [ ] Confirm that masks and channel configuration survive checkpoint reload.
+- [x] Pass mask callbacks to training and reapply masks after optimizer updates.
+- [x] Pass the actual epoch into training and step the supplied scheduler correctly.
+- [x] Define or reconstruct `pruner` and callback selection before fine-tuning.
+- [x] Use shared train/evaluate return contracts and preserve documented legacy tuple
+      adapters without changing their callers.
+- [x] Validate sparsity boundaries, tiny tensors, tied weights, and missing layer settings.
+- [x] Verify VGG channel dimensions through convolutions, batch normalization and
+      classifiers; reject unsupported residual/depthwise channel configurations explicitly.
+- [x] Implement fine-grained pruning on the verified baseline first; add channel pruning next.
+- [x] Select pruning ratios and fine-tuned checkpoints using validation data only.
+- [x] Confirm that masks and channel configuration survive checkpoint reload.
 
 ### Target
 
@@ -344,8 +345,34 @@ Masked weights remain zero through fine-tuning, the learning rate follows the
 configured schedule, and supported pruned models complete forward/backward passes.
 Reloading preserves pruning behavior. Unsupported configurations fail clearly.
 
-**Files:** `TrainingModules.py`, `PruneTrain.py`, `Utill.py`,
-`Utills/PrunUtillFGP.py`, `Utills/PrunUtillCP.py`, supported fine-tuning entry point.
+### Verification and limits
+
+- Canonical weight pruning uses stable exact mask counts, rejects invalid/empty
+  tensors and tied storage, validates complete per-layer maps before mutation,
+  and treats repeated ratios as total target sparsity.
+- Training reapplies masks before batches and after optimizer updates, including
+  matching optimizer buffers. Legacy callbacks, epochs, supplied schedulers,
+  best-first-epoch selection and cloning of mask-hook models are repaired.
+- VGG channel surgery preserves retained convolution weights, BN affine/running
+  state/counters, downstream inputs and classifier columns. At least one channel
+  remains. Zero-ratio predictions match and narrower models pass backward checks.
+- Checkpoints record and validate widths and retained indices. Dense/masked/channel
+  reload is supported; fresh-process channel predictions match at atol 1e-6, rtol 1e-5.
+- Pruning writes a separate validation report for ratio selection. Training and
+  fine-tuning continue selecting checkpoints on validation; test evaluation is separate.
+- CPU tests cover pruning boundaries/ties, tiny layers, missing maps, tied weights,
+  masks/momentum, callbacks/schedulers, ResNet masked forward/backward and VGG surgery.
+- Actual v1 GPU VGG channel pruning, fine-tuning and fresh-process interruption/resume
+  completed successfully using the existing 12-image smoke manifest.
+
+Residual/depthwise structured pruning, mixed channel/mask models, and historical
+architecture-specific channel helpers remain unsupported and fail on the supported
+command surface. Automatic ratio search and measured efficiency are not implemented.
+These checks do not establish full-dataset accuracy or a latency benefit.
+
+**Files:** `breakhis/pruning.py`, `breakhis/training.py`, `breakhis/models/vgg.py`,
+`breakhis/checkpoints.py`, `breakhis/cli.py`, compatibility helpers, tests and
+`docs/PRUNING.md`.
 
 ## Stage 8 — Correct evaluation and efficiency reporting
 

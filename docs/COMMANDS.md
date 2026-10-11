@@ -58,8 +58,10 @@ Other custom architectures remain experimental and are not CLI model choices.
 
 The supported `prune` command uses PyTorch L1 unstructured weight pruning on
 convolution and linear layers. Masks are saved and reconstructed, and remain
-effective during fine-tuning. Structured channel pruning, architecture-specific
-pruning validation, and systematic ratio selection remain Stage 7 work.
+effective during fine-tuning. `--method channel` physically removes VGG channels
+and adjusts batch normalization, downstream inputs and classifier columns.
+Residual/depthwise channel models remain unsupported. Complete per-layer ratios
+can be supplied with `--layer-sparsities`. See [PRUNING.md](PRUNING.md).
 
 Common options include `--manifest`, `--source`, `--magnification`, `--data-root`,
 `--batch-size`, `--num-workers`, `--device`, and `--deterministic`.

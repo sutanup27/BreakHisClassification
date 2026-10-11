@@ -31,51 +31,16 @@ def download_url(url, model_dir='.', overwrite=False):
         return None
 
 
-def magnitude_based_prune(tensor: torch.Tensor, sparsity : float) -> torch.Tensor:
-    """
-    magnitude-based pruning for single tensor
-    :param tensor: torch.(cuda.)Tensor, weight of conv/fc layer
-    :param sparsity: float, pruning sparsity
-        sparsity = #zeros / #elements = 1 - #nonzeros / #elements
-    :return:
-        torch.(cuda.)Tensor, mask for zeros
-    """
-    sparsity = min(max(0.0, sparsity), 1.0)
-    if sparsity == 1.0:
-        tensor.zero_()
-        return torch.zeros_like(tensor)
-    elif sparsity == 0.0:
-        return torch.ones_like(tensor)
-
-    num_elements = tensor.numel()
-
-    ##################### YOUR CODE STARTS HERE #####################
-    # Step 1: calculate the #zeros (please use round())
-    num_zeros = round(num_elements*sparsity)
-    # Step 2: calculate the importance of weight
-    importance = torch.abs(tensor)
-    # Step 3: calculate the pruning threshold
-    threshold,ind=  torch.kthvalue(torch.abs(tensor.view(-1)), num_zeros)
-    # Step 4: calculate the pruning mask
-    # Step 4: get binary mask (1 for nonzeros, 0 for zeros)
-    mask = importance.gt(threshold)
-    ##################### YOUR CODE ENDS HERE #######################
-
-    # Step 5: apply mask to prune the tensor
-    tensor.mul_(mask)
-
-    return mask
+def magnitude_based_prune(tensor, sparsity):
+    from .legacy_utils.PrunUtillFGP import magnitude_based_prune as canonical
+    return canonical(tensor, sparsity)
 
 
-def fine_grained_prune(tensor: torch.Tensor, sparsity : float, prune_type="magnitude_based"):
-    if prune_type=="magnitude_based" :
-        return magnitude_based_prune(tensor,sparsity)
-    else:
-        print("Wrong prune type is passed")
-        return tensor
-        
+def fine_grained_prune(tensor, sparsity, prune_type="magnitude_based"):
+    from .legacy_utils.PrunUtillFGP import fine_grained_prune as canonical
+    return canonical(tensor, sparsity, prune_type)
 
-    
+
 def get_labels_preds(model, dataloader,criterion):
     all_labels = []
     all_preds = []
@@ -157,25 +122,18 @@ def recover_model(PATH,model):
         return model.load_state_dict(cp)
 
 
-class FineGrainedPruner:
-    def __init__(self, model, sparsity_dict):
-        self.masks = FineGrainedPruner.prune(model, sparsity_dict)
+from .legacy_utils.PrunUtillFGP import FineGrainedPruner as _CanonicalPruner
 
-    @torch.no_grad()
-    def apply(self, model):
-        for name, param in model.named_parameters():
-            if name in self.masks:
-                param *= self.masks[name]
 
+class FineGrainedPruner(_CanonicalPruner):
     @staticmethod
-    @torch.no_grad()
     def prune(model, sparsity_dict):
-        masks = dict()
-        for name, param in model.named_parameters():
-            if param.dim() > 1: # we only prune conv and fc weights
-                masks[name] = fine_grained_prune(param, sparsity_dict[name],prune_type="magnitude_based")
-        return masks
-    
+        # Preserve the old parameter-name dictionary format as an explicit adapter.
+        settings = {name.removesuffix('.weight') if name != 'weight' else '': value
+                    for name, value in sparsity_dict.items()}
+        return _CanonicalPruner.prune(model, settings)
+
+
 def print_model(model):
     for name, param in model.named_parameters():
         if param.requires_grad:
@@ -308,7 +266,6 @@ def apply_channel_sorting(model):
 
     return model
 
-def ChannelPrunner(model,channel_pruning_ratio):
-    sorted_model = apply_channel_sorting(model)
-    pruned_model = channel_prune(sorted_model, channel_pruning_ratio)
-    return pruned_model
+def ChannelPrunner(model, channel_pruning_ratio):
+    from .pruning import prune_vgg_channels
+    return prune_vgg_channels(model, channel_pruning_ratio)

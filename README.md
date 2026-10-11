@@ -181,8 +181,27 @@ This custom filename saves to `../checkpoint/binary/resnet18-baseline.pth`.
 | --- | --- | --- |
 | `--checkpoint` | **Required**; file path | Supported checkpoint to prune. Architecture is reconstructed automatically. |
 | `--sparsity` | `0.5`; number from `0` to `1` inclusive | Fraction selected for L1 unstructured pruning in each convolution and linear layer. `0.5` requests 50%; `0` requests none; `1` selects all. This does not remove channels or guarantee faster inference. |
+| `--method` | `unstructured`; `unstructured`, `channel` | Weight masks for VGG/ResNet18, or physical VGG channel removal. Channel ratios must be below 1; residual/depthwise channel models are unsupported. |
+| `--layer-sparsities` | None; JSON file path | Complete layer-name-to-ratio map. Replaces the uniform ratio; missing/unknown names fail. See [pruning details](docs/PRUNING.md) for names and a template. |
 
 Masks are stored in the checkpoint and reconstructed on loading. Dense tensor shapes remain unchanged.
+
+With `--method channel`, VGG convolution widths, batch normalization, downstream
+inputs, and classifier columns are rebuilt together. Channel configuration is
+saved for automatic loading and fine-tuning. At least one channel remains per
+layer. Mixing channel-pruned models with unstructured masks is rejected.
+
+```powershell
+python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --method channel --sparsity 0.5 --experiment-id channel-50
+python -m breakhis finetune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/channel-50/prune.pth --epochs 5 --experiment-id channel-50
+```
+
+Each pruning run writes `prune.validation.json` beside its checkpoint. Choose
+ratios using validation results, then reserve test evaluation for the selected
+model. Unstructured masks, original masked weights, and matching optimizer buffers
+remain zero through fine-tuning. Re-pruning targets total mask sparsity;
+decreasing existing sparsity is rejected. Magnitude ties are resolved
+deterministically. See [PRUNING.md](docs/PRUNING.md) for full rules.
 
 ## Fine-tune parameters
 
@@ -315,7 +334,7 @@ Example: `python Train.py --dataset breakhis --magnification 40X --model vgg`. W
 | Resume configuration differs | Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them. |
 | Run already completed | Start a new fine-tuning run from its weights; resume does not extend the saved schedule. |
 
-Stages 1-6 are implemented and verified for the supported binary workflow. Full baseline quality, multiclass training, structured pruning correctness, efficiency reports, and CI remain future work. See [fix roadmap](docs/CODEBASE_FIX_ROADMAP.md) and [command reference](docs/COMMANDS.md).
+Stages 1-7 are implemented and verified for the supported binary workflow, including VGG channel pruning. Full baseline quality, multiclass training, residual/depthwise channel pruning, efficiency reports, and CI remain future work. See [fix roadmap](docs/CODEBASE_FIX_ROADMAP.md) and [command reference](docs/COMMANDS.md).
 
 CIFAR-10 experiments and mixed tutorials live under `experiments/cifar10/` as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
 
@@ -334,6 +353,7 @@ module rather than adding another implementation to a compatibility wrapper.
 | `breakhis/training.py` | Training/evaluation steps, loss aggregation, finite checks | Change optimizer-step behavior or shared metrics |
 | `breakhis/checkpoints.py` | Model reconstruction, format validation, training/RNG state | Change saved metadata or resume behavior |
 | `breakhis/paths.py` | Task checkpoint directories and experiment path validation | Change checkpoint placement safely |
+| `breakhis/pruning.py` | Weight masks, post-update enforcement, VGG channel surgery | Change supported pruning or layer validation |
 | `tests/` | CPU regressions and subprocess reload checks | Verify behavior affected by a code change |
 | `tools/check_environment.py` | Dependency/device verification | Diagnose environment setup |
 | `experiments/cifar10/` and legacy pruning helpers | Historical experiments | Consult reference code; these are outside the supported workflow |
@@ -344,8 +364,8 @@ boundaries intact: model selection and pruning settings use validation, with the
 test split reserved for final reporting. Changes to preprocessing or split files
 must be reflected in checkpoint provenance so incompatible weights are rejected.
 
-The supported pruning command currently applies L1 unstructured masks. Structured
-channel pruning helpers are experimental and need Stage 7 validation. Model
+The supported pruning command applies L1 unstructured masks or VGG channel removal.
+Other architecture-specific channel helpers remain experimental. Model
 commands do not currently support multiclass training, configurable image sizes,
 training-seed arguments, or quick-subset flags; avoid inventing CLI options.
 

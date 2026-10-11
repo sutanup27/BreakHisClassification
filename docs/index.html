@@ -13,10 +13,11 @@
 <details open><summary>Command reference</summary><a href="#commands" data-section="commands">Package and command reference</a><a href="#commands-canonical-package" data-section="commands-canonical-package">Canonical package</a><a href="#commands-supported-commands" data-section="commands-supported-commands">Supported commands</a><a href="#commands-compatibility-entry-points" data-section="commands-compatibility-entry-points">Compatibility entry points</a><a href="#commands-checkpoints-and-limits" data-section="commands-checkpoints-and-limits">Checkpoints and limits</a><a href="#commands-stage-6-configuration" data-section="commands-stage-6-configuration">Stage 6 configuration</a></details>
 <details open><summary>Dataset policy</summary><a href="#datasets" data-section="datasets">Dataset audit and patient-separated splits</a><a href="#datasets-audited-local-sources" data-section="datasets-audited-local-sources">Audited local sources</a><a href="#datasets-identifier-rule" data-section="datasets-identifier-rule">Identifier rule</a><a href="#datasets-split-policy" data-section="datasets-split-policy">Split policy</a><a href="#datasets-prepare-and-reuse" data-section="datasets-prepare-and-reuse">Prepare and reuse</a></details>
 <details open><summary>Checkpoints &amp; resume</summary><a href="#checkpoints" data-section="checkpoints">Experiment configuration and checkpoint format</a><a href="#checkpoints-experiment-outputs" data-section="checkpoints-experiment-outputs">Experiment outputs</a><a href="#checkpoints-format-version-2" data-section="checkpoints-format-version-2">Format version 2</a><a href="#checkpoints-resume-semantics" data-section="checkpoints-resume-semantics">Resume semantics</a><a href="#checkpoints-verification" data-section="checkpoints-verification">Verification</a></details>
+<details open><summary>Pruning &amp; fine-tuning</summary><a href="#pruning" data-section="pruning">Pruning and fine-tuning</a><a href="#pruning-supported-methods" data-section="pruning-supported-methods">Supported methods</a><a href="#pruning-channel-pruning-workflow" data-section="pruning-channel-pruning-workflow">Channel-pruning workflow</a><a href="#pruning-per-layer-settings" data-section="pruning-per-layer-settings">Per-layer settings</a><a href="#pruning-mask-invariants-and-edge-cases" data-section="pruning-mask-invariants-and-edge-cases">Mask invariants and edge cases</a><a href="#pruning-validation-saved-files-and-resume" data-section="pruning-validation-saved-files-and-resume">Validation, saved files, and resume</a><a href="#pruning-compatibility-and-verification" data-section="pruning-compatibility-and-verification">Compatibility and verification</a></details>
 <details open><summary>Repair roadmap</summary><a href="#roadmap" data-section="roadmap">Codebase repair roadmap</a><a href="#roadmap-objective" data-section="roadmap-objective">Objective</a><a href="#roadmap-current-state" data-section="roadmap-current-state">Current state</a><a href="#roadmap-stage-1--separate-dataset-workflows" data-section="roadmap-stage-1--separate-dataset-workflows">Stage 1 — Separate dataset workflows</a><a href="#roadmap-stage-2--establish-a-reproducible-environment" data-section="roadmap-stage-2--establish-a-reproducible-environment">Stage 2 — Establish a reproducible environment</a><a href="#roadmap-stage-3--repair-package-imports-and-command-structure" data-section="roadmap-stage-3--repair-package-imports-and-command-structure">Stage 3 — Repair package imports and command structure</a><a href="#roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-section="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits">Stage 4 — Audit datasets and create patient-separated splits</a><a href="#roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-section="roadmap-stage-5--standardize-preprocessing-and-baseline-training">Stage 5 — Standardize preprocessing and baseline training</a><a href="#roadmap-stage-6--standardize-configuration-and-checkpoints" data-section="roadmap-stage-6--standardize-configuration-and-checkpoints">Stage 6 — Standardize configuration and checkpoints</a><a href="#roadmap-stage-7--repair-pruning-and-fine-tuning" data-section="roadmap-stage-7--repair-pruning-and-fine-tuning">Stage 7 — Repair pruning and fine-tuning</a><a href="#roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-section="roadmap-stage-8--correct-evaluation-and-efficiency-reporting">Stage 8 — Correct evaluation and efficiency reporting</a><a href="#roadmap-stage-9--add-regression-checks-and-operational-documentation" data-section="roadmap-stage-9--add-regression-checks-and-operational-documentation">Stage 9 — Add regression checks and operational documentation</a><a href="#roadmap-final-acceptance-run" data-section="roadmap-final-acceptance-run">Final acceptance run</a></details></nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
 <div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
-<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–6 implemented</span></div></div>
+<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–7 implemented</span></div></div>
 <div class="notice"><strong>Current workspace:</strong> use the saved manifest with <code>cancer_binary</code>. The v2 copy was removed; v1-only manifest rebuilding and multiclass training remain pending.</div>
 <p id="search-status" role="status" aria-live="polite"></p><p id="no-results" hidden>No matching section. Try a command name, parameter, or error message.</p>
 <section class="doc-section" id="readme" data-guide="User guide">
@@ -147,8 +148,14 @@ python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnific
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
 <tr><td><code>--checkpoint</code></td><td><strong>Required</strong>; file path</td><td>Supported checkpoint to prune. Architecture is reconstructed automatically.</td></tr>
 <tr><td><code>--sparsity</code></td><td><code>0.5</code>; number from <code>0</code> to <code>1</code> inclusive</td><td>Fraction selected for L1 unstructured pruning in each convolution and linear layer. <code>0.5</code> requests 50%; <code>0</code> requests none; <code>1</code> selects all. This does not remove channels or guarantee faster inference.</td></tr>
+<tr><td><code>--method</code></td><td><code>unstructured</code>; <code>unstructured</code>, <code>channel</code></td><td>Weight masks for VGG/ResNet18, or physical VGG channel removal. Channel ratios must be below 1; residual/depthwise channel models are unsupported.</td></tr>
+<tr><td><code>--layer-sparsities</code></td><td>None; JSON file path</td><td>Complete layer-name-to-ratio map. Replaces the uniform ratio; missing/unknown names fail. See <a href="#pruning">pruning details</a> for names and a template.</td></tr>
 </tbody></table></div>
 <p>Masks are stored in the checkpoint and reconstructed on loading. Dense tensor shapes remain unchanged.</p>
+<p>With <code>--method channel</code>, VGG convolution widths, batch normalization, downstream inputs, and classifier columns are rebuilt together. Channel configuration is saved for automatic loading and fine-tuning. At least one channel remains per layer. Mixing channel-pruned models with unstructured masks is rejected.</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --method channel --sparsity 0.5 --experiment-id channel-50
+python -m breakhis finetune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/channel-50/prune.pth --epochs 5 --experiment-id channel-50</code></pre></div>
+<p>Each pruning run writes <code>prune.validation.json</code> beside its checkpoint. Choose ratios using validation results, then reserve test evaluation for the selected model. Unstructured masks, original masked weights, and matching optimizer buffers remain zero through fine-tuning. Re-pruning targets total mask sparsity; decreasing existing sparsity is rejected. Magnitude ties are resolved deterministically. See <a href="#pruning">PRUNING.md</a> for full rules.</p>
 </section>
 <section class="doc-section" id="readme-fine-tune-parameters" data-guide="User guide">
 <p class="eyebrow">User guide</p><h2>Fine-tune parameters</h2>
@@ -247,7 +254,7 @@ python -m unittest discover -s tests -v</code></pre></div>
 <tr><td>Resume configuration differs</td><td>Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them.</td></tr>
 <tr><td>Run already completed</td><td>Start a new fine-tuning run from its weights; resume does not extend the saved schedule.</td></tr>
 </tbody></table></div>
-<p>Stages 1-6 are implemented and verified for the supported binary workflow. Full baseline quality, multiclass training, structured pruning correctness, efficiency reports, and CI remain future work. See <a href="#roadmap">fix roadmap</a> and <a href="#commands">command reference</a>.</p>
+<p>Stages 1-7 are implemented and verified for the supported binary workflow, including VGG channel pruning. Full baseline quality, multiclass training, residual/depthwise channel pruning, efficiency reports, and CI remain future work. See <a href="#roadmap">fix roadmap</a> and <a href="#commands">command reference</a>.</p>
 <p>CIFAR-10 experiments and mixed tutorials live under <code>experiments/cifar10/</code> as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.</p>
 </section>
 <section class="doc-section" id="readme-working-on-the-codebase" data-guide="User guide">
@@ -261,12 +268,13 @@ python -m unittest discover -s tests -v</code></pre></div>
 <tr><td><code>breakhis/training.py</code></td><td>Training/evaluation steps, loss aggregation, finite checks</td><td>Change optimizer-step behavior or shared metrics</td></tr>
 <tr><td><code>breakhis/checkpoints.py</code></td><td>Model reconstruction, format validation, training/RNG state</td><td>Change saved metadata or resume behavior</td></tr>
 <tr><td><code>breakhis/paths.py</code></td><td>Task checkpoint directories and experiment path validation</td><td>Change checkpoint placement safely</td></tr>
+<tr><td><code>breakhis/pruning.py</code></td><td>Weight masks, post-update enforcement, VGG channel surgery</td><td>Change supported pruning or layer validation</td></tr>
 <tr><td><code>tests/</code></td><td>CPU regressions and subprocess reload checks</td><td>Verify behavior affected by a code change</td></tr>
 <tr><td><code>tools/check_environment.py</code></td><td>Dependency/device verification</td><td>Diagnose environment setup</td></tr>
 <tr><td><code>experiments/cifar10/</code> and legacy pruning helpers</td><td>Historical experiments</td><td>Consult reference code; these are outside the supported workflow</td></tr>
 </tbody></table></div>
 <p>To change behavior, locate the canonical module, implement the change, run the relevant existing tests, then run the suite above. Keep training/validation/test boundaries intact: model selection and pruning settings use validation, with the test split reserved for final reporting. Changes to preprocessing or split files must be reflected in checkpoint provenance so incompatible weights are rejected.</p>
-<p>The supported pruning command currently applies L1 unstructured masks. Structured channel pruning helpers are experimental and need Stage 7 validation. Model commands do not currently support multiclass training, configurable image sizes, training-seed arguments, or quick-subset flags; avoid inventing CLI options.</p>
+<p>The supported pruning command applies L1 unstructured masks or VGG channel removal. Other architecture-specific channel helpers remain experimental. Model commands do not currently support multiclass training, configurable image sizes, training-seed arguments, or quick-subset flags; avoid inventing CLI options.</p>
 </section>
 <section class="doc-section" id="readme-documentation-maintenance" data-guide="User guide">
 <p class="eyebrow">User guide</p><h2>Documentation maintenance</h2>
@@ -367,7 +375,7 @@ python -m breakhis finetune --dataset breakhis --source cancer_binary --magnific
 
 python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/finetune.pth --experiment-id baseline</code></pre></div>
 <p>Supported baseline architectures are VGG and torchvision ResNet18 (<code>resnet</code> is an alias). ResNet pretrained weights download only when <code>--pretrained</code> is supplied. Other custom architectures remain experimental and are not CLI model choices.</p>
-<p>The supported <code>prune</code> command uses PyTorch L1 unstructured weight pruning on convolution and linear layers. Masks are saved and reconstructed, and remain effective during fine-tuning. Structured channel pruning, architecture-specific pruning validation, and systematic ratio selection remain Stage 7 work.</p>
+<p>The supported <code>prune</code> command uses PyTorch L1 unstructured weight pruning on convolution and linear layers. Masks are saved and reconstructed, and remain effective during fine-tuning. <code>--method channel</code> physically removes VGG channels and adjusts batch normalization, downstream inputs and classifier columns. Residual/depthwise channel models remain unsupported. Complete per-layer ratios can be supplied with <code>--layer-sparsities</code>. See <a href="#pruning">PRUNING.md</a>.</p>
 <p>Common options include <code>--manifest</code>, <code>--source</code>, <code>--magnification</code>, <code>--data-root</code>, <code>--batch-size</code>, <code>--num-workers</code>, <code>--device</code>, and <code>--deterministic</code>. Workers default to zero for simpler interruption handling on Windows. Use <code>--num-workers 4</code> only after checking throughput on your machine.</p>
 <p>Each improvement in validation accuracy saves the selected checkpoint. Ctrl+C also attempts to save partial weights to an <code>-interrupted.pth</code> file. Every completed epoch saves an independent <code>-last.pth</code> with optimizer, scheduler, and RNG state. Use <code>--resume</code> with that file; see <a href="#checkpoints">CHECKPOINTS.md</a>.</p>
 </section>
@@ -478,17 +486,17 @@ python -m breakhis train --dataset breakhis --source breakhis_v2 --magnification
 <p>Checkpoints use tensors and standard Python values, loaded with <code>torch.load(..., weights_only=True)</code>. They do not pickle model instances.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Field</th><th scope="col">Contents</th></tr></thead><tbody>
 <tr><td><code>format_version</code></td><td><code>2</code>; format <code>1</code> remains readable for weights-only workflows</td></tr>
-<tr><td><code>architecture</code>, <code>architecture_config</code></td><td>Supported constructor identifier and output class count</td></tr>
+<tr><td><code>architecture</code>, <code>architecture_config</code></td><td>Supported constructor identifier, class count, and optional VGG channel widths</td></tr>
 <tr><td><code>classes</code>, <code>class_to_idx</code></td><td>Ordered class names and corresponding numeric labels</td></tr>
 <tr><td><code>state_dict</code></td><td>CPU tensors, including weights, batch-normalization buffers, pruning originals and masks</td></tr>
 <tr><td><code>metadata</code></td><td>Source, magnification, preprocessing description/configuration, manifest hash/path, dataset root, and split-selection policy</td></tr>
 <tr><td><code>epoch</code></td><td>Completed epoch number; partial interrupted files use the last completed epoch number</td></tr>
 <tr><td><code>config</code></td><td>Resolved command configuration</td></tr>
-<tr><td><code>pruning</code></td><td>Dense/unstructured designation and masked module names</td></tr>
+<tr><td><code>pruning</code></td><td>Dense/unstructured/channel designation, masks or validated retained-channel configuration</td></tr>
 <tr><td><code>runtime</code></td><td>Python, PyTorch, and CUDA runtime versions</td></tr>
 <tr><td><code>training_state</code></td><td>Optimizer, scheduler, best accuracy, planned epochs, RNGs, device, and resume-boundary policy; absent for pruning and partial weights</td></tr>
 </tbody></table></div>
-<p>Writes use a temporary sibling file and atomic replacement. Dense and supported unstructured models reconstruct from their declared architecture; mask hooks are reinstalled before loading state. Channel-pruned architecture reconstruction is not yet supported because structured pruning remains Stage 7 work.</p>
+<p>Writes use a temporary sibling file and atomic replacement. Dense and supported unstructured models reconstruct from their declared architecture; mask hooks are reinstalled before loading state. VGG channel models reconstruct from saved widths and retained-channel metadata. Residual/depthwise channel models and mixed channel/mask checkpoints remain unsupported.</p>
 <p>Version 1 checkpoints can be evaluated, pruned, or used to start a new fine-tuning run. They cannot resume exactly. Legacy whole-model pickles are rejected rather than loaded with unrestricted unpickling. Missing fields, inconsistent labels, invalid format versions, and nonfinite weights are rejected.</p>
 </section>
 <section class="doc-section" id="checkpoints-resume-semantics" data-guide="Checkpoints &amp; resume">
@@ -503,6 +511,61 @@ python -m breakhis train --dataset breakhis --resume ../checkpoint/binary/40X/vg
 <section class="doc-section" id="checkpoints-verification" data-guide="Checkpoints &amp; resume">
 <p class="eyebrow">Checkpoints &amp; resume</p><h2>Verification</h2>
 <p>Regression tests compare an uninterrupted stochastic CPU run with interrupted and resumed runs, for both dense and masked models. Final weights, optimizer, scheduler, and RNG states must match exactly. Separate actual VGG subprocess checks compare dense and pruned predictions using <code>atol=1e-6</code>, <code>rtol=1e-5</code>. GPU smoke checks validate actual checkpoint loading and finite inference; they do not establish full-dataset model quality or cross-device numerical equivalence.</p>
+</section>
+<section class="doc-section" id="pruning" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h1>Pruning and fine-tuning</h1>
+<p>The supported workflow offers unstructured weight masks for VGG/ResNet18 and physical output-channel removal for sequential VGG. Pruning decisions and fine-tuned checkpoint selection use validation. Test evaluation remains a separate final step.</p>
+</section>
+<section class="doc-section" id="pruning-supported-methods" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Supported methods</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Method</th><th scope="col">Models</th><th scope="col">Effect</th><th scope="col">Limits</th></tr></thead><tbody>
+<tr><td><code>--method unstructured</code> (default)</td><td>VGG, ResNet18</td><td>Masks convolution/linear weights</td><td>Dense tensor shapes remain; no guaranteed speedup</td></tr>
+<tr><td><code>--method channel</code></td><td>VGG only</td><td>Removes convolution output channels and corresponding BN/input/classifier dimensions</td><td>Ratios below 1; at least one channel remains</td></tr>
+</tbody></table></div>
+<p>Residual/depthwise channel surgery, tied/shared weight storage, and mixing channel-pruned models with weight masks are rejected. Historical custom ResNet, MobileNet, DenseNet, and Inception channel helpers remain experimental, outside supported commands. Unsupported channel operations do not fall back to masking.</p>
+</section>
+<section class="doc-section" id="pruning-channel-pruning-workflow" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Channel-pruning workflow</h2>
+<p>Starting from a supported dense VGG with the same manifest/source/magnification:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --method channel --sparsity 0.5 --experiment-id channel-50
+python -m breakhis finetune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/channel-50/prune.pth --epochs 5 --learning-rate 0.0001 --experiment-id channel-50
+python -m breakhis evaluate --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/channel-50/finetune.pth --experiment-id channel-50</code></pre></div>
+<p>For nondefault data settings, supply the same manifest/source/magnification on every command. The narrower model is reconstructed from saved channel widths automatically.</p>
+<p>Importance is the sum of absolute filter weights. Keep the highest-scoring outputs, with stable original-index ordering for ties. Copy corresponding batch-normalization affine values, running means/variances, and batch counters. Select the same indices in downstream convolution inputs and final classifier columns. RGB inputs and class labels remain unchanged. Channel pruning returns a new model without modifying the source.</p>
+<p>The kept count is <code>max(1, original - round(original * ratio))</code>. Small layers may retain more than the nominal fraction. Zero-ratio channel pruning preserves predictions within numerical tolerance.</p>
+</section>
+<section class="doc-section" id="pruning-per-layer-settings" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Per-layer settings</h2>
+<p>Optional <code>--layer-sparsities layers.json</code> replaces the uniform <code>--sparsity</code> with a complete JSON layer-name-to-ratio object. Specify every eligible layer exactly. Missing/unknown names, invalid ratios, NaN/infinity, and tied weights fail before any layer changes.</p>
+<p>VGG channel settings require <code>backbone.conv0</code> through <code>backbone.conv7</code>. VGG unstructured settings also require <code>fc2</code>. ResNet18 unstructured settings require all named Conv2d/Linear modules, including downsample convolutions and <code>fc</code>. Generate a complete unstructured template from the actual checkpoint:</p>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>import json
+from pathlib import Path
+from torch import nn
+from breakhis.checkpoints import load_checkpoint
+
+model, _ = load_checkpoint(&#x27;../checkpoint/binary/40X/vgg/baseline/train.pth&#x27;)
+settings = {name: 0.5 for name, module in model.named_modules()
+            if isinstance(module, (nn.Conv2d, nn.Linear))}
+Path(&#x27;layers.json&#x27;).write_text(json.dumps(settings, indent=2), encoding=&#x27;utf-8&#x27;)</code></pre></div>
+<p>For channel settings, filter only <code>nn.Conv2d</code> and start from unmasked VGG. Edit values and run:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --method unstructured --layer-sparsities layers.json --experiment-id layer-settings</code></pre></div>
+<p>The resolved map is saved in configuration and the validation report. The uniform ratio is still validated. JSON may use UTF-8 with or without a byte-order mark.</p>
+</section>
+<section class="doc-section" id="pruning-mask-invariants-and-edge-cases" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Mask invariants and edge cases</h2>
+<p>Unstructured pruning selects exactly <code>round(numel * ratio)</code> mask entries per layer. Stable sorting handles magnitude ties, one-element tensors, and zero-count rounding. Naturally zero weights can make numerical sparsity exceed mask sparsity. Empty tensors and shared weight storage are rejected.</p>
+<p>Re-pruning targets the requested total mask fraction rather than pruning another fraction of remaining weights. Lowering existing sparsity is rejected; use dense weights to compare smaller ratios.</p>
+<p>Training enforces masks before batches and after optimizer steps. Masked original weights and matching optimizer buffers, including SGD momentum, stay zero. Forward hooks retain differentiable mask multiplication. Saved masks reconstruct automatically; fine-tuning needs no external pruner object.</p>
+</section>
+<section class="doc-section" id="pruning-validation-saved-files-and-resume" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Validation, saved files, and resume</h2>
+<p>Pruning writes <code>prune.pth</code>, <code>prune.config.json</code>, and <code>prune.validation.json</code>. The report contains validation accuracy/loss, method, ratio/map, source, magnification, and input checkpoint. Compare candidate ratios using validation files; then fine-tune with validation-based selection. Do not choose settings through repeated test evaluations. Automatic ratio search is not implemented.</p>
+<p>Fine-tuning passes the actual epoch and steps its supplied/configured scheduler. Best weights and last-epoch optimizer/scheduler/RNG state follow <a href="#checkpoints">checkpoint rules</a>, for both masked and channel-pruned models. Channel checkpoints save validated widths and retained indices. Parameter reduction does not establish measured latency gains; efficiency reports remain Stage 8 work.</p>
+</section>
+<section class="doc-section" id="pruning-compatibility-and-verification" data-guide="Pruning &amp; fine-tuning">
+<p class="eyebrow">Pruning &amp; fine-tuning</p><h2>Compatibility and verification</h2>
+<p>Canonical <code>prune_weights</code> and <code>prune_vgg_channels</code> return the resulting model. Shared <code>train</code> returns sample-averaged loss; <code>evaluate</code> returns percent accuracy and loss. Compatibility fine-grained helpers delegate to validated masks. <code>TrainingPrunned</code> retains <code>(best_accuracy, best_model, accuracies)</code> while correctly passing callbacks/epochs, stepping the supplied scheduler, and retaining the first valid epoch even at zero accuracy. Its second loader must be validation despite the historical <code>test_dataloader</code> name. <code>Training</code> retains its four-item tuple.</p>
+<p>Tests cover ties/boundaries, masks and momentum, missing layer settings, tied-weight rejection, legacy callbacks/schedulers, VGG BN/classifier surgery, ResNet masked forward/backward, and fresh-process channel reload (<code>atol=1e-6</code>, <code>rtol=1e-5</code>). Real v1 GPU smoke runs confirm channel pruning, fine-tuning and fresh-process resume. These checks establish execution correctness, not full-dataset quality or guaranteed speed improvements.</p>
 </section>
 <section class="doc-section" id="roadmap" data-guide="Repair roadmap">
 <p class="eyebrow">Repair roadmap</p><h1>Codebase repair roadmap</h1>
@@ -712,23 +775,34 @@ python -m breakhis train --dataset breakhis --resume ../checkpoint/binary/40X/vg
 </section>
 <section class="doc-section" id="roadmap-stage-7--repair-pruning-and-fine-tuning" data-guide="Repair roadmap">
 <p class="eyebrow">Repair roadmap</p><h2>Stage 7 — Repair pruning and fine-tuning</h2>
-<p><strong>Status:</strong> Pending.</p>
+<p><strong>Status:</strong> Complete for supported unstructured VGG/ResNet18 and sequential VGG channel pruning; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Unused pruning callbacks, incorrect scheduler argument, undefined pruning variables, and unverified structural pruning.</p>
 <h3 id="roadmap-steps-6">Steps</h3>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Pass mask callbacks to training and reapply masks after optimizer updates.</li>
-<li class="check-item"><span class="check pending">Pending</span>Pass the actual epoch into training and step the supplied scheduler correctly.</li>
-<li class="check-item"><span class="check pending">Pending</span>Define or reconstruct <code>pruner</code> and callback selection before fine-tuning.</li>
-<li class="check-item"><span class="check pending">Pending</span>Standardize return values across training implementations and their callers.</li>
-<li class="check-item"><span class="check pending">Pending</span>Validate sparsity boundaries, tiny tensors, tied weights, and missing layer settings.</li>
-<li class="check-item"><span class="check pending">Pending</span>Verify channel dimensions through convolutions, batch normalization, residual connections, depthwise operations, and classifiers for each supported architecture.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement fine-grained pruning on the verified baseline first; add channel pruning next.</li>
-<li class="check-item"><span class="check pending">Pending</span>Select pruning ratios and fine-tuned checkpoints using validation data only.</li>
-<li class="check-item"><span class="check pending">Pending</span>Confirm that masks and channel configuration survive checkpoint reload.</li>
+<li class="check-item"><span class="check done">Done</span>Pass mask callbacks to training and reapply masks after optimizer updates.</li>
+<li class="check-item"><span class="check done">Done</span>Pass the actual epoch into training and step the supplied scheduler correctly.</li>
+<li class="check-item"><span class="check done">Done</span>Define or reconstruct <code>pruner</code> and callback selection before fine-tuning.</li>
+<li class="check-item"><span class="check done">Done</span>Use shared train/evaluate return contracts and preserve documented legacy tuple adapters without changing their callers.</li>
+<li class="check-item"><span class="check done">Done</span>Validate sparsity boundaries, tiny tensors, tied weights, and missing layer settings.</li>
+<li class="check-item"><span class="check done">Done</span>Verify VGG channel dimensions through convolutions, batch normalization and classifiers; reject unsupported residual/depthwise channel configurations explicitly.</li>
+<li class="check-item"><span class="check done">Done</span>Implement fine-grained pruning on the verified baseline first; add channel pruning next.</li>
+<li class="check-item"><span class="check done">Done</span>Select pruning ratios and fine-tuned checkpoints using validation data only.</li>
+<li class="check-item"><span class="check done">Done</span>Confirm that masks and channel configuration survive checkpoint reload.</li>
 </ul>
 <h3 id="roadmap-target-6">Target</h3>
 <p>Masked weights remain zero through fine-tuning, the learning rate follows the configured schedule, and supported pruned models complete forward/backward passes. Reloading preserves pruning behavior. Unsupported configurations fail clearly.</p>
-<p><strong>Files:</strong> <code>TrainingModules.py</code>, <code>PruneTrain.py</code>, <code>Utill.py</code>, <code>Utills/PrunUtillFGP.py</code>, <code>Utills/PrunUtillCP.py</code>, supported fine-tuning entry point.</p>
+<h3 id="roadmap-verification-and-limits-2">Verification and limits</h3>
+<ul>
+<li>Canonical weight pruning uses stable exact mask counts, rejects invalid/empty tensors and tied storage, validates complete per-layer maps before mutation, and treats repeated ratios as total target sparsity.</li>
+<li>Training reapplies masks before batches and after optimizer updates, including matching optimizer buffers. Legacy callbacks, epochs, supplied schedulers, best-first-epoch selection and cloning of mask-hook models are repaired.</li>
+<li>VGG channel surgery preserves retained convolution weights, BN affine/running state/counters, downstream inputs and classifier columns. At least one channel remains. Zero-ratio predictions match and narrower models pass backward checks.</li>
+<li>Checkpoints record and validate widths and retained indices. Dense/masked/channel reload is supported; fresh-process channel predictions match at atol 1e-6, rtol 1e-5.</li>
+<li>Pruning writes a separate validation report for ratio selection. Training and fine-tuning continue selecting checkpoints on validation; test evaluation is separate.</li>
+<li>CPU tests cover pruning boundaries/ties, tiny layers, missing maps, tied weights, masks/momentum, callbacks/schedulers, ResNet masked forward/backward and VGG surgery.</li>
+<li>Actual v1 GPU VGG channel pruning, fine-tuning and fresh-process interruption/resume completed successfully using the existing 12-image smoke manifest.</li>
+</ul>
+<p>Residual/depthwise structured pruning, mixed channel/mask models, and historical architecture-specific channel helpers remain unsupported and fail on the supported command surface. Automatic ratio search and measured efficiency are not implemented. These checks do not establish full-dataset accuracy or a latency benefit.</p>
+<p><strong>Files:</strong> <code>breakhis/pruning.py</code>, <code>breakhis/training.py</code>, <code>breakhis/models/vgg.py</code>, <code>breakhis/checkpoints.py</code>, <code>breakhis/cli.py</code>, compatibility helpers, tests and <code>docs/PRUNING.md</code>.</p>
 </section>
 <section class="doc-section" id="roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-guide="Repair roadmap">
 <p class="eyebrow">Repair roadmap</p><h2>Stage 8 — Correct evaluation and efficiency reporting</h2>

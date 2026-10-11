@@ -65,6 +65,8 @@ def main(argv=None):
             command.add_argument('--checkpoint', type=Path, required=name != 'finetune')
         if name == 'prune':
             command.add_argument('--sparsity', type=float, default=.5)
+            command.add_argument('--method', choices=['unstructured', 'channel'], default='unstructured')
+            command.add_argument('--layer-sparsities', type=Path, help='JSON object specifying every eligible layer name and ratio')
     args = parser.parse_args(argv)
     if args.command == 'prepare-data':
         if args.workers < 1:
@@ -126,6 +128,11 @@ def main(argv=None):
                 raise ValueError('--pretrained initializes a new model and cannot be used with --resume')
         if args.command == 'prune' and not 0 <= args.sparsity <= 1:
             raise ValueError('sparsity must be between zero and one')
+        if args.command == 'prune':
+            from .pruning import validate_sparsity
+            validate_sparsity(args.sparsity, channel=args.method == 'channel')
+            if args.layer_sparsities:
+                args.layer_sparsities = resolve_input(args.layer_sparsities, 'Layer sparsities')
         args.experiment_id = validate_experiment_id(args.experiment_id or previous.get('experiment_id') or
             datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8])
         if resume and args.experiment_id != previous['experiment_id']:
@@ -166,6 +173,8 @@ def main(argv=None):
             if payload['classes'] != ['benign', 'malignant']:
                 raise ValueError('Checkpoint class labels differ from the binary dataset')
         architecture = args.model if args.command == 'train' else payload['architecture']
+        if args.command == 'prune' and args.method == 'channel' and architecture != 'vgg':
+            raise ValueError('Channel pruning supports VGG only; residual/depthwise architectures are unsupported')
         if args.command == 'evaluate':
             output = args.output.resolve() if args.output else checkpoint_output(
                 args.source, args.magnification, architecture, args.command,
@@ -209,7 +218,8 @@ def main(argv=None):
         model = create_model(architecture, classes=len(loaders['train'].dataset.classes),
                              pretrained=args.pretrained).to(device)
     config_path = output.with_suffix('.config.json')
-    write_json(config_path, config)
+    if args.command != 'prune':
+        write_json(config_path, config)
     print(f'Device: {device}; source: {args.source}; magnification: {args.magnification}; experiment: {args.experiment_id}', flush=True)
     print('Images:', {split: len(loader.dataset) for split, loader in loaders.items()}, flush=True)
     if args.command == 'evaluate':
@@ -221,11 +231,19 @@ def main(argv=None):
         print(f'Report: {output}; configuration: {config_path}')
         return
     if args.command == 'prune':
-        from torch.nn.utils import prune
-        for module in model.modules():
-            if isinstance(module, (nn.Conv2d, nn.Linear)):
-                prune.l1_unstructured(module, 'weight', amount=args.sparsity)
+        from .pruning import prune_weights, prune_vgg_channels
+        try:
+            settings = json.loads(args.layer_sparsities.read_text(encoding='utf-8-sig')) if args.layer_sparsities else None
+            model = (prune_vgg_channels if args.method == 'channel' else prune_weights)(model, args.sparsity, settings)
+        except (ValueError, OSError) as error:
+            parser.error(str(error))
+        config['layer_sparsities_resolved'] = settings
+        write_json(config_path, config)
         accuracy, loss = evaluate(model, loaders['validation'], criterion)
+        write_json(output.with_suffix('.validation.json'), dict(split='validation', accuracy=accuracy,
+                   accuracy_unit='percent', loss=loss, method=args.method, sparsity=args.sparsity,
+                   layer_sparsities=settings, experiment_id=args.experiment_id, checkpoint=str(input_path),
+                   source=args.source, magnification=args.magnification))
         save_checkpoint(output, model, architecture, metadata, classes=loaders['train'].dataset.classes, config=config)
         print(f'Validation accuracy after pruning: {accuracy:.4f}%; saved {output}')
         return
