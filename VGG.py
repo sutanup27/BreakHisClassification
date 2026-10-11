@@ -28,7 +28,7 @@ class VGG(nn.Module):
   ARCH = [64, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M']
   #ARCH = [32 , 32, 'M', 64, 64,'M',128, 128, 'M', 256, 256, 'M', 512, 512]
 
-  def __init__(self) -> None:
+  def __init__(self, classes=2) -> None:
     super().__init__()
 
     layers = []
@@ -52,7 +52,7 @@ class VGG(nn.Module):
 
     self.backbone = nn.Sequential(OrderedDict(layers))
 #    self.fc1 = nn.Linear(2024, 500)
-    self.fc2 = nn.Linear(512, 2)
+    self.fc2 = nn.Linear(512, classes)
 
   def forward(self, x: torch.Tensor) -> torch.Tensor:
     # backbone: [N, 3, 32, 32] => [N, 512, 2, 2]

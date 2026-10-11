@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 import torch
 from torch import nn
-from PruningNAS.DataProcess.DataPreprocessing import get_dataloaders
+from .DataPreprocessing import get_dataloaders
 from PruningNAS.Utills.EvaluatiorUtills import get_model_macs, get_model_size, get_model_sparsity
 from PruningNAS.Utills.Utill import get_labels_preds, measure_latency, print_model
 from PruningNAS.Utills.TrainingModulesUtills import evaluate  # Ensure you import your correct model architecture
@@ -32,7 +32,7 @@ def main():
 
     # Print out missing/unexpected keys for debugging
 
-    train_dataloader,test_dataloader=get_dataloaders(path)
+    train_dataloader,test_dataloader=get_dataloaders(path, dataset="cifar10")
     ########################################test model#####################################
     # Set model to evaluation mode
     # model.eval()

@@ -35,7 +35,7 @@ types=['train','test']
 
 root_dir=os.path.join(path, magf)
 dataloader={}
-train_dataloader, test_dataloader=get_dataloaders(root_dir)
+train_dataloader, test_dataloader=get_dataloaders(root_dir, dataset="breakhis")
 
 ########################################test model#####################################
 # Set model to evaluation mode

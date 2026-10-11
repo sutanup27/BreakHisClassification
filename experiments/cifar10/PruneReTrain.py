@@ -14,7 +14,7 @@ from .Models.ResNetBasic import *
 from .Models.ResNetBottleNeck import *
 from .Models.DenseNet import *
 from .Utills.TrainingModulesUtills import TrainingPrunned, evaluate
-from .DataProcess.DataPreprocessing import get_dataloaders
+from .DataPreprocessing import get_dataloaders
 from .Models.VGG import *
 from .Utills.TrainingModulesUtills import Training
 from .Utills.ViewerUtills import plot_accuracy, plot_loss
@@ -29,7 +29,7 @@ def main():
 
     path='./dataset/cifar10'
     classes=10
-    train_dataloader, test_dataloader = get_dataloaders(path, batch_size=128)
+    train_dataloader, test_dataloader = get_dataloaders(path, batch_size=128, dataset="cifar10")
 
 
     # ########load from path only for retraining #####

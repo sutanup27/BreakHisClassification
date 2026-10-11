@@ -22,7 +22,7 @@ root_dir=os.path.join(path, magf)
 model = torch.load(model_path, map_location=torch.device(device))  # Use 'cpu' if necessary
 model.to(device)
 plot_weight_distribution(model)
-train_dataloader,test_dataloader=get_dataloaders(root_dir,batch_size=32 )
+train_dataloader,test_dataloader=get_dataloaders(root_dir, batch_size=32, dataset="breakhis")
 ############# calculate sparsities (optional) #############################################
 acc_pkl=f'checkpoint/{magf}/{model_type}/accuracies_{model_type}.pkl'
 sparse_pkl=f'checkpoint/{magf}/{model_type}/sparsities_{model_type}.pkl'

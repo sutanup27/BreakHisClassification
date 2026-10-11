@@ -42,7 +42,7 @@ dataloader={}
 # missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
 model=torch.load(model_path,map_location=torch.device(device))
 model.to(device)
-train_dataloader,test_dataloader=get_dataloaders(root_dir ) # Basemodel
+train_dataloader,test_dataloader=get_dataloaders(root_dir, dataset="breakhis") # Basemodel
 
 dense_model_accuracy=evaluate(model,test_dataloader)
 print('dense_model_accuracy:',dense_model_accuracy)

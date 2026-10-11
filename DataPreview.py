@@ -23,7 +23,7 @@ from pygame import mixer
 import copy
 from typing import Union,List
 
-path='./mrleyedataset'
+path=os.path.join(os.path.dirname(__file__), '..', 'Dataset', 'BreaKHis_v2', '40X')
 
 # Load images using ImageFolder
 image_dataset = ImageFolder(root=path, transform=transforms.ToTensor())
@@ -42,7 +42,7 @@ for d , l in image_dataset:
 width=2
 fig, ax = plt.subplots(2, width, figsize=(40, 40))
 fig.set_facecolor('lightgrey')
-e_status=['Eye close','Eye open']
+e_status=image_dataset.classes
 for l in [0,1]:
     for i in range(2):
         image=samples['Before'][l][i]

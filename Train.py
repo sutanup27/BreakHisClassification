@@ -1,70 +1,54 @@
-import copy
-import math
-import random
+"""Primary BreaKHis training entry point."""
+import argparse
+from pathlib import Path
 
 
-import os
-import torch
-from torch import nn
-from torch.optim import *
-from torch.optim.lr_scheduler import *
-from torchvision.datasets import *
-from torchvision.transforms import *
-import torchvision.models as models
-from DataPreprocessing import train_transform,test_transform,get_dataloaders
-from TrainingModules import evaluate
-from VGG import VGG
-from TrainingModules import Training
-from Viewer import plot_accuracy, plot_loss
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device:",device)
+def main(default_model="vgg"):
+    parser = argparse.ArgumentParser(description="Train a BreaKHis classifier")
+    parser.add_argument("--dataset", required=True, choices=["breakhis"])
+    parser.add_argument("--magnification", choices=["40X", "100X", "200X", "400X"], default="40X")
+    parser.add_argument("--model", choices=["vgg", "resnet"], default=default_model)
+    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--data-root", type=Path,
+                        default=Path(__file__).resolve().parent.parent / "Dataset" / "BreaKHis_v2")
+    args = parser.parse_args()
 
-seed=0
-random.seed(seed)
+    import torch
+    from torch import nn
+    from torchvision import models
+    from DataPreprocessing import get_class_names, get_dataloaders
+    from TrainingModules import Training, evaluate
+    from VGG import VGG
+    from Viewer import plot_accuracy, plot_loss
 
-magf='40X'
-
-path='..\Dataset\BreaKHis_v2'
-sub_dirs=['400X','200X','100X','40X']
-types=['train','test']
-
-root_dir=os.path.join(path, magf)
-dataloader={}
-train_dataloader, test_dataloader=get_dataloaders(root_dir,train_transform, test_transform)
-
-
-select_model='vgg'
-if select_model=='vgg':
-    model=VGG()
-elif select_model=='resnet':
-    model = models.resnet18(weights='DEFAULT')
-    model.fc = torch.nn.Linear(model.fc.in_features, 2)  # num_classes is the number of output classes
-else:
-    exit
-
-model = model.to(device)
-
-criterion = nn.CrossEntropyLoss()
-optimizer = SGD( model.parameters(), lr=0.001,  momentum=0.9,  weight_decay=5e-4)
-
-# lambda_lr = lambda epoch: math.sqrt(.1) ** (epoch // 7)
-# lambda_lr = lambda epoch: 0.1 ** (epoch // 5)
-# scheduler=LambdaLR(optimizer,lambda_lr)
-num_epochs=20
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, num_epochs)
-# scheduler = CosineAnnealingLR(optimizer, T_max=50)
-
-best_model, losses, test_losses, accs=Training( model, train_dataloader, test_dataloader, criterion, optimizer, num_epochs=num_epochs,scheduler=scheduler)
-
-model=copy.deepcopy(best_model)
-metric,_ = evaluate(model, test_dataloader)
-print(f"Best model accuray:", metric)
-
-plot_accuracy(accs)
-plot_loss(losses,test_losses)
-
-torch.save(model, f'./checkpoint/{magf}/{select_model}/{select_model}_{metric}.pth')
+    train_loader, test_loader = get_dataloaders(
+        args.data_root / args.magnification, batch_size=args.batch_size, dataset=args.dataset,
+    )
+    class_names = get_class_names(train_loader.dataset)
+    num_classes = len(class_names)
+    print(f"Dataset: {args.dataset}; labels: {class_names}; classes: {num_classes}")
+    if args.model == "vgg":
+        model = VGG(classes=num_classes)
+    else:
+        model = models.resnet18(weights="DEFAULT")
+        model.fc = nn.Linear(model.fc.in_features, num_classes)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, weight_decay=5e-4)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
+    best_model, losses, test_losses, accs = Training(
+        model, train_loader, test_loader, criterion, optimizer,
+        num_epochs=args.epochs, scheduler=scheduler,
+    )
+    metric, _ = evaluate(best_model, test_loader)
+    output_dir = Path(__file__).resolve().parent / "checkpoint" / args.magnification / args.model
+    output_dir.mkdir(parents=True, exist_ok=True)
+    torch.save(best_model, output_dir / f"{args.model}_{metric}.pth")
+    plot_accuracy(accs)
+    plot_loss(losses, test_losses)
 
 
-
-    
+if __name__ == "__main__":
+    main()

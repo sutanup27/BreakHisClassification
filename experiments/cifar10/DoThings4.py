@@ -4,7 +4,7 @@ import pickle
 
 import torch
 
-from PruningNAS.DataProcess.DataPreprocessing import get_dataloaders
+from .DataPreprocessing import get_dataloaders
 from PruningNAS.Models.DenseNet import DenseNet121
 from PruningNAS.Models.MobileNetV1 import MobileNetV1
 from PruningNAS.Models.ResNetBasic import *
@@ -26,7 +26,7 @@ def main():
 
     model.to(device)
 
-    train_dataloader,test_dataloader=get_dataloaders(path )
+    train_dataloader,test_dataloader=get_dataloaders(path, dataset="cifar10")
     dense_model_accuracy,_=evaluate(model,test_dataloader)
     print(f"Original model accuracy: {dense_model_accuracy:.4f}")
 

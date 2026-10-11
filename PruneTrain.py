@@ -59,7 +59,7 @@ sparsity_dict = {      #for FGP
 # 'fc2.weight': 0.95,
 # }
 
-train_dataloader,test_dataloader=get_dataloaders(root_dir,batch_size=16 ) # Basemodel
+train_dataloader,test_dataloader=get_dataloaders(root_dir, batch_size=16, dataset="breakhis") # Basemodel
 dense_model_accuracy=evaluate(model,test_dataloader)
 print('dense_model_accuracy:',dense_model_accuracy)
 pruned_model=copy.deepcopy(model)

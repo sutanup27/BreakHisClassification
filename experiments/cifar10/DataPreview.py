@@ -4,11 +4,11 @@ from torch.optim.lr_scheduler import *
 from torchvision.datasets import *
 from torchvision.transforms import *
 
-from DataPreprocessing import  get_datasets
+from .DataPreprocessing import  get_datasets
 
 path='./dataset/cifar10'
 out_path='./output'
-train_dataloader,test_datasets=get_datasets(path)
+train_dataloader,test_datasets=get_datasets(path, dataset="cifar10")
 
 samples = [[] for _ in range(10)]
 for image, label in test_datasets:
