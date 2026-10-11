@@ -21,6 +21,13 @@ class CheckpointPathTests(unittest.TestCase):
             self.assertEqual(checkpoint_output('cancer_binary', '40X', 'vgg', 'train', output),
                              root / 'baseline.pth')
 
+    def test_experiment_directory_and_identifier_validation(self):
+        root = checkpoint_directory('cancer_binary').resolve()
+        self.assertEqual(checkpoint_output('cancer_binary', '40X', 'vgg', 'train', experiment_id='baseline-1'),
+                         root / '40X/vgg/baseline-1/train.pth')
+        with self.assertRaisesRegex(ValueError, 'Experiment ID'):
+            checkpoint_output('cancer_binary', '40X', 'vgg', 'train', experiment_id='../outside')
+
     def test_rejects_outputs_outside_task_and_non_checkpoint_files(self):
         for output in (CHECKPOINT_ROOT / 'multiclass' / 'wrong.pth',
                        CHECKPOINT_ROOT / 'binary' / '..' / 'wrong.pth', 'wrong.json'):

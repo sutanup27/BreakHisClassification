@@ -101,6 +101,9 @@ def get_split_datasets(manifest=DEFAULT_MANIFEST, source='breakhis_v2', magnific
     root = Path(data_root or payload['roots'][source])
     rows = [row for row in payload['rows'] if row['source']==source and
             (magnification=='all' or row['magnification']==magnification)]
+    for split in ('train','validation','test'):
+        if not any(row['split'] == split for row in rows):
+            raise ValueError(f'Selected {source}/{magnification} manifest split is empty: {split}')
     return {split:ManifestDataset(root,[row for row in rows if row['split']==split],
                                   train_transform if split=='train' else test_transform)
             for split in ('train','validation','test')}

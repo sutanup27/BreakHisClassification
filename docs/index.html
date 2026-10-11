@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Offline BreaKHis user and developer guide: setup, commands, parameters, checkpoints and resume.">
+<title>BreaKHis · Codebase guide</title><style>:root{--ink:#182a38;--muted:#566873;--teal:#087a76;--nav:#132d3c;--paper:#fff;--line:#dbe5e7;--back:#f3f7f7}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:120px}body{margin:0;background:var(--back);color:var(--ink);font:16px/1.65 "Segoe UI",Arial,sans-serif}a{color:var(--teal);text-underline-offset:3px}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:8px;background:white;padding:8px 14px;color:var(--ink)}button:hover{background:#e7f4f2}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,.table-wrap:focus-visible{outline:3px solid #20aaa0;outline-offset:3px}.sidebar{position:fixed;inset:0 auto 0 0;width:285px;background:var(--nav);color:#d4e4e9;overflow-y:auto;padding:30px 22px}.brand{display:flex;gap:13px;align-items:center;color:white;text-decoration:none;font-size:23px;font-weight:700;letter-spacing:-.5px}.brand-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#59cec0;color:#102d3c;font-size:25px}.brand small{display:block;font-size:10px;letter-spacing:2px;color:#9fc4cc;font-weight:600}.sidebar-note{font-size:13px;color:#a7c2cd;margin:21px 0 25px}.sidebar details{margin:0 0 19px}.sidebar summary{cursor:pointer;font-weight:650;color:#e9f2f4;font-size:14px;margin-bottom:8px}.sidebar nav a{display:block;font-size:12px;line-height:1.5;padding:6px 10px;margin:2px 0;border-radius:6px;color:#afcbd5;text-decoration:none;overflow-wrap:anywhere}.sidebar nav a:hover,.sidebar nav a.active{background:#224858;color:#fff}.sidebar-footer{border-top:1px solid #31505e;padding-top:20px;font-size:11px;color:#97b2bd}.workspace{margin-left:285px}.topbar{position:sticky;top:0;z-index:5;background:#f3f7f7f2;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:15px 40px;display:flex;gap:20px;justify-content:space-between;align-items:center}.search-wrap{width:min(560px,80%)}.search-wrap label{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-bottom:4px}.search-row{display:flex;gap:8px}.search-row input{min-width:0;width:100%;border:1px solid #c3d6d8;background:white;border-radius:8px;padding:9px 13px}.search-row button{font-size:13px}main{max-width:1130px;margin:auto;padding:44px 40px 75px}.intro{padding:0 0 25px}.eyebrow{font-size:11px;letter-spacing:1.7px;font-weight:700;color:var(--teal);text-transform:uppercase;margin:0 0 8px}.intro h1{font-size:clamp(30px,4vw,49px);line-height:1.12;letter-spacing:-1.5px;margin:12px 0 20px;max-width:700px}.intro>p:not(.eyebrow){max-width:720px;color:var(--muted);font-size:18px}.badges{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.badges span{font-size:12px;font-weight:600;padding:5px 10px;border:1px solid #c6dfdd;border-radius:20px;background:#e8f3f1;color:#176b68}.notice{border-left:4px solid var(--teal);background:#e8f2f1;padding:16px 20px;border-radius:0 9px 9px 0;font-size:14px;margin-bottom:30px}#search-status{font-size:13px;color:var(--muted)}#search-status:empty{display:none}#no-results{padding:24px;border:1px solid var(--line);border-radius:10px;background:white}.doc-section{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:28px 30px;margin:0 0 20px;scroll-margin-top:115px;box-shadow:0 2px 5px #182a3803;overflow-wrap:break-word}.doc-section[hidden]{display:none}h1,h2,h3,h4{line-height:1.3;letter-spacing:-.35px;color:var(--ink)}.doc-section h1{font-size:29px;margin:8px 0 20px}.doc-section h2{font-size:25px;margin:7px 0 20px}.doc-section h3{font-size:19px;margin:27px 0 12px}.doc-section p{margin:13px 0}.doc-section .eyebrow{margin:0;color:#738b90;font-size:10px}.doc-section li{padding:3px 0}.doc-section ol,.doc-section ul{padding-left:24px}code{font:13px/1.6 Consolas,"Courier New",monospace;color:#09696a;background:#eff5f5;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}.code-block{background:#152d3b;border-radius:9px;margin:20px 0;overflow:hidden}.code-toolbar{display:flex;justify-content:space-between;align-items:center;background:#203c4b;border-bottom:1px solid #35505c;padding:8px 13px;color:#b8d4dc;font:11px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px}.code-toolbar button{border:1px solid #52727f;background:transparent;color:#e4f0f4;font:12px "Segoe UI",Arial,sans-serif;text-transform:none;letter-spacing:0;padding:4px 10px}.code-toolbar button:hover{background:#345665}.code-block pre{margin:0;padding:19px 18px;overflow-x:auto;tab-size:2}.code-block code{display:block;font-size:12px;line-height:1.8;color:#deeff3;background:none;border-radius:0;padding:0;white-space:pre;overflow-wrap:normal}.table-wrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:19px 0}table{width:100%;border-collapse:collapse;font-size:13px;text-align:left;min-width:610px}th{background:#edf5f4;padding:12px 14px;color:#305a62;font-size:11px;letter-spacing:.35px}td{padding:13px 14px;border-top:1px solid #e3ebec;vertical-align:top}td:first-child{min-width:160px}tr:nth-child(even){background:#fbfdfd}table code{font-size:12px}.check-item{list-style:none;display:flex;gap:10px;align-items:baseline}.check{font-size:10px;font-weight:700;border-radius:5px;padding:2px 6px;white-space:nowrap}.check.done{background:#dff2e9;color:#226d4b}.check.pending{background:#f4ecda;color:#876019}.page-footer{border-top:1px solid var(--line);padding-top:25px;color:var(--muted);font-size:12px}.skip-link{position:fixed;top:-70px;left:12px;z-index:10;background:white;padding:12px}.skip-link:focus{top:12px}[hidden]{display:none!important}@media(max-width:1000px){.sidebar{width:235px;padding:24px 16px}.workspace{margin-left:235px}.topbar{padding:15px 22px}main{padding:32px 22px}.doc-section{padding:25px 22px}}@media(max-width:720px){.sidebar{position:relative;width:100%;max-height:270px;padding:18px 22px}.sidebar-note,.sidebar-footer{display:none}.sidebar nav{margin-top:17px}.sidebar details{margin-bottom:10px}.workspace{margin-left:0}.topbar{padding:12px 16px;gap:8px}.search-wrap{width:100%}#print{display:none}main{padding:28px 16px}.intro h1{font-size:34px;letter-spacing:-.8px}.intro>p:not(.eyebrow){font-size:16px}.doc-section{padding:22px 18px}.doc-section h2{font-size:22px}.code-block pre{padding:15px 13px}}@media print{body{background:white;font-size:10pt}.sidebar,.topbar,.copy,.skip-link,#search-status,#no-results{display:none!important}.workspace{margin:0}main{max-width:none;padding:0}.intro h1{font-size:25pt}.doc-section{display:block!important;border:0;border-radius:0;padding:0;margin:22pt 0;box-shadow:none}.code-block,.code-toolbar{background:#f1f3f3!important;color:#222!important}.code-block code{color:#222!important;white-space:pre-wrap;font-size:8pt}.table-wrap{overflow:visible}table{min-width:0;font-size:8pt}td,th{padding:6pt;min-width:0!important}h1,h2,h3{break-after:avoid}tr,.notice{break-inside:avoid}a{color:#222}html{scroll-padding:0}}
+
+@media print{.doc-section[hidden]{display:block!important}}
+</style></head><body>
+<a class="skip-link" href="#main">Skip to documentation</a>
+<aside class="sidebar"><a class="brand" href="#readme"><span class="brand-mark">B</span><span>BreaKHis<small>CODEBASE GUIDE</small></span></a>
+<p class="sidebar-note">Setup, experiments, and implementation</p>
+<nav aria-label="Documentation navigation"><details open><summary>User guide</summary><a href="#readme" data-section="readme">BreaKHis classification and pruning</a><a href="#readme-start-here" data-section="readme-start-here">Start here</a><a href="#readme-first-run-checklist" data-section="readme-first-run-checklist">First-run checklist</a><a href="#readme-workspace-and-checkpoint-layout" data-section="readme-workspace-and-checkpoint-layout">Workspace and checkpoint layout</a><a href="#readme-environment-setup" data-section="readme-environment-setup">Environment setup</a><a href="#readme-complete-binary-workflow" data-section="readme-complete-binary-workflow">Complete binary workflow</a><a href="#readme-shared-parameters" data-section="readme-shared-parameters">Shared parameters</a><a href="#readme-train-parameters" data-section="readme-train-parameters">Train parameters</a><a href="#readme-prune-parameters" data-section="readme-prune-parameters">Prune parameters</a><a href="#readme-fine-tune-parameters" data-section="readme-fine-tune-parameters">Fine-tune parameters</a><a href="#readme-evaluate-parameters" data-section="readme-evaluate-parameters">Evaluate parameters</a><a href="#readme-checkpoint-paths-and-loading-rules" data-section="readme-checkpoint-paths-and-loading-rules">Checkpoint paths and loading rules</a><a href="#readme-prepare-data-parameters-and-current-limitation" data-section="readme-prepare-data-parameters-and-current-limitation">Prepare-data parameters and current limitation</a><a href="#readme-preprocessing-and-runtime" data-section="readme-preprocessing-and-runtime">Preprocessing and runtime</a><a href="#readme-help-environment-checking-and-wrappers" data-section="readme-help-environment-checking-and-wrappers">Help, environment checking, and wrappers</a><a href="#readme-troubleshooting-and-remaining-work" data-section="readme-troubleshooting-and-remaining-work">Troubleshooting and remaining work</a><a href="#readme-working-on-the-codebase" data-section="readme-working-on-the-codebase">Working on the codebase</a><a href="#readme-documentation-maintenance" data-section="readme-documentation-maintenance">Documentation maintenance</a></details>
+<details open><summary>Environment</summary><a href="#environment" data-section="environment">Environment setup</a><a href="#environment-create-a-virtual-environment" data-section="environment-create-a-virtual-environment">Create a virtual environment</a><a href="#environment-nvidia-gpu-installation" data-section="environment-nvidia-gpu-installation">NVIDIA GPU installation</a><a href="#environment-cpu-installation" data-section="environment-cpu-installation">CPU installation</a><a href="#environment-what-the-files-cover" data-section="environment-what-the-files-cover">What the files cover</a><a href="#environment-verify-and-run" data-section="environment-verify-and-run">Verify and run</a></details>
+<details open><summary>Command reference</summary><a href="#commands" data-section="commands">Package and command reference</a><a href="#commands-canonical-package" data-section="commands-canonical-package">Canonical package</a><a href="#commands-supported-commands" data-section="commands-supported-commands">Supported commands</a><a href="#commands-compatibility-entry-points" data-section="commands-compatibility-entry-points">Compatibility entry points</a><a href="#commands-checkpoints-and-limits" data-section="commands-checkpoints-and-limits">Checkpoints and limits</a><a href="#commands-stage-6-configuration" data-section="commands-stage-6-configuration">Stage 6 configuration</a></details>
+<details open><summary>Dataset policy</summary><a href="#datasets" data-section="datasets">Dataset audit and patient-separated splits</a><a href="#datasets-audited-local-sources" data-section="datasets-audited-local-sources">Audited local sources</a><a href="#datasets-identifier-rule" data-section="datasets-identifier-rule">Identifier rule</a><a href="#datasets-split-policy" data-section="datasets-split-policy">Split policy</a><a href="#datasets-prepare-and-reuse" data-section="datasets-prepare-and-reuse">Prepare and reuse</a></details>
+<details open><summary>Checkpoints &amp; resume</summary><a href="#checkpoints" data-section="checkpoints">Experiment configuration and checkpoint format</a><a href="#checkpoints-experiment-outputs" data-section="checkpoints-experiment-outputs">Experiment outputs</a><a href="#checkpoints-format-version-2" data-section="checkpoints-format-version-2">Format version 2</a><a href="#checkpoints-resume-semantics" data-section="checkpoints-resume-semantics">Resume semantics</a><a href="#checkpoints-verification" data-section="checkpoints-verification">Verification</a></details>
+<details open><summary>Repair roadmap</summary><a href="#roadmap" data-section="roadmap">Codebase repair roadmap</a><a href="#roadmap-objective" data-section="roadmap-objective">Objective</a><a href="#roadmap-current-state" data-section="roadmap-current-state">Current state</a><a href="#roadmap-stage-1--separate-dataset-workflows" data-section="roadmap-stage-1--separate-dataset-workflows">Stage 1 — Separate dataset workflows</a><a href="#roadmap-stage-2--establish-a-reproducible-environment" data-section="roadmap-stage-2--establish-a-reproducible-environment">Stage 2 — Establish a reproducible environment</a><a href="#roadmap-stage-3--repair-package-imports-and-command-structure" data-section="roadmap-stage-3--repair-package-imports-and-command-structure">Stage 3 — Repair package imports and command structure</a><a href="#roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-section="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits">Stage 4 — Audit datasets and create patient-separated splits</a><a href="#roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-section="roadmap-stage-5--standardize-preprocessing-and-baseline-training">Stage 5 — Standardize preprocessing and baseline training</a><a href="#roadmap-stage-6--standardize-configuration-and-checkpoints" data-section="roadmap-stage-6--standardize-configuration-and-checkpoints">Stage 6 — Standardize configuration and checkpoints</a><a href="#roadmap-stage-7--repair-pruning-and-fine-tuning" data-section="roadmap-stage-7--repair-pruning-and-fine-tuning">Stage 7 — Repair pruning and fine-tuning</a><a href="#roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-section="roadmap-stage-8--correct-evaluation-and-efficiency-reporting">Stage 8 — Correct evaluation and efficiency reporting</a><a href="#roadmap-stage-9--add-regression-checks-and-operational-documentation" data-section="roadmap-stage-9--add-regression-checks-and-operational-documentation">Stage 9 — Add regression checks and operational documentation</a><a href="#roadmap-final-acceptance-run" data-section="roadmap-final-acceptance-run">Final acceptance run</a></details></nav>
+<div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
+<div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
+<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–6 implemented</span></div></div>
+<div class="notice"><strong>Current workspace:</strong> use the saved manifest with <code>cancer_binary</code>. The v2 copy was removed; v1-only manifest rebuilding and multiclass training remain pending.</div>
+<p id="search-status" role="status" aria-live="polite"></p><p id="no-results" hidden>No matching section. Try a command name, parameter, or error message.</p>
+<section class="doc-section" id="readme" data-guide="User guide">
+<p class="eyebrow">User guide</p><h1>BreaKHis classification and pruning</h1>
+<p>This project trains PyTorch models to classify breast histology images as <strong>benign</strong> or <strong>malignant</strong>, then evaluates, prunes, and fine-tunes the saved models. Model commands support binary classification. The eight-subtype dataset is audited, but multiclass training is not implemented yet.</p>
+</section>
+<section class="doc-section" id="readme-start-here" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Start here</h2>
+<p>Read this guide from setup through training before running an experiment. An <a href="..\docs\index.html">offline HTML guide</a> presents this README and the detailed documentation with navigation, search, and copy buttons. Open <code>docs/index.html</code> in a browser; no web server, installation, or internet connection is required.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Goal</th><th scope="col">Read next</th></tr></thead><tbody>
+<tr><td>Run the project for the first time</td><td><a href="#readme-first-run-checklist">First-run checklist</a>, then <a href="#readme-environment-setup">environment setup</a></td></tr>
+<tr><td>Train, prune, and evaluate</td><td><a href="#readme-complete-binary-workflow">Complete binary workflow</a></td></tr>
+<tr><td>Understand an argument</td><td><a href="#readme-shared-parameters">Shared parameters</a> and the command-specific tables below</td></tr>
+<tr><td>Stop and continue a run</td><td><a href="#readme-resume-training-and-fine-tuning">Resume training and fine-tuning</a></td></tr>
+<tr><td>Find or interpret saved files</td><td><a href="#readme-checkpoint-paths-and-loading-rules">Checkpoint paths</a>, <a href="#checkpoints">format details</a></td></tr>
+<tr><td>Modify the implementation</td><td><a href="#readme-working-on-the-codebase">Working on the codebase</a></td></tr>
+<tr><td>Diagnose an error</td><td><a href="#readme-troubleshooting-and-remaining-work">Troubleshooting</a></td></tr>
+</tbody></table></div>
+</section>
+<section class="doc-section" id="readme-first-run-checklist" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>First-run checklist</h2>
+<ol start="1">
+<li>Open PowerShell in <code>D:\Sutanu_WorkSpace\BreakHis\BreakHisClassification</code>.</li>
+<li>Activate <code>.venv313</code> or use its Python executable directly. If starting from a fresh checkout, follow <a href="#environment">environment creation</a> first.</li>
+<li>Check the interpreter, dependencies, binary images, and saved manifest:</li>
+</ol>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python --version
+python tools/check_environment.py --device cuda
+Test-Path ../Dataset/dataset_cancer_v1/classificacao_binaria
+Test-Path artifacts/data/manifest.json</code></pre></div>
+<p>Both <code>Test-Path</code> results must be <code>True</code>. Use <code>--device cpu</code> in the environment checker for a CPU installation. The checker runs a forward pass, not training. The dataset and manifest are local artifacts and are not included in Git. A fresh clone therefore needs those files copied into the layout below. If images moved, use <code>--data-root</code> while keeping their contents and manifest assignments unchanged.</p>
+<p><strong>Current setup limitation:</strong> after removing v2, the existing v1 manifest works, but the audit command cannot yet rebuild using v1 alone. Restore the existing manifest from your local backup; do not assume <code>prepare-data</code> works in a clean v1-only workspace. See <a href="#readme-prepare-data-parameters-and-current-limitation">prepare-data limitation</a>.</p>
+<ol start="4">
+<li>Run the tests before a long experiment:</li>
+</ol>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m unittest discover -s tests -v</code></pre></div>
+<ol start="5">
+<li>Start with a separate one-epoch run to confirm the complete selected dataset loads and produces finite training/validation results:</li>
+</ol>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --model vgg --magnification 40X --epochs 1 --batch-size 16 --num-workers 0 --experiment-id first-check</code></pre></div>
+<p>This still processes all selected training/validation images. It is not a small sample run. Expect <code>train.config.json</code>, <code>train.pth</code>, and <code>train-last.pth</code> in <code>../checkpoint/binary/40X/vgg/first-check/</code>. Use a new ID if that directory already contains output files. A completed one-epoch run cannot resume for extra epochs; start a new baseline or fine-tune its weights.</p>
+</section>
+<section class="doc-section" id="readme-workspace-and-checkpoint-layout" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Workspace and checkpoint layout</h2>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>BreakHis/
+  Dataset/
+    dataset_cancer_v1/
+      classificacao_binaria/       # Supported training source
+      classificacao_multiclasse/   # Audit only for now
+  BreakHisClassification/          # Run commands from this codebase directory
+    breakhis/                     # Canonical package
+    artifacts/data/manifest.json  # Saved audited image records and splits
+  checkpoint/
+    binary/
+      40X/vgg/baseline/train.pth
+      40X/vgg/baseline/prune.pth
+      40X/vgg/baseline/finetune.pth
+      legacy/                     # Previously saved checkpoints
+    multiclass/                   # Reserved for future multiclass training</code></pre></div>
+<p>The local <code>BreaKHis_v2</code> dataset has been removed. The default model-command source is now <code>cancer_binary</code>. Moving old files into <code>binary/legacy/</code> does not migrate their format or establish their experiment provenance.</p>
+</section>
+<section class="doc-section" id="readme-environment-setup" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Environment setup</h2>
+<p>The tested baseline is Windows x64 with Python 3.13. See <a href="#environment">environment setup</a> for environment creation, pinned dependencies, CPU installation, and the verified Python executable.</p>
+<p>Activate the existing environment in PowerShell:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>cd D:\Sutanu_WorkSpace\BreakHis\BreakHisClassification
+.\.venv313\Scripts\Activate.ps1
+python --version</code></pre></div>
+<p>If activation is blocked, allow scripts for the current session and retry:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv313\Scripts\Activate.ps1</code></pre></div>
+<p>Activation is optional. Replace <code>python</code> in any command with <code>.\.venv313\Scripts\python.exe</code> to use the environment directly.</p>
+<p>If dependencies are missing, install the NVIDIA CUDA 12.8 wheel selection first, then the common requirements:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m pip install -r requirements-torch-cu128.txt
+python -m pip install -r requirements.txt
+python tools/check_environment.py --device cuda</code></pre></div>
+<p>For CPU execution, use <code>requirements-torch-cpu.txt</code> instead of the CUDA wheel file in a separate CPU environment. Installing CPU wheels into the GPU environment replaces its GPU build.</p>
+</section>
+<section class="doc-section" id="readme-complete-binary-workflow" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Complete binary workflow</h2>
+<p>These commands use the existing saved manifest and the remaining v1 binary dataset. Keep the manifest, source, and magnification consistent throughout the experiment.</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code># Train and select the best weights using validation accuracy.
+python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X --model vgg --epochs 20 --device auto --experiment-id baseline
+
+# Prune weights and check validation performance.
+python -m breakhis prune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --sparsity 0.5 --experiment-id baseline
+
+# Fine-tune with the pruning masks still active.
+python -m breakhis finetune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/prune.pth --epochs 5 --learning-rate 0.0001 --experiment-id baseline
+
+# Evaluate the selected model on the reserved test split.
+python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/finetune.pth --output artifacts/final-test.json</code></pre></div>
+<p>Training and fine-tuning use the training split and choose weights using validation accuracy. Pruning reports validation performance. Evaluation uses the reserved test split; run it after choosing your model and pruning settings. Reported accuracy is a percentage on a 0-100 scale: <code>90.0</code> means 90%.</p>
+</section>
+<section class="doc-section" id="readme-shared-parameters" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Shared parameters</h2>
+<p>These arguments apply to <strong>train, evaluate, prune, and finetune</strong>. Omitted optional arguments use their defaults. Flags such as <code>--deterministic</code> take no value.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose and usage</th></tr></thead><tbody>
+<tr><td><code>--dataset</code></td><td><strong>Required</strong>; <code>breakhis</code> only</td><td>Always supply <code>--dataset breakhis</code>. CIFAR-10 is a separate legacy workflow.</td></tr>
+<tr><td><code>--source</code></td><td><code>cancer_binary</code>; also <code>breakhis_v2</code></td><td>Selects source records in the manifest. Use <code>cancer_binary</code> for v1. The v2 choice requires restoring or relocating its images. <code>cancer_multiclass</code> is not accepted by model commands yet.</td></tr>
+<tr><td><code>--manifest</code></td><td><code>&lt;codebase&gt;/artifacts/data/manifest.json</code></td><td>Saved image records, hashes, roots, and patient split assignments. Example: <code>--manifest artifacts/data/manifest.json</code>.</td></tr>
+<tr><td><code>--magnification</code></td><td><code>40X</code>; <code>40X</code>, <code>100X</code>, <code>200X</code>, <code>400X</code>, <code>all</code></td><td>Filters images by magnification. <code>all</code> combines all four into one run; it does not train four separate models.</td></tr>
+<tr><td><code>--data-root</code></td><td>Selected source root in the manifest</td><td>Overrides the image root after relocation. Example: <code>--data-root ../Dataset/dataset_cancer_v1/classificacao_binaria</code>. Use the folder containing magnification folders. Files must still match saved hashes.</td></tr>
+<tr><td><code>--batch-size</code></td><td><code>32</code>; positive integer</td><td>Images processed per batch, for both training and evaluation. Larger batches need more memory; try <code>16</code> or <code>8</code> if GPU memory is exhausted.</td></tr>
+<tr><td><code>--num-workers</code></td><td><code>0</code>; nonnegative integer</td><td>Background data-loader processes. Zero simplifies interruption on Windows. Positive values enable persistent workers and prefetching. Try <code>4</code> after measuring throughput. Different from audit <code>--workers</code>.</td></tr>
+<tr><td><code>--device</code></td><td><code>auto</code>; <code>auto</code>, <code>cpu</code>, <code>cuda</code></td><td><code>auto</code> uses CUDA when available, otherwise CPU. <code>cuda</code> fails if unavailable. <code>cpu</code> forces CPU execution.</td></tr>
+<tr><td><code>--deterministic</code></td><td>Off; <code>--deterministic</code> / <code>--no-deterministic</code></td><td>Enables deterministic cuDNN settings and disables cuDNN benchmarking; may be slower. Does not guarantee identical results across hardware/software versions. Loader RNGs use seed 0; model commands have no <code>--seed</code> argument.</td></tr>
+<tr><td><code>--experiment-id</code></td><td>Generated UTC timestamp and random suffix</td><td>Groups outputs under a distinct experiment directory. Use 1-64 letters, digits, underscores or hyphens, starting with a letter or digit. An explicit existing checkpoint output is rejected to avoid overwriting an experiment.</td></tr>
+<tr><td><code>--output</code></td><td>Command-dependent</td><td>Checkpoint output for train/prune/finetune; optional report file for evaluate. See checkpoint rules below.</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc-section" id="readme-train-parameters" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Train parameters</h2>
+<p><code>python -m breakhis train</code> creates a new model unless <code>--resume</code> is supplied.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--model</code></td><td><code>vgg</code>; <code>vgg</code>, <code>resnet</code>, <code>resnet18</code></td><td>Architecture. <code>resnet</code> is an alias for torchvision ResNet18. The chosen name is used in the default checkpoint directory.</td></tr>
+<tr><td><code>--epochs</code></td><td><code>20</code>; positive integer</td><td>Passes through the training split. Validation runs after every epoch.</td></tr>
+<tr><td><code>--learning-rate</code></td><td><code>0.001</code></td><td>Initial SGD learning rate. Use a positive value; for example <code>0.0001</code> for smaller updates.</td></tr>
+<tr><td><code>--pretrained</code></td><td>Off; flag</td><td>Loads torchvision pretrained ResNet18 weights, potentially downloading them. The binary classifier head is replaced. Has no effect for VGG, which does not load pretrained weights.</td></tr>
+</tbody></table></div>
+<p>SGD uses momentum <code>0.9</code>, weight decay <code>0.0005</code>, and cosine learning-rate scheduling over the requested epochs. These settings are currently fixed in code. Weights are saved when validation accuracy improves. A new run refuses an existing checkpoint output. Choose a new experiment ID or output filename.</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --model resnet18 --pretrained --epochs 10 --batch-size 16 --output resnet18-baseline.pth</code></pre></div>
+<p>This custom filename saves to <code>../checkpoint/binary/resnet18-baseline.pth</code>.</p>
+</section>
+<section class="doc-section" id="readme-prune-parameters" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Prune parameters</h2>
+<p><code>python -m breakhis prune</code> loads weights, applies masks, checks validation, and saves weights. It performs no training.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--checkpoint</code></td><td><strong>Required</strong>; file path</td><td>Supported checkpoint to prune. Architecture is reconstructed automatically.</td></tr>
+<tr><td><code>--sparsity</code></td><td><code>0.5</code>; number from <code>0</code> to <code>1</code> inclusive</td><td>Fraction selected for L1 unstructured pruning in each convolution and linear layer. <code>0.5</code> requests 50%; <code>0</code> requests none; <code>1</code> selects all. This does not remove channels or guarantee faster inference.</td></tr>
+</tbody></table></div>
+<p>Masks are stored in the checkpoint and reconstructed on loading. Dense tensor shapes remain unchanged.</p>
+</section>
+<section class="doc-section" id="readme-fine-tune-parameters" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Fine-tune parameters</h2>
+<p><code>python -m breakhis finetune</code> starts a new optimization run from saved weights. Pruned checkpoints retain their masks.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--checkpoint</code></td><td>Required for a new run; replaced by <code>--resume</code> when continuing</td><td>Starting weights; architecture is read from the checkpoint. Do not supply <code>--model</code>.</td></tr>
+<tr><td><code>--epochs</code></td><td><code>20</code>; positive integer</td><td>Additional training epochs. Set explicitly, for example <code>--epochs 5</code>.</td></tr>
+<tr><td><code>--learning-rate</code></td><td><code>0.001</code></td><td>Initial rate for the new SGD optimizer. A smaller value can be useful for fine-tuning.</td></tr>
+</tbody></table></div>
+<p>Uses the same optimizer, scheduler, and validation selection as training. Without <code>--resume</code>, optimizer, scheduler, and RNG state start a new run. With <code>--resume</code>, their saved states are restored.</p>
+</section>
+<section class="doc-section" id="readme-evaluate-parameters" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Evaluate parameters</h2>
+<p><code>python -m breakhis evaluate</code> evaluates saved weights on the test split.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--checkpoint</code></td><td><strong>Required</strong>; file path</td><td>Model weights; architecture and pruning masks are reconstructed.</td></tr>
+<tr><td><code>--output</code></td><td>Experiment-directory <code>evaluate.json</code></td><td>JSON report path. Example: <code>--output artifacts/final-test.json</code>. Parent folders are created. Evaluation saves no model weights.</td></tr>
+</tbody></table></div>
+<p>The JSON report is printed even without <code>--output</code>. It includes test accuracy, cross-entropy loss, and dataset metadata.</p>
+</section>
+<section class="doc-section" id="readme-checkpoint-paths-and-loading-rules" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Checkpoint paths and loading rules</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Command</th><th scope="col">Default output relative to the workspace parent</th></tr></thead><tbody>
+<tr><td><code>train</code></td><td><code>checkpoint/binary/&lt;magnification&gt;/&lt;architecture&gt;/&lt;experiment-id&gt;/train.pth</code></td></tr>
+<tr><td><code>prune</code></td><td><code>checkpoint/binary/&lt;magnification&gt;/&lt;architecture&gt;/&lt;experiment-id&gt;/prune.pth</code></td></tr>
+<tr><td><code>finetune</code></td><td><code>checkpoint/binary/&lt;magnification&gt;/&lt;architecture&gt;/&lt;experiment-id&gt;/finetune.pth</code></td></tr>
+</tbody></table></div>
+<p>Defaults are resolved using the codebase location, independently of your working directory. For checkpoint commands, a bare output filename such as <code>--output baseline.pth</code> goes directly into <code>checkpoint/binary/</code>. An explicit relative or absolute path must resolve inside that task directory and end in <code>.pth</code>. From the codebase, <code>--output ../checkpoint/binary/40X/vgg/baseline.pth</code> is valid. Binary outputs cannot go into the multiclass directory. Checkpoint input paths can be anywhere.</p>
+<p>Other explicit relative paths, including checkpoint inputs and evaluation reports, are relative to your current working directory. Quote paths containing spaces.</p>
+<p>Each completed training/fine-tuning epoch also saves <code>&lt;name&gt;-last.pth</code>, including optimizer, scheduler, and random state. The main checkpoint remains the best validation model. Each command saves its resolved arguments as <code>&lt;name&gt;.config.json</code>; evaluation saves a JSON report automatically when no output is supplied.</p>
+<p>Ctrl+C attempts to save partial-epoch weights as <code>&lt;name&gt;-interrupted.pth</code>. Resume from the completed-epoch <code>-last.pth</code>, not the partial weights. Work from an interrupted epoch is replayed. A second interruption or stalled operation can prevent saving.</p>
+<h3 id="readme-resume-training-and-fine-tuning">Resume training and fine-tuning</h3>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Commands</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--resume</code></td><td><code>train</code>, <code>finetune</code></td><td>Completed-epoch checkpoint containing optimizer, scheduler, and RNG state. Cannot be combined with <code>--checkpoint</code>; training cannot combine it with <code>--pretrained</code>.</td></tr>
+</tbody></table></div>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --resume ../checkpoint/binary/40X/vgg/baseline/train-last.pth
+python -m breakhis finetune --dataset breakhis --resume ../checkpoint/binary/40X/vgg/baseline/finetune-last.pth</code></pre></div>
+<p>Omitted options inherit saved settings. <code>--epochs</code> is the original <strong>total planned epochs</strong>, not additional epochs on resume. Changing the planned total changes the cosine schedule and is rejected. Batch size, learning rate, worker count, deterministic mode, device, output, runtime versions, experiment ID, and dataset provenance must match. A fully completed run cannot be resumed for extra epochs; start <code>finetune --checkpoint ...</code> instead.</p>
+<p>Exact epoch-boundary resume requires <code>--num-workers 0</code>. Background-worker RNG/prefetch states are not stored. The full original experiment directory, including its best checkpoint, must remain available. Reproducibility across different software/hardware or nondeterministic GPU operations is not guaranteed. Version-1 weights remain loadable for evaluation/pruning/fine-tuning, but do not contain exact resume state. See <a href="#checkpoints">checkpoint format and resume</a>.</p>
+<p>Supported checkpoints contain architecture, binary labels, state dictionaries, epoch, and dataset metadata. Loading requires matching manifest hash, source, magnification, and preprocessing. Regenerating a manifest may invalidate checkpoint metadata. Old whole-model pickle files require explicit migration and are not automatically loaded.</p>
+</section>
+<section class="doc-section" id="readme-prepare-data-parameters-and-current-limitation" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Prepare-data parameters and current limitation</h2>
+<p><code>prepare-data</code> decodes and hashes images, checks folder/filename labels, links duplicate content, and saves approximately 70%/15%/15% patient-group splits for train/validation/test. Group fractions do not guarantee identical image fractions. See <a href="#datasets">dataset details</a> for the grouping policy.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--dataset-root</code></td><td><code>&lt;workspace&gt;/Dataset</code></td><td>Parent containing <code>BreaKHis_v2</code> and <code>dataset_cancer_v1</code>, not a magnification folder.</td></tr>
+<tr><td><code>--output</code></td><td><code>&lt;codebase&gt;/artifacts/data</code></td><td>Directory receiving <code>manifest.json</code> and <code>audit.json</code>. This is a directory, unlike checkpoint/report outputs.</td></tr>
+<tr><td><code>--seed</code></td><td><code>0</code>; integer</td><td>Reproducible patient-group split seed. Does not configure training seed.</td></tr>
+<tr><td><code>--workers</code></td><td><code>8</code>; positive integer</td><td>Image-audit threads. Separate from loader <code>--num-workers</code>.</td></tr>
+</tbody></table></div>
+<p><strong>After deleting v2, rebuilding is currently blocked:</strong> this command still requires all three configured sources, including <code>BreaKHis_v2</code>. Continue using the existing manifest with <code>--source cancer_binary</code>. A v1-only rebuild needs a further code change. The following example requires restoring v2 or implementing that change first:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis prepare-data --dataset-root ../Dataset --output artifacts/data --seed 0 --workers 8</code></pre></div>
+</section>
+<section class="doc-section" id="readme-preprocessing-and-runtime" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Preprocessing and runtime</h2>
+<p>Images are converted to RGB and resized to a 256-pixel short edge with aspect ratio preserved. Training uses random 224 x 224 crops (padding 4) and horizontal flips. Validation/test use center crops. Tensors use ImageNet mean/std normalization. These are fixed in code; there is no image-size option. Older 460 x 700 evaluation accuracy is not directly comparable.</p>
+<p>Each loaded image is checked against its manifest hash. Epoch logs show training and validation time, losses, and validation accuracy. <code>--epochs 1</code> checks execution but still processes all selected images; there is no quick-subset argument. CPU execution and <code>--magnification all</code> can take longer. Measure throughput before increasing workers. Unstructured pruning does not automatically speed up dense computation.</p>
+<p>Training and validation losses are averaged over samples, so a smaller final batch does not receive the same weight as a full batch. Invalid learning rates, epoch counts, and empty splits are rejected. Nonfinite inputs, outputs, losses, or gradient norms stop training; invalid gradients are rejected before the optimizer updates weights. This fail-fast validation can add device checks per batch.</p>
+</section>
+<section class="doc-section" id="readme-help-environment-checking-and-wrappers" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Help, environment checking, and wrappers</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis --help
+python -m breakhis train --help
+python -m breakhis evaluate --help
+python -m breakhis prune --help
+python -m breakhis finetune --help
+python -m breakhis prepare-data --help
+python tools/check_environment.py --device cuda --output artifacts/environment.json
+python -m unittest discover -s tests -v</code></pre></div>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Environment-checker parameter</th><th scope="col">Default / allowed values</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>--device</code></td><td><code>cpu</code>; <code>cpu</code>, <code>cuda</code></td><td>Device for tensor and VGG forward checks. Unlike model commands, <code>auto</code> is not supported.</td></tr>
+<tr><td><code>--output</code></td><td>No file by default</td><td>Optional JSON evidence path; the report is also printed.</td></tr>
+</tbody></table></div>
+<p>The checker verifies imports, tensor computation, image processing, a two-class VGG forward pass, and dependency consistency. It does not train or download pretrained weights.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Compatibility script</th><th scope="col">Equivalent command</th></tr></thead><tbody>
+<tr><td><code>Train.py</code></td><td><code>train</code></td></tr>
+<tr><td><code>Main.py</code></td><td><code>train</code>, defaulting to model <code>resnet</code></td></tr>
+<tr><td><code>Test.py</code>, <code>PruneEvaluator.py</code>, <code>PruneViewer.py</code></td><td><code>evaluate</code></td></tr>
+<tr><td><code>PruneTrain.py</code></td><td><code>prune</code></td></tr>
+<tr><td><code>PruneReTrain.py</code></td><td><code>finetune</code></td></tr>
+</tbody></table></div>
+<p>Example: <code>python Train.py --dataset breakhis --magnification 40X --model vgg</code>. Wrappers accept their corresponding command&#x27;s parameters. Optional editable installation (<code>python -m pip install -e . --no-deps --no-build-isolation</code>) also exposes <code>breakhis train ...</code> without <code>python -m</code>.</p>
+</section>
+<section class="doc-section" id="readme-troubleshooting-and-remaining-work" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Troubleshooting and remaining work</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Symptom</th><th scope="col">Action</th></tr></thead><tbody>
+<tr><td><code>python</code> is not recognized</td><td>Activate the environment or use its executable directly.</td></tr>
+<tr><td><code>No module named torch</code></td><td>Check the interpreter and install pinned requirements into that environment.</td></tr>
+<tr><td>CUDA unavailable</td><td>Check the CUDA wheel selection and NVIDIA driver with the environment checker; use <code>--device cpu</code> if needed.</td></tr>
+<tr><td>Manifest missing</td><td>Restore the saved manifest; rebuilding currently needs the removed v2 source as described above.</td></tr>
+<tr><td>Image changed since audit</td><td>Restore the audited image or rebuild after resolving the v1-only audit limitation.</td></tr>
+<tr><td>Checkpoint metadata mismatch</td><td>Match source, magnification, and manifest to the checkpoint&#x27;s original run.</td></tr>
+<tr><td>Checkpoint output rejected</td><td>Use a bare <code>.pth</code> filename or a path inside <code>../checkpoint/binary/</code>.</td></tr>
+<tr><td>Legacy checkpoint rejected</td><td>Train a new supported checkpoint or implement explicit migration.</td></tr>
+<tr><td>Output already exists</td><td>Choose a new experiment ID for a new run, or use <code>--resume</code> to continue an incomplete run.</td></tr>
+<tr><td>Resume configuration differs</td><td>Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them.</td></tr>
+<tr><td>Run already completed</td><td>Start a new fine-tuning run from its weights; resume does not extend the saved schedule.</td></tr>
+</tbody></table></div>
+<p>Stages 1-6 are implemented and verified for the supported binary workflow. Full baseline quality, multiclass training, structured pruning correctness, efficiency reports, and CI remain future work. See <a href="#roadmap">fix roadmap</a> and <a href="#commands">command reference</a>.</p>
+<p>CIFAR-10 experiments and mixed tutorials live under <code>experiments/cifar10/</code> as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.</p>
+</section>
+<section class="doc-section" id="readme-working-on-the-codebase" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Working on the codebase</h2>
+<p>The supported implementation lives in <code>breakhis/</code>. Root scripts and the historical <code>Models/</code>, <code>DataProcess/</code>, and <code>Utills/</code> paths delegate to it. Edit the canonical module rather than adding another implementation to a compatibility wrapper.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Module / directory</th><th scope="col">Responsibility</th><th scope="col">Change here when you need to...</th></tr></thead><tbody>
+<tr><td><code>breakhis/cli.py</code></td><td>Argument parsing, workflow dispatch, configuration, validation selection</td><td>Add a command/argument or change how commands connect</td></tr>
+<tr><td><code>breakhis/data.py</code></td><td>Manifest datasets, transforms, loaders, loader seeds</td><td>Change preprocessing or data loading</td></tr>
+<tr><td><code>breakhis/manifest.py</code></td><td>Filename validation, image hashes, grouping, saved splits</td><td>Audit a source or change the split policy</td></tr>
+<tr><td><code>breakhis/models/</code></td><td>Architecture implementations</td><td>Add or modify a model; also register its constructor in checkpoints</td></tr>
+<tr><td><code>breakhis/training.py</code></td><td>Training/evaluation steps, loss aggregation, finite checks</td><td>Change optimizer-step behavior or shared metrics</td></tr>
+<tr><td><code>breakhis/checkpoints.py</code></td><td>Model reconstruction, format validation, training/RNG state</td><td>Change saved metadata or resume behavior</td></tr>
+<tr><td><code>breakhis/paths.py</code></td><td>Task checkpoint directories and experiment path validation</td><td>Change checkpoint placement safely</td></tr>
+<tr><td><code>tests/</code></td><td>CPU regressions and subprocess reload checks</td><td>Verify behavior affected by a code change</td></tr>
+<tr><td><code>tools/check_environment.py</code></td><td>Dependency/device verification</td><td>Diagnose environment setup</td></tr>
+<tr><td><code>experiments/cifar10/</code> and legacy pruning helpers</td><td>Historical experiments</td><td>Consult reference code; these are outside the supported workflow</td></tr>
+</tbody></table></div>
+<p>To change behavior, locate the canonical module, implement the change, run the relevant existing tests, then run the suite above. Keep training/validation/test boundaries intact: model selection and pruning settings use validation, with the test split reserved for final reporting. Changes to preprocessing or split files must be reflected in checkpoint provenance so incompatible weights are rejected.</p>
+<p>The supported pruning command currently applies L1 unstructured masks. Structured channel pruning helpers are experimental and need Stage 7 validation. Model commands do not currently support multiclass training, configurable image sizes, training-seed arguments, or quick-subset flags; avoid inventing CLI options.</p>
+</section>
+<section class="doc-section" id="readme-documentation-maintenance" data-guide="User guide">
+<p class="eyebrow">User guide</p><h2>Documentation maintenance</h2>
+<p>The HTML guide is generated from this README and the Markdown files in <code>docs/</code>. After editing them, rebuild the offline page using any Python 3.13 environment:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python tools/build_docs.py
+Start-Process docs/index.html</code></pre></div>
+<p>The builder uses only the Python standard library. Keep CLI parameter tables and examples aligned with <code>python -m breakhis &lt;command&gt; --help</code>. The page embeds its styles and scripts, so it can be opened directly or printed to PDF from a browser.</p>
+</section>
+<section class="doc-section" id="environment" data-guide="Environment">
+<p class="eyebrow">Environment</p><h1>Environment setup</h1>
+<p>The supported Stage 2 baseline is <strong>Windows x64 with CPython 3.13.14</strong>. Dependency versions are pinned in <code>requirements.txt</code>; <code>constraints.txt</code> pins the tested dependency versions. This is version pinning, not a wheel-hash lock. Other platforms or Python versions require their own installation verification.</p>
+</section>
+<section class="doc-section" id="environment-create-a-virtual-environment" data-guide="Environment">
+<p class="eyebrow">Environment</p><h2>Create a virtual environment</h2>
+<p>From PowerShell, enter the repository directory. Use your Python 3.13 executable; the following AppData path was verified on this machine:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>cd D:\Sutanu_WorkSpace\BreakHis\BreakHisClassification
+$python313 = &quot;$env:LOCALAPPDATA\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python3.13.exe&quot;
+&amp; $python313 -m venv .venv313</code></pre></div>
+<p>For an existing <code>.venv313</code>, skip creation. Use its executable directly to avoid PowerShell activation-policy problems:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>.\.venv313\Scripts\python.exe --version
+.\.venv313\Scripts\python.exe -m pip --version</code></pre></div>
+<p>Optional activation applies to the current PowerShell session:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv313\Scripts\Activate.ps1</code></pre></div>
+<p>Virtual environments require a base Python installation; activation does not install Python. See the <a href="https://docs.python.org/3/library/venv.html">Python venv documentation</a>.</p>
+</section>
+<section class="doc-section" id="environment-nvidia-gpu-installation" data-guide="Environment">
+<p class="eyebrow">Environment</p><h2>NVIDIA GPU installation</h2>
+<p>Install the tested CUDA 12.8 wheels first, then the common dependencies:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>.\.venv313\Scripts\python.exe -m pip install -r requirements-torch-cu128.txt
+.\.venv313\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv313\Scripts\python.exe tools/check_environment.py --device cuda</code></pre></div>
+<p>The installed wheels contain the CUDA runtime needed for normal training; a compatible NVIDIA driver is required. The verified local GPU is an RTX 5070 Ti with driver 610.88. The checked combination is PyTorch <code>2.11.0+cu128</code>, torchvision <code>0.26.0+cu128</code>, CUDA runtime 12.8, and cuDNN 9.19.0. Wheel selection follows <a href="https://pytorch.org/get-started/previous-versions/#v2110">PyTorch&#x27;s official 2.11.0 installation instructions</a>.</p>
+</section>
+<section class="doc-section" id="environment-cpu-installation" data-guide="Environment">
+<p class="eyebrow">Environment</p><h2>CPU installation</h2>
+<p>Use a separate environment so CPU wheel installation does not replace your GPU build:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>&amp; $python313 -m venv .venv-cpu
+.\.venv-cpu\Scripts\python.exe -m pip install -r requirements-torch-cpu.txt
+.\.venv-cpu\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv-cpu\Scripts\python.exe tools/check_environment.py --device cpu</code></pre></div>
+<p>CPU training will usually take longer. CPU and CUDA use the same pinned upstream PyTorch/torchvision versions with different build variants. Install the wheel selection and common requirements in separate pip commands; the PyTorch index is not the package source for the remaining scientific Python dependencies.</p>
+</section>
+<section class="doc-section" id="environment-what-the-files-cover" data-guide="Environment">
+<p class="eyebrow">Environment</p><h2>What the files cover</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">File</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><code>requirements.txt</code></td><td>Direct dependencies for primary BreaKHis training, plotting, and root evaluation/pruning utilities</td></tr>
+<tr><td><code>constraints.txt</code></td><td>Tested versions for the dependency graph</td></tr>
+<tr><td><code>requirements-torch-cu128.txt</code></td><td>Stable CUDA 12.8 torch/torchvision wheels from the official PyTorch index</td></tr>
+<tr><td><code>requirements-torch-cpu.txt</code></td><td>Stable CPU torch/torchvision wheels from the official PyTorch index</td></tr>
+<tr><td><code>requirement.txt</code></td><td>Compatibility alias for <code>requirements.txt</code>; select torch wheels first</td></tr>
+<tr><td><code>tools/check_environment.py</code></td><td>Import, tensor, preprocessing, classifier, and pip consistency checks</td></tr>
+</tbody></table></div>
+<p>OpenCV and pygame were unused imports in the primary VGG and preview code and have been removed. They are not required by primary training. The existing user environment may still contain them; no packages were uninstalled from it. Legacy notebooks may need additional dependencies and still contain unresolved imports and logic. Stage 2 does not make those legacy workflows supported.</p>
+<p>The requirements replace the old nightly CUDA snapshot. Do not use that old snapshot to reconstruct an environment. For the reasoning behind version pinning, see <a href="https://pip.pypa.io/en/stable/topics/repeatable-installs/">pip&#x27;s repeatable installation documentation</a>.</p>
+</section>
+<section class="doc-section" id="environment-verify-and-run" data-guide="Environment">
+<p class="eyebrow">Environment</p><h2>Verify and run</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>.\.venv313\Scripts\python.exe tools/check_environment.py --device cuda --output artifacts/environment.json
+.\.venv313\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv313\Scripts\python.exe -m breakhis prepare-data --seed 0
+.\.venv313\Scripts\python.exe Train.py --dataset breakhis --magnification 40X --model vgg --num-workers 0</code></pre></div>
+<p>The environment check imports supported primary modules without launching training or downloading weights. It checks a tensor computation and a finite two-class VGG forward pass on a transformed synthetic image, then runs <code>pip check</code>. It does not verify patient splits, pruning correctness, or model quality.</p>
+<p>Use <code>--num-workers 0</code> for simpler Ctrl+C handling; use background workers after checking their throughput on your machine. Supported commands now save best weights after validation and attempt an interrupted weights checkpoint on Ctrl+C. Completed-epoch checkpoints now support optimizer/scheduler/RNG resume with workers zero. See <a href="#checkpoints">CHECKPOINTS.md</a> for limits and <a href="#commands">COMMANDS.md</a>.</p>
+<p>Virtual environments, checkpoints, and generated environment reports are ignored by Git. The disposable <code>.venv-stage2-cpu</code> directory is a separate installation verification environment; it does not replace <code>.venv313</code>.</p>
+</section>
+<section class="doc-section" id="commands" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h1>Package and command reference</h1>
+</section>
+<section class="doc-section" id="commands-canonical-package" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h2>Canonical package</h2>
+<p><code>breakhis</code> is the canonical package. Implementations live in:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>breakhis/
+  cli.py               # Command dispatch
+  data.py              # Manifest-backed loading
+  manifest.py          # Audit, hashing, grouping, splitting
+  training.py          # Shared training/evaluation routines
+  checkpoints.py       # Model construction and checkpoint reconstruction
+  models/              # Canonical VGG and architecture definitions
+  plots.py             # Shared plots
+  metrics.py           # Shared metric utilities
+  pruning_legacy.py    # Historical VGG pruning helpers
+  legacy_utils/        # Historical architecture-specific utilities</code></pre></div>
+<p>Root modules, <code>Models/</code>, <code>DataProcess/</code>, and <code>Utills/</code> preserve compatibility imports. The duplicate VGG and training modules delegate to shared implementations. Historical architecture-specific utilities remain available as importable helpers; that does not certify their pruning algorithms or make them supported commands.</p>
+<p>From the repository directory, <code>python -m breakhis</code> works without installation. After installing dependencies, optionally install the local package in editable mode:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m pip install -e . --no-deps --no-build-isolation
+breakhis --help</code></pre></div>
+<p>The declared tested Python range is 3.13. Module commands can also be launched outside the repository after editable installation. Explicit relative argument paths are relative to the current working directory; default artifact paths are resolved against this repository. Default checkpoints are resolved against its parent directory.</p>
+</section>
+<section class="doc-section" id="commands-supported-commands" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h2>Supported commands</h2>
+<p>Use the existing patient manifest with the remaining v1 binary source; see <a href="#datasets">DATASETS.md</a>. Rebuilding currently requires the removed v2 source. The following supported pipeline uses a shared experiment ID:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X --model vgg --epochs 20 --experiment-id baseline
+
+python -m breakhis prune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --sparsity 0.5 --experiment-id baseline
+
+python -m breakhis finetune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/prune.pth --epochs 5 --experiment-id baseline
+
+python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/finetune.pth --experiment-id baseline</code></pre></div>
+<p>Supported baseline architectures are VGG and torchvision ResNet18 (<code>resnet</code> is an alias). ResNet pretrained weights download only when <code>--pretrained</code> is supplied. Other custom architectures remain experimental and are not CLI model choices.</p>
+<p>The supported <code>prune</code> command uses PyTorch L1 unstructured weight pruning on convolution and linear layers. Masks are saved and reconstructed, and remain effective during fine-tuning. Structured channel pruning, architecture-specific pruning validation, and systematic ratio selection remain Stage 7 work.</p>
+<p>Common options include <code>--manifest</code>, <code>--source</code>, <code>--magnification</code>, <code>--data-root</code>, <code>--batch-size</code>, <code>--num-workers</code>, <code>--device</code>, and <code>--deterministic</code>. Workers default to zero for simpler interruption handling on Windows. Use <code>--num-workers 4</code> only after checking throughput on your machine.</p>
+<p>Each improvement in validation accuracy saves the selected checkpoint. Ctrl+C also attempts to save partial weights to an <code>-interrupted.pth</code> file. Every completed epoch saves an independent <code>-last.pth</code> with optimizer, scheduler, and RNG state. Use <code>--resume</code> with that file; see <a href="#checkpoints">CHECKPOINTS.md</a>.</p>
+</section>
+<section class="doc-section" id="commands-compatibility-entry-points" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h2>Compatibility entry points</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Existing command</th><th scope="col">Delegates to</th></tr></thead><tbody>
+<tr><td><code>python Train.py ...</code></td><td><code>python -m breakhis train ...</code></td></tr>
+<tr><td><code>python Main.py ...</code></td><td>Training with default <code>--model resnet</code></td></tr>
+<tr><td><code>python Test.py ...</code></td><td><code>python -m breakhis evaluate ...</code></td></tr>
+<tr><td><code>python PruneEvaluator.py ...</code></td><td>Evaluation</td></tr>
+<tr><td><code>python PruneTrain.py ...</code></td><td>Unstructured pruning</td></tr>
+<tr><td><code>python PruneReTrain.py ...</code></td><td>Fine-tuning</td></tr>
+<tr><td><code>python PruneViewer.py ...</code></td><td>Evaluation; old sensitivity plotting is available only as a helper</td></tr>
+</tbody></table></div>
+<p>Command scripts have main guards and perform no experiments on import. Legacy checkpoint paths, magnifications, and pruning dictionaries are no longer hardcoded. Manual preview/pruning demonstrations run only when explicitly invoked.</p>
+<p>The compatibility two-loader API returns <strong>training and validation</strong>, not the reserved test set. Use <code>breakhis.data.get_split_loaders</code> for explicit access to all three named splits. Changing split fractions requires rebuilding the manifest.</p>
+</section>
+<section class="doc-section" id="commands-checkpoints-and-limits" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h2>Checkpoints and limits</h2>
+<p>Checkpoint storage is alongside the dataset and codebase directories:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>BreakHis/
+  Dataset/
+  BreakHisClassification/
+  checkpoint/
+    binary/
+      40X/vgg/&lt;experiment-id&gt;/train.pth
+      40X/vgg/&lt;experiment-id&gt;/prune.pth
+      40X/vgg/&lt;experiment-id&gt;/finetune.pth
+      legacy/             # Existing files; provenance is not inferred
+    multiclass/           # Reserved for future multiclass training</code></pre></div>
+<p>Training, pruning, fine-tuning, and interrupted saves use this layout. A bare <code>--output baseline.pth</code> saves inside <code>checkpoint/binary/</code>; an explicit path must stay inside the task directory. Outputs outside that directory are rejected. Evaluation <code>--output</code> remains a report path. Checkpoint inputs can be anywhere. The default source is now <code>cancer_binary</code>; the local v2 copy was removed. Multiclass training is not yet supported, but its checkpoint directory is separate.</p>
+<p>New commands save state dictionaries with architecture, labels, dataset source, magnification, preprocessing, manifest hash, and epoch metadata. Loading rejects a different source, magnification, preprocessing policy, or manifest.</p>
+<p>Existing whole-model pickle checkpoints are not automatically migrated or loaded. Their original experiment split/provenance is unknown; keep them as historical artifacts until an explicit migration is implemented. Re-train with the patient manifest to obtain checkpoints suitable for the new workflow.</p>
+<p>The preserved <code>experiments/cifar10/</code> scripts and notebooks are legacy reference material. They are outside the supported command surface and may retain old <code>PruningNAS</code> names and unresolved logic.</p>
+</section>
+<section class="doc-section" id="commands-stage-6-configuration" data-guide="Command reference">
+<p class="eyebrow">Command reference</p><h2>Stage 6 configuration</h2>
+<p>All model commands accept <code>--experiment-id</code>, generate distinct default run directories, and save resolved arguments beside their output as <code>.config.json</code>. Existing new-run checkpoint outputs are rejected. Evaluation writes a report by default. Train/fine-tune accept <code>--resume</code> with saved effective defaults; completed epochs, optimizer, scheduler and RNG state are restored. Exact resume requires workers zero and the original schedule/runtime. See <a href="#checkpoints">CHECKPOINTS.md</a> and the <a href="#readme">README parameter tables</a>.</p>
+</section>
+<section class="doc-section" id="datasets" data-guide="Dataset policy">
+<p class="eyebrow">Dataset policy</p><h1>Dataset audit and patient-separated splits</h1>
+</section>
+<section class="doc-section" id="datasets-audited-local-sources" data-guide="Dataset policy">
+<p class="eyebrow">Dataset policy</p><h2>Audited local sources</h2>
+<p>The audit decodes every supported image, checks filename metadata against its folder, computes SHA-256 hashes for the original file and decoded RGB pixels, and records the accepted images in a saved manifest. It does not edit dataset files.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Source argument</th><th scope="col">Local dataset root</th><th scope="col">Images decoded</th><th scope="col">Unique decoded images used</th></tr></thead><tbody>
+<tr><td><code>breakhis_v2</code></td><td><code>../Dataset/BreaKHis_v2</code></td><td>7,900</td><td>7,775</td></tr>
+<tr><td><code>cancer_binary</code></td><td><code>../Dataset/dataset_cancer_v1/classificacao_binaria</code></td><td>7,909</td><td>7,784</td></tr>
+<tr><td>Audit only</td><td><code>../Dataset/dataset_cancer_v1/classificacao_multiclasse</code></td><td>7,909</td><td>7,784</td></tr>
+</tbody></table></div>
+<p>No decoding failures were found in this local audit. Each source contains 125 repeated decoded images; the manifest excludes subsequent occurrences within that source. Cross-source entries are retained because source selection is explicit, and the sources are not concatenated for primary training.</p>
+<p>The binary roots have 7,900 filenames in common, but <strong>none of those shared images have identical decoded pixels</strong>. <code>dataset_cancer_v1</code> contains 224×224 versions; <code>BreaKHis_v2</code> has mostly 700×460 images, with a smaller set at 700×456. The cancer dataset has nine additional named images. Their names and all changed content entries are saved in <code>artifacts/data/audit.json</code>.</p>
+</section>
+<section class="doc-section" id="datasets-identifier-rule" data-guide="Dataset policy">
+<p class="eyebrow">Dataset policy</p><h2>Identifier rule</h2>
+<p>The <a href="https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/">official BreaKHis dataset description</a> documents procedure, tumor class, subtype, year, slide identifier, magnification, and sequence in the image filename. The grouping rule uses the full <code>YEAR-SLIDE_ID</code>:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>SOB_B_A-14-22549AB-40-001.png
+        └─ 14-22549AB is the patient/slide group</code></pre></div>
+<p>The subtype, magnification, and image sequence are excluded from the group key. Letter suffixes are preserved. The same identifier is grouped together even when it appears under more than one subtype. Local filenames yield <strong>81 patient/slide groups</strong>; this is the local filename census, not an independently verified count of distinct people. No external patient-to-slide metadata is present in the repo.</p>
+<p>Exact decoded-image duplicates also link groups before splitting, so matching content cannot appear in different splits. Conflicting binary labels within linked groups fail the audit rather than silently choosing a label.</p>
+</section>
+<section class="doc-section" id="datasets-split-policy" data-guide="Dataset policy">
+<p class="eyebrow">Dataset policy</p><h2>Split policy</h2>
+<p>The saved seed defaults to zero. Groups are stratified by binary label, shuffled with a local seeded generator, and allocated approximately <strong>70% training, 15% validation, and 15% test by group count</strong>. Image proportions differ because patients have different numbers of images. Class/image distributions are reported for each source, magnification, and split.</p>
+<p>All magnifications and all local source copies use consistent assignments for a patient/slide identifier. <code>--magnification all</code> therefore preserves group isolation. The audit validates zero patient overlap and zero exact decoded-content overlap across splits. It does not establish that visually similar, nonidentical images are unrelated; the filename identifier remains the patient-group reference.</p>
+</section>
+<section class="doc-section" id="datasets-prepare-and-reuse" data-guide="Dataset policy">
+<p class="eyebrow">Dataset policy</p><h2>Prepare and reuse</h2>
+<p>From the repository directory, in the activated environment:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis prepare-data --seed 0</code></pre></div>
+<p>Outputs:</p>
+<ul>
+<li><code>artifacts/data/manifest.json</code>: source roots, seed, split fractions, patient-group rule, image paths, labels, magnifications, file/pixel hashes, and split assignments.</li>
+<li><code>artifacts/data/audit.json</code>: inventory results, exclusions, source comparison, dimensions, and class/patient distributions.</li>
+</ul>
+<p>These generated files are ignored by Git. Keep the manifest with your experiment artifacts to reproduce its split. Rebuilding is deterministic for the same data and seed, but changed data creates a new experiment manifest.</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --source breakhis_v2 --magnification 40X
+python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X
+python -m breakhis train --dataset breakhis --source breakhis_v2 --magnification all</code></pre></div>
+<p>Use <code>--manifest</code> for a different saved manifest. <code>--data-root</code> relocates the selected source without changing its split. The loader verifies each image&#x27;s file hash against the audit while loading; altered files fail with an instruction to rebuild. Missing manifests fail clearly rather than falling back to image-level random splits.</p>
+<p>Training and fine-tuning select weights using <strong>validation</strong>. The <code>evaluate</code> command alone reads the reserved test split for final metrics. Repeated use of test results to tune experiments would still compromise that independence.</p>
+<p>The eight-class inventory is audited for comparison; primary commands remain binary. Its subtype field is preserved for a future eight-class extension.</p>
+</section>
+<section class="doc-section" id="checkpoints" data-guide="Checkpoints &amp; resume">
+<p class="eyebrow">Checkpoints &amp; resume</p><h1>Experiment configuration and checkpoint format</h1>
+<p>All supported model commands normalize input paths and check manifest/checkpoint files and the selected dataset root before image loading or model construction. Dataset provenance is checked before loading weights or downloading pretrained weights. Relative explicit paths use the current working directory; default outputs use the workspace&#x27;s parent <code>checkpoint/binary/</code> directory.</p>
+</section>
+<section class="doc-section" id="checkpoints-experiment-outputs" data-guide="Checkpoints &amp; resume">
+<p class="eyebrow">Checkpoints &amp; resume</p><h2>Experiment outputs</h2>
+<p>Without <code>--output</code>, model commands use:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>checkpoint/binary/&lt;magnification&gt;/&lt;architecture&gt;/&lt;experiment-id&gt;/
+  train.config.json
+  train.pth                   # Best validation model
+  train-last.pth              # Last completed epoch; resume state
+  train-interrupted.pth       # Optional partial-epoch weights; not resumable
+  prune.config.json
+  prune.pth
+  finetune.config.json
+  finetune.pth
+  finetune-last.pth
+  evaluate.config.json
+  evaluate.json</code></pre></div>
+<p>Each invocation generates a UTC timestamp plus random suffix as its ID unless <code>--experiment-id</code> is supplied. Supply the same ID across train/prune/fine-tune to group a pipeline, with explicit checkpoint input paths. Existing new-run output checkpoints are rejected. IDs cannot contain path separators or traversal. Custom checkpoint outputs remain confined to the binary task directory. A bare filename is placed directly in that directory; configuration and last/interrupted files are placed beside it. Evaluation reports can be placed elsewhere.</p>
+<p>Configuration JSON records resolved CLI arguments, absolute input/output paths, actual device, architecture, experiment ID, parent checkpoint, and fixed optimizer and scheduler settings where applicable. It is an execution record, not a separate configuration-file input API. Command-line arguments and checkpoint resume state remain the configuration sources.</p>
+</section>
+<section class="doc-section" id="checkpoints-format-version-2" data-guide="Checkpoints &amp; resume">
+<p class="eyebrow">Checkpoints &amp; resume</p><h2>Format version 2</h2>
+<p>Checkpoints use tensors and standard Python values, loaded with <code>torch.load(..., weights_only=True)</code>. They do not pickle model instances.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Field</th><th scope="col">Contents</th></tr></thead><tbody>
+<tr><td><code>format_version</code></td><td><code>2</code>; format <code>1</code> remains readable for weights-only workflows</td></tr>
+<tr><td><code>architecture</code>, <code>architecture_config</code></td><td>Supported constructor identifier and output class count</td></tr>
+<tr><td><code>classes</code>, <code>class_to_idx</code></td><td>Ordered class names and corresponding numeric labels</td></tr>
+<tr><td><code>state_dict</code></td><td>CPU tensors, including weights, batch-normalization buffers, pruning originals and masks</td></tr>
+<tr><td><code>metadata</code></td><td>Source, magnification, preprocessing description/configuration, manifest hash/path, dataset root, and split-selection policy</td></tr>
+<tr><td><code>epoch</code></td><td>Completed epoch number; partial interrupted files use the last completed epoch number</td></tr>
+<tr><td><code>config</code></td><td>Resolved command configuration</td></tr>
+<tr><td><code>pruning</code></td><td>Dense/unstructured designation and masked module names</td></tr>
+<tr><td><code>runtime</code></td><td>Python, PyTorch, and CUDA runtime versions</td></tr>
+<tr><td><code>training_state</code></td><td>Optimizer, scheduler, best accuracy, planned epochs, RNGs, device, and resume-boundary policy; absent for pruning and partial weights</td></tr>
+</tbody></table></div>
+<p>Writes use a temporary sibling file and atomic replacement. Dense and supported unstructured models reconstruct from their declared architecture; mask hooks are reinstalled before loading state. Channel-pruned architecture reconstruction is not yet supported because structured pruning remains Stage 7 work.</p>
+<p>Version 1 checkpoints can be evaluated, pruned, or used to start a new fine-tuning run. They cannot resume exactly. Legacy whole-model pickles are rejected rather than loaded with unrestricted unpickling. Missing fields, inconsistent labels, invalid format versions, and nonfinite weights are rejected.</p>
+</section>
+<section class="doc-section" id="checkpoints-resume-semantics" data-guide="Checkpoints &amp; resume">
+<p class="eyebrow">Checkpoints &amp; resume</p><h2>Resume semantics</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m breakhis train --dataset breakhis --experiment-id baseline --epochs 20 --num-workers 0 --deterministic
+# If interrupted before the planned run completes:
+python -m breakhis train --dataset breakhis --resume ../checkpoint/binary/40X/vgg/baseline/train-last.pth</code></pre></div>
+<p>Resume uses the same command (<code>train</code> or <code>finetune</code>) as the saved run. Omitted options inherit the saved effective settings. The scheduler is stepped before each completed-epoch checkpoint is saved. Restore starts at <code>epoch + 1</code>, with optimizer momentum, learning-rate schedule, best-validation tracking, Python RNG, NumPy RNG, PyTorch CPU RNG, CUDA RNGs, and recorded backend determinism settings. An epoch-zero last checkpoint allows restarting if the first epoch is interrupted.</p>
+<p>The original planned epoch count and learning rate, batch size, worker count, deterministic mode, resolved device, output path, experiment ID, runtime versions, and dataset provenance must match. A changed total would define a different cosine schedule and is rejected. Completed runs require a new fine-tuning run rather than extending resume. Restore the original best checkpoint if it was moved; the experiment&#x27;s best and last files belong together.</p>
+<p>Exact resume is supported at completed-epoch boundaries with <strong>num-workers 0</strong>. Positive-worker runs still save optimizer/scheduler information but are marked nonresumable because worker RNGs and prefetch queues are not captured. Partial interrupted weights are nonresumable; restart from the last completed epoch and replay the partial work. Software/hardware changes and nondeterministic GPU kernels can change numerical results even when random states are restored.</p>
+</section>
+<section class="doc-section" id="checkpoints-verification" data-guide="Checkpoints &amp; resume">
+<p class="eyebrow">Checkpoints &amp; resume</p><h2>Verification</h2>
+<p>Regression tests compare an uninterrupted stochastic CPU run with interrupted and resumed runs, for both dense and masked models. Final weights, optimizer, scheduler, and RNG states must match exactly. Separate actual VGG subprocess checks compare dense and pruned predictions using <code>atol=1e-6</code>, <code>rtol=1e-5</code>. GPU smoke checks validate actual checkpoint loading and finite inference; they do not establish full-dataset model quality or cross-device numerical equivalence.</p>
+</section>
+<section class="doc-section" id="roadmap" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h1>Codebase repair roadmap</h1>
+<p>Updated: 11 October 2026</p>
+</section>
+<section class="doc-section" id="roadmap-objective" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Objective</h2>
+<p>Build a reproducible BreaKHis workflow that loads the intended dataset, trains a classifier, saves and reloads it, applies pruning, fine-tunes the pruned model, and measures accuracy and efficiency using independent evaluation data.</p>
+<p>Complete the stages in order. Each stage&#x27;s target is the condition for proceeding to the next stage. Use small smoke runs before committing to full training. Eight-class classification is a future extension, not part of the initial binary baseline.</p>
+</section>
+<section class="doc-section" id="roadmap-current-state" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Current state</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Area</th><th scope="col">Status</th></tr></thead><tbody>
+<tr><td>Separate BreaKHis and CIFAR workflows</td><td>Stage 1 complete; real BreaKHis batch and forward-pass checks passed</td></tr>
+<tr><td>Explicit primary dataset selection and label-derived class count</td><td>Implemented locally</td></tr>
+<tr><td>Regression checks</td><td>Fifteen Stage 3/4 tests passed in CPU and CUDA environments</td></tr>
+<tr><td>Existing Python files</td><td>Syntax checked; this does not prove runtime correctness</td></tr>
+<tr><td>Python environment</td><td>Stage 2 complete; existing CUDA and fresh CPU environments verified with Python 3.13.14</td></tr>
+<tr><td>PyTorch</td><td>Verified PyTorch 2.11.0+cu128 and CUDA execution in <code>.venv313</code></td></tr>
+<tr><td>Full baseline training and pruning</td><td>Tiny real-data train/prune/fine-tune/test smoke passed; full baseline quality remains unverified</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc-section" id="roadmap-stage-1--separate-dataset-workflows" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 1 — Separate dataset workflows</h2>
+<p><strong>Status:</strong> Complete; runtime acceptance verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Mixed BreaKHis/CIFAR experiments and incorrect classifier class counts.</p>
+<h3 id="roadmap-steps">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Make BreaKHis binary classification the primary training workflow.</li>
+<li class="check-item"><span class="check done">Done</span>Move CIFAR experiments and mixed tutorial notebooks into <code>experiments/cifar10/</code>.</li>
+<li class="check-item"><span class="check done">Done</span>Require explicit dataset selection in the primary training command.</li>
+<li class="check-item"><span class="check done">Done</span>Derive VGG and ResNet output counts from loaded labels.</li>
+<li class="check-item"><span class="check done">Done</span>Validate that the primary dataset has <code>benign</code> and <code>malignant</code> folders.</li>
+<li class="check-item"><span class="check done">Done</span>Require explicit CIFAR selection in the isolated CIFAR loader; make downloads opt-in.</li>
+<li class="check-item"><span class="check done">Done</span>Document supported commands and the limitations of preserved legacy experiments.</li>
+<li class="check-item"><span class="check done">Done</span>Verify a real torchvision batch and a two-class forward pass after dependencies are installed.</li>
+</ul>
+<h3 id="roadmap-verification-evidence">Verification evidence</h3>
+<ul>
+<li>Loaded actual <code>BreaKHis_v2/40X</code> training and test batches with labels <code>benign</code> and <code>malignant</code>.</li>
+<li>VGG and ResNet18 each returned finite outputs shaped <code>(2, 2)</code> for a batch of two images, using CUDA in <code>.venv313</code>.</li>
+<li>Training inputs were <code>(2, 3, 224, 224)</code>; test inputs were <code>(2, 3, 460, 700)</code>. These were the dimensions at Stage 1 acceptance. The later evaluation performance change standardized both outputs to 224×224.</li>
+<li>The primary loader rejected <code>dataset=&quot;cifar10&quot;</code>.</li>
+<li>All eight workflow separation checks passed again.</li>
+<li>The ResNet smoke check used <code>weights=None</code> to avoid downloading pretrained weights. This verifies data routing and classifier dimensions, not the full pretrained training command or model quality.</li>
+</ul>
+<h3 id="roadmap-target">Target</h3>
+<p>The primary command loads BreaKHis images and produces two logits per image. Selecting CIFAR through the primary command fails clearly. Legacy experiment files remain preserved, and primary training does not depend on them.</p>
+<p><strong>Files:</strong> <code>Train.py</code>, <code>Main.py</code>, <code>DataPreprocessing.py</code>, <code>DataProcess/DataPreprocessing.py</code>, <code>VGG.py</code>, <code>experiments/cifar10/</code>, <code>README.md</code>.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-2--establish-a-reproducible-environment" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 2 — Establish a reproducible environment</h2>
+<p><strong>Status:</strong> Complete; verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Missing dependencies, machine-specific CUDA nightly pins, and missing declared imports.</p>
+<h3 id="roadmap-steps-1">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Confirm <code>.venv313</code> uses the intended Python executable and pip.</li>
+<li class="check-item"><span class="check done">Done</span>Install a compatible stable PyTorch/torchvision pair for the local NVIDIA GPU.</li>
+<li class="check-item"><span class="check done">Done</span>Install the dependencies imported by supported primary commands.</li>
+<li class="check-item"><span class="check done">Done</span>Remove unnecessary imports; declare any dependencies that remain required.</li>
+<li class="check-item"><span class="check done">Done</span>Replace the existing nightly environment snapshot with a tested dependency specification.</li>
+<li class="check-item"><span class="check done">Done</span>Document CPU and GPU setup separately, including the tested Python version.</li>
+<li class="check-item"><span class="check done">Done</span>Exclude virtual environments and generated files from Git.</li>
+<li class="check-item"><span class="check done">Done</span>Verify imports, CUDA availability, and a small tensor operation.</li>
+</ul>
+<h3 id="roadmap-verification-evidence-1">Verification evidence</h3>
+<ul>
+<li>Existing <code>.venv313</code>: Python 3.13.14, PyTorch 2.11.0+cu128, torchvision 0.26.0+cu128, CUDA runtime 12.8, cuDNN 9.19.0, RTX 5070 Ti, driver 610.88.</li>
+<li>Fresh <code>.venv-stage2-cpu</code>: created separately and installed successfully from <code>requirements-torch-cpu.txt</code> followed by <code>requirements.txt</code> with <code>constraints.txt</code>. PyTorch 2.11.0+cpu and torchvision 0.26.0+cpu verified.</li>
+<li>Both environments passed primary-module imports, tensor multiplication, image preprocessing, a finite two-class VGG forward pass, and <code>pip check</code>.</li>
+<li>All eleven regression tests passed in both environments.</li>
+<li>The fresh environment contains neither pygame nor OpenCV; primary imports and regression tests still passed after unused imports were removed.</li>
+<li>A dry run confirmed the compatibility <code>requirement.txt</code> matches the existing CUDA installation without requesting package changes.</li>
+<li><code>git check-ignore</code> confirmed exclusion of virtual environments, checkpoints, and generated verification reports. Reports are saved in ignored <code>artifacts/stage2-cpu.json</code> and <code>artifacts/stage2-cuda.json</code>.</li>
+<li>CPU installation was tested from scratch. CUDA execution was tested in the existing user environment; a second CUDA installation was not created.</li>
+</ul>
+<h3 id="roadmap-target-1">Target</h3>
+<p>A fresh environment can install the documented dependencies and run the primary imports without errors. Record the tested Python, PyTorch, torchvision, CUDA runtime, and driver versions. Confirm GPU execution with a tensor computation.</p>
+<p><strong>Files:</strong> <code>requirements.txt</code>, <code>constraints.txt</code>, <code>requirements-torch-cpu.txt</code>, <code>requirements-torch-cu128.txt</code>, compatibility <code>requirement.txt</code>, <code>.gitignore</code>, <code>docs/ENVIRONMENT.md</code>, <code>tools/check_environment.py</code>, <code>README.md</code>, cleaned primary imports.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-3--repair-package-imports-and-command-structure" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 3 — Repair package imports and command structure</h2>
+<p><strong>Status:</strong> Complete for the supported command surface; verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Missing <code>PruningNAS</code> package references, duplicate modules, import side effects, and inconsistent launch locations.</p>
+<h3 id="roadmap-steps-2">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Choose one package name and use it consistently in supported modules.</li>
+<li class="check-item"><span class="check done">Done</span>Replace stale imports and consolidate duplicate training, model, and utility implementations.</li>
+<li class="check-item"><span class="check done">Done</span>Move execution into explicit functions guarded by <code>if __name__ == &quot;__main__&quot;</code>.</li>
+<li class="check-item"><span class="check done">Done</span>Provide documented entry points for training, evaluation, pruning, and fine-tuning.</li>
+<li class="check-item"><span class="check done">Done</span>Define which architectures and legacy experiments are supported.</li>
+<li class="check-item"><span class="check done">Done</span>Keep compatibility wrappers only where they preserve a documented interface.</li>
+</ul>
+<h3 id="roadmap-verification-evidence-2">Verification evidence</h3>
+<ul>
+<li>Canonical implementations reside in <code>breakhis</code>; root/<code>Models</code>/<code>Utills</code> modules are compatibility imports. Duplicate VGG and training definitions were consolidated.</li>
+<li>No <code>PruningNAS</code> imports remain in the canonical package. CIFAR reference notebooks remain explicitly outside the supported workflow.</li>
+<li>Editable installation and the <code>breakhis</code> executable succeeded without dependency changes.</li>
+<li>All five commands expose working help: prepare-data, train, evaluate, prune, finetune.</li>
+<li>Import tests prohibit checkpoint loads, image scans, plot display, or output on import.</li>
+<li>A 12-image real-data GPU smoke ran all four model commands and reloaded checkpoints.</li>
+<li>Fifteen regression tests passed in both the existing CUDA and isolated CPU environments.</li>
+<li>Supported architectures: VGG and torchvision ResNet18. Supported pruning: built-in L1 unstructured masks. Custom architectures/channel pruning remain experimental.</li>
+<li>Old whole-model checkpoints require explicit migration; new commands do not silently load them. See <code>docs/COMMANDS.md</code> for compatibility changes.</li>
+</ul>
+<h3 id="roadmap-target-2">Target</h3>
+<p>Supported modules import without starting training, loading checkpoints, opening plots, or downloading data. Every documented command launches from its documented working directory without <code>ModuleNotFoundError</code>.</p>
+<p><strong>Files:</strong> <code>breakhis/</code>, <code>pyproject.toml</code>, primary compatibility scripts, <code>Models/</code>, <code>Utills/</code>, <code>Testing/</code>, <code>docs/COMMANDS.md</code>, import/command regression tests.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 4 — Audit datasets and create patient-separated splits</h2>
+<p><strong>Status:</strong> Complete for the local filename-based patient/slide grouping policy; verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Possible patient leakage, class imbalance, uncertain duplicate content, and confusion between the two local dataset copies.</p>
+<h3 id="roadmap-steps-3">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Select and record the dataset source for each experiment.</li>
+<li class="check-item"><span class="check done">Done</span>Inventory supported image files and check that images decode successfully.</li>
+<li class="check-item"><span class="check done">Done</span>Compare the two local dataset copies using filenames and content hashes; investigate count differences rather than assuming every file is an image.</li>
+<li class="check-item"><span class="check done">Done</span>Create a manifest with path, label, magnification, patient ID, and content hash.</li>
+<li class="check-item"><span class="check done">Done</span>Validate patient ID extraction against filenames or dataset metadata.</li>
+<li class="check-item"><span class="check done">Done</span>Generate train/validation/test splits grouped by patient with a saved seed.</li>
+<li class="check-item"><span class="check done">Done</span>Keep a patient&#x27;s images together across magnifications when experiments combine them.</li>
+<li class="check-item"><span class="check done">Done</span>Report split sizes and class distributions, and check for overlapping patients and duplicates.</li>
+</ul>
+<h3 id="roadmap-verification-evidence-3">Verification evidence</h3>
+<ul>
+<li>All 7,900 BreaKHis images and both 7,909-image cancer representations decoded; no corruption exclusions were needed. Each source has 125 repeated decoded images, excluded from its training manifest without modifying originals.</li>
+<li>All 7,900 shared binary filenames differ in decoded pixels; cancer images are 224×224, while BreaKHis is mostly 700×460. Cancer has nine additional filenames.</li>
+<li>Seed-zero group-stratified allocation gives 57 training, 13 validation, and 11 test patient/slide groups. All four magnifications share those assignments.</li>
+<li>The identifier rule preserves the full YEAR-SLIDE_ID including suffix letters, following the official filename structure. The local census is 81 groups; no independent patient-to-slide metadata is available to verify distinct people.</li>
+<li>Exact decoded-content links also keep matching images together across splits. Audit reports zero patient overlap and zero exact-content overlap.</li>
+<li>Saved reports include source choice, class/image distributions, patient counts, hashes, dimensions, and duplicate exclusions. Loading checks for modified files.</li>
+<li>Regression tests cover reproducible grouping, cross-patient duplicate linkage, label conflicts, corrupt images, missing manifests, and file changes.</li>
+<li>Primary training now uses saved training/validation splits. Reserved test evaluation is a separate command. See <code>docs/DATASETS.md</code>.</li>
+<li>Real batches from all three splits of both binary sources, combining all magnifications, produced finite two-class ResNet18 outputs.</li>
+</ul>
+<h3 id="roadmap-target-3">Target</h3>
+<p>Every accepted image has a traceable label and patient group. Saved splits have no patient overlap; duplicate content across splits is resolved or explicitly excluded. Reusing a manifest reproduces the same experiment data.</p>
+<h3 id="roadmap-local-dataset-choices">Local dataset choices</h3>
+<ul>
+<li><code>../Dataset/BreaKHis_v2/&lt;magnification&gt;/</code>: two classes; current default.</li>
+<li><code>../Dataset/dataset_cancer_v1/classificacao_binaria/&lt;magnification&gt;/</code>: two classes; selected with <code>--source cancer_binary</code>; <code>--data-root</code> can relocate that source.</li>
+<li><code>../Dataset/dataset_cancer_v1/classificacao_multiclasse/&lt;magnification&gt;/</code>: eight classes; currently rejected by the primary binary loader.</li>
+</ul>
+<p>Both binary dataset roots have 40X, 100X, 200X, and 400X folders.</p>
+<p><strong>Files:</strong> <code>breakhis/manifest.py</code>, <code>breakhis/data.py</code>, <code>breakhis/cli.py</code>, <code>docs/DATASETS.md</code>, generated <code>artifacts/data/manifest.json</code> and <code>audit.json</code>, tests.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 5 — Standardize preprocessing and baseline training</h2>
+<p><strong>Status:</strong> Complete for the supported binary workflow; verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Inconsistent image dimensions, test-set model selection, fragile best-model tracking, and device handling.</p>
+<h3 id="roadmap-steps-4">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Define an input size and normalization policy appropriate to the chosen model: resize the shorter edge to 256, crop to 224×224, and retain ImageNet normalization.</li>
+<li class="check-item"><span class="check done">Done</span>Separate training augmentation from deterministic validation/test transforms: random training crops/flips and deterministic evaluation center crops.</li>
+<li class="check-item"><span class="check done">Done</span>Use the saved patient splits rather than creating image-level random splits.</li>
+<li class="check-item"><span class="check done">Done</span>Select the best checkpoint using validation performance only.</li>
+<li class="check-item"><span class="check done">Done</span>Reserve the test split for final evaluation after model decisions are complete.</li>
+<li class="check-item"><span class="check done">Done</span>Initialize best-model tracking so the first valid epoch is retained, even at zero accuracy, in supported commands.</li>
+<li class="check-item"><span class="check done">Done</span>Reject invalid epoch counts, empty splits, and nonfinite training values clearly.</li>
+<li class="check-item"><span class="check done">Done</span>Pass the device consistently and make loss aggregation sample-weighted.</li>
+<li class="check-item"><span class="check done">Done</span>Run a small baseline smoke test before a full experiment.</li>
+</ul>
+<h3 id="roadmap-target-4">Target</h3>
+<p>One VGG or ResNet baseline completes training and validation with consistent batch shapes, finite losses, and a valid best checkpoint. The test set does not influence checkpoint selection or training decisions.</p>
+<h3 id="roadmap-verification-and-limits">Verification and limits</h3>
+<ul>
+<li>Training and validation aggregate loss by sample count, including partial last batches; scalar mean and sum criterion reductions are handled explicitly.</li>
+<li>Inputs, outputs, losses, accumulated loss, and training gradient norms are checked for nonfinite values. Invalid gradients fail before an optimizer step.</li>
+<li>Batches, prediction inputs, and criteria follow the model&#x27;s actual device; explicit CPU models do not follow a global CUDA default.</li>
+<li>Invalid epoch/loader settings and nonpositive or nonfinite learning rates are rejected. Empty manifest selections name the source, magnification, and split.</li>
+<li>Regression tests verify first-epoch checkpoint selection at zero accuracy and prohibit iterating the reserved test split during training.</li>
+<li>An actual v1 40X GPU VGG smoke completed two epochs with uneven batches (batch size 3, four training and four validation images), finite losses, and a reconstructible checkpoint under the parent binary checkpoint directory.</li>
+<li>Accuracy uses percentages (0-100), consistent with the shared evaluator.</li>
+</ul>
+<p>This establishes baseline execution correctness, not full-dataset clinical or classification quality. Full experiments and comparative reporting remain work for later stages. V1-only manifest rebuilding after removing v2 is still pending.</p>
+<p><strong>Files:</strong> <code>breakhis/data.py</code>, <code>breakhis/training.py</code>, <code>breakhis/cli.py</code>, <code>tests/test_training.py</code>, <code>tests/test_manifest_loading.py</code>, existing preprocessing tests.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-6--standardize-configuration-and-checkpoints" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 6 — Standardize configuration and checkpoints</h2>
+<p><strong>Status:</strong> Complete for supported dense and unstructured binary models; verified on 11 October 2026.</p>
+<p><strong>Issues addressed:</strong> Hardcoded paths, missing output directories, incompatible checkpoint formats, and insufficient experiment metadata.</p>
+<h3 id="roadmap-steps-5">Steps</h3>
+<ul>
+<li class="check-item"><span class="check done">Done</span>Extend consistent configuration to evaluation, pruning, and fine-tuning commands.</li>
+<li class="check-item"><span class="check done">Done</span>Resolve input paths consistently and validate missing files before computation begins.</li>
+<li class="check-item"><span class="check done">Done</span>Create output directories and use distinct experiment identifiers.</li>
+<li class="check-item"><span class="check done">Done</span>Save architecture identity/configuration, weights, label mapping, preprocessing, and the split-manifest reference.</li>
+<li class="check-item"><span class="check done">Done</span>Save optimizer, scheduler, epoch, and random state when training resume is supported.</li>
+<li class="check-item"><span class="check done">Done</span>Save pruning masks or channel configuration needed to reconstruct pruned architectures.</li>
+<li class="check-item"><span class="check done">Done</span>Replace reliance on pickled whole-model objects with a documented reconstruction format.</li>
+<li class="check-item"><span class="check done">Done</span>Verify checkpoint loading in a fresh process and inference on the intended device.</li>
+</ul>
+<h3 id="roadmap-target-5">Target</h3>
+<p>Dense and pruned checkpoints reload without relying on an old directory layout or class import path. Reloaded predictions match within a declared numerical tolerance. Supported training resumes restore optimizer and scheduler state.</p>
+<h3 id="roadmap-verification-and-limits-1">Verification and limits</h3>
+<ul>
+<li>All model commands save resolved <code>.config.json</code> records and use distinct default experiment IDs under the parent binary checkpoint tree. Explicit existing new-run checkpoint outputs are rejected.</li>
+<li>Version 2 records architecture, class mapping, preprocessing, manifest hash/path, source/root, split policy, pruning masks, runtime and effective configuration. Version 1 remains readable for weights workflows; whole-model pickles remain rejected.</li>
+<li>Completed-epoch last checkpoints contain optimizer, scheduler, best accuracy, Python/NumPy/PyTorch CPU/CUDA RNG state and backend determinism settings.</li>
+<li>Dense and pruned stochastic CPU interruption/resume regressions produce exactly matching weights, optimizer, scheduler and RNG states against uninterrupted runs.</li>
+<li>Fresh-process VGG dense/pruned predictions match at atol 1e-6, rtol 1e-5.</li>
+<li>A real v1 GPU smoke interrupted after epoch one, resumed epoch two in a fresh process, then completed pruning, fine-tuning, and reserved-test evaluation with the new format and saved command configurations.</li>
+</ul>
+<p>Exact resume uses completed epochs, workers zero, the original planned schedule, configuration, runtime and device. Partial epochs are replayed; their interrupted weights files cannot resume exactly. Background worker/prefetch state is not saved. Full-dataset quality and structured channel architecture reconstruction are outside this stage. V1-only manifest rebuilding remains pending after local v2 deletion.</p>
+<p><strong>Files:</strong> <code>breakhis/cli.py</code>, <code>breakhis/checkpoints.py</code>, <code>breakhis/paths.py</code>, checkpoint/resume tests, README and <code>docs/CHECKPOINTS.md</code>.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-7--repair-pruning-and-fine-tuning" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 7 — Repair pruning and fine-tuning</h2>
+<p><strong>Status:</strong> Pending.</p>
+<p><strong>Issues addressed:</strong> Unused pruning callbacks, incorrect scheduler argument, undefined pruning variables, and unverified structural pruning.</p>
+<h3 id="roadmap-steps-6">Steps</h3>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Pass mask callbacks to training and reapply masks after optimizer updates.</li>
+<li class="check-item"><span class="check pending">Pending</span>Pass the actual epoch into training and step the supplied scheduler correctly.</li>
+<li class="check-item"><span class="check pending">Pending</span>Define or reconstruct <code>pruner</code> and callback selection before fine-tuning.</li>
+<li class="check-item"><span class="check pending">Pending</span>Standardize return values across training implementations and their callers.</li>
+<li class="check-item"><span class="check pending">Pending</span>Validate sparsity boundaries, tiny tensors, tied weights, and missing layer settings.</li>
+<li class="check-item"><span class="check pending">Pending</span>Verify channel dimensions through convolutions, batch normalization, residual connections, depthwise operations, and classifiers for each supported architecture.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement fine-grained pruning on the verified baseline first; add channel pruning next.</li>
+<li class="check-item"><span class="check pending">Pending</span>Select pruning ratios and fine-tuned checkpoints using validation data only.</li>
+<li class="check-item"><span class="check pending">Pending</span>Confirm that masks and channel configuration survive checkpoint reload.</li>
+</ul>
+<h3 id="roadmap-target-6">Target</h3>
+<p>Masked weights remain zero through fine-tuning, the learning rate follows the configured schedule, and supported pruned models complete forward/backward passes. Reloading preserves pruning behavior. Unsupported configurations fail clearly.</p>
+<p><strong>Files:</strong> <code>TrainingModules.py</code>, <code>PruneTrain.py</code>, <code>Utill.py</code>, <code>Utills/PrunUtillFGP.py</code>, <code>Utills/PrunUtillCP.py</code>, supported fine-tuning entry point.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 8 — Correct evaluation and efficiency reporting</h2>
+<p><strong>Status:</strong> Pending.</p>
+<p><strong>Issues addressed:</strong> CIFAR-sized profiling inputs, misleading sparse-size estimates, and inconsistent latency comparisons.</p>
+<h3 id="roadmap-steps-7">Steps</h3>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Use the experiment&#x27;s actual input dimensions for MAC and latency measurements.</li>
+<li class="check-item"><span class="check pending">Pending</span>Report accuracy, precision, recall, F1, confusion matrix, and relevant patient-level metrics.</li>
+<li class="check-item"><span class="check pending">Pending</span>Preserve class labels and metric averaging conventions in reports.</li>
+<li class="check-item"><span class="check pending">Pending</span>Report dense parameters, nonzero parameters, sparsity, actual checkpoint bytes, and theoretical storage estimates as separate quantities.</li>
+<li class="check-item"><span class="check pending">Pending</span>Benchmark using fixed hardware, input shape, batch size, warm-up, and repeated runs.</li>
+<li class="check-item"><span class="check pending">Pending</span>Synchronize GPU operations for timing and report the device/runtime used.</li>
+<li class="check-item"><span class="check pending">Pending</span>Compare dense, pruned-before-fine-tuning, and pruned-after-fine-tuning models.</li>
+<li class="check-item"><span class="check pending">Pending</span>Report measured efficiency changes even when pruning gives no practical speedup.</li>
+</ul>
+<h3 id="roadmap-target-7">Target</h3>
+<p>A saved comparison report can be reproduced from checkpoints and configuration. It distinguishes measured file size and latency from theoretical sparse-storage estimates and documents the accuracy/efficiency tradeoff.</p>
+<p><strong>Files:</strong> <code>Model_Evaluation.py</code>, supported evaluation command, <code>Utills/EvaluatiorUtills.py</code>, latency utilities, report generation code.</p>
+</section>
+<section class="doc-section" id="roadmap-stage-9--add-regression-checks-and-operational-documentation" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Stage 9 — Add regression checks and operational documentation</h2>
+<p><strong>Status:</strong> Initial separation tests exist; broader coverage pending.</p>
+<p><strong>Issues addressed:</strong> Manual-only demonstrations, weak setup documentation, and lack of checks against recurring correctness failures.</p>
+<h3 id="roadmap-steps-8">Steps</h3>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Add regression tests for the repaired data, training, checkpoint, and pruning failures.</li>
+<li class="check-item"><span class="check pending">Pending</span>Add a small actual PyTorch integration test using temporary synthetic images.</li>
+<li class="check-item"><span class="check pending">Pending</span>Check patient split isolation, output shapes, mask persistence, and checkpoint round trips.</li>
+<li class="check-item"><span class="check pending">Pending</span>Add lightweight CPU continuous integration; keep full dataset/GPU experiments separate.</li>
+<li class="check-item"><span class="check pending">Pending</span>Document environment setup, supported datasets, commands, outputs, and troubleshooting.</li>
+<li class="check-item"><span class="check pending">Pending</span>Mark legacy demonstrations and incomplete architectures clearly.</li>
+<li class="check-item"><span class="check pending">Pending</span>Record the limitations of the final experiment and the supported operating environment.</li>
+</ul>
+<h3 id="roadmap-target-8">Target</h3>
+<p>A new user can reproduce the smoke workflow from the README. Automated checks catch the repaired correctness failures without requiring the full dataset or a GPU.</p>
+<p><strong>Files:</strong> <code>tests/</code>, future CI workflow, <code>README.md</code>, dependency documentation.</p>
+</section>
+<section class="doc-section" id="roadmap-final-acceptance-run" data-guide="Repair roadmap">
+<p class="eyebrow">Repair roadmap</p><h2>Final acceptance run</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Install dependencies into a fresh virtual environment.</li>
+<li class="check-item"><span class="check pending">Pending</span>Validate the chosen dataset and saved patient splits.</li>
+<li class="check-item"><span class="check pending">Pending</span>Train one binary baseline and select its checkpoint using validation data.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reload the baseline in a fresh process.</li>
+<li class="check-item"><span class="check pending">Pending</span>Prune the baseline and verify its structural or mask invariants.</li>
+<li class="check-item"><span class="check pending">Pending</span>Fine-tune using validation selection and save/reload the result.</li>
+<li class="check-item"><span class="check pending">Pending</span>Evaluate the selected baseline and pruned model on the reserved test data.</li>
+<li class="check-item"><span class="check pending">Pending</span>Generate the accuracy, size, computation, and latency comparison report.</li>
+<li class="check-item"><span class="check pending">Pending</span>Save configuration, split references, checkpoint metadata, and logs.</li>
+</ul>
+<p>Do not mark the codebase complete on syntax checks or a single successful import. Completion requires this reproducible end-to-end run and the relevant regression checks.</p>
+</section>
+<footer class="page-footer">Edit README.md or docs/*.md, then run <code>python tools/build_docs.py</code> to refresh this guide. No network resources are used.</footer></main></div>
+<script>(() => {
+  const search = document.querySelector('#search');
+  const sections = [...document.querySelectorAll('.doc-section')];
+  const links = [...document.querySelectorAll('nav a[data-section]')];
+  const status = document.querySelector('#search-status');
+  function filter() {
+    const query = search.value.trim().toLowerCase();
+    let count = 0;
+    for (const section of sections) {
+      section.hidden = query !== '' && !section.textContent.toLowerCase().includes(query);
+      if (!section.hidden) count++;
+    }
+    for (const link of links) link.hidden = document.getElementById(link.dataset.section).hidden;
+    for (const group of document.querySelectorAll('nav details')) {
+      group.hidden = [...group.querySelectorAll('a')].every(link => link.hidden);
+      if (query && !group.hidden) group.open = true;
+    }
+    status.textContent = query ? `${count} matching sections for “${search.value.trim()}”` : '';
+    document.querySelector('#no-results').hidden = count > 0;
+  }
+  search.addEventListener('input', filter);
+  document.querySelector('#clear').addEventListener('click', () => {search.value = ''; filter(); search.focus();});
+  document.querySelector('#print').addEventListener('click', () => window.print());
+  for (const button of document.querySelectorAll('.copy')) {
+    button.addEventListener('click', async () => {
+      const text = button.closest('.code-block').querySelector('pre code').textContent;
+      try {
+        if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+        else {
+          const area = document.createElement('textarea');
+          area.value = text; area.style.position = 'fixed'; area.style.opacity = '0';
+          document.body.append(area); area.select();
+          const copied = document.execCommand('copy'); area.remove();
+          if (!copied) throw new Error('Clipboard unavailable');
+        }
+        button.textContent = 'Copied';
+      } catch { button.textContent = 'Select to copy'; }
+      setTimeout(() => button.textContent = 'Copy', 2000);
+    });
+  }
+  document.addEventListener('click', event => {
+    const anchor = event.target.closest('a[href^="#"]');
+    if (anchor && search.value) {search.value = ''; filter();}
+  });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.find(entry => entry.isIntersecting);
+      if (visible) for (const link of links) link.classList.toggle('active', link.dataset.section === visible.target.id);
+    }, {rootMargin: '-110px 0px -65% 0px'});
+    sections.forEach(section => observer.observe(section));
+  }
+})();
+</script></body></html>

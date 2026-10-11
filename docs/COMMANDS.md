@@ -38,18 +38,18 @@ resolved against this repository. Default checkpoints are resolved against its p
 
 ## Supported commands
 
-Prepare the patient manifest first; see [DATASETS.md](DATASETS.md).
+Use the existing patient manifest with the remaining v1 binary source; see
+[DATASETS.md](DATASETS.md). Rebuilding currently requires the removed v2 source.
+The following supported pipeline uses a shared experiment ID:
 
 ```powershell
-python -m breakhis prepare-data --seed 0
+python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X --model vgg --epochs 20 --experiment-id baseline
 
-python -m breakhis train --dataset breakhis --source cancer_binary --magnification 40X --model vgg --epochs 20 --output ../checkpoint/binary/40X/vgg/baseline.pth
+python -m breakhis prune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/train.pth --sparsity 0.5 --experiment-id baseline
 
-python -m breakhis prune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline.pth --sparsity 0.5 --output ../checkpoint/binary/40X/vgg/pruned.pth
+python -m breakhis finetune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/prune.pth --epochs 5 --experiment-id baseline
 
-python -m breakhis finetune --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/pruned.pth --epochs 5 --output ../checkpoint/binary/40X/vgg/finetuned.pth
-
-python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/finetuned.pth --output artifacts/final-test.json
+python -m breakhis evaluate --dataset breakhis --source cancer_binary --magnification 40X --checkpoint ../checkpoint/binary/40X/vgg/baseline/finetune.pth --experiment-id baseline
 ```
 
 Supported baseline architectures are VGG and torchvision ResNet18 (`resnet` is
@@ -67,9 +67,9 @@ Workers default to zero for simpler interruption handling on Windows. Use
 `--num-workers 4` only after checking throughput on your machine.
 
 Each improvement in validation accuracy saves the selected checkpoint. Ctrl+C
-also attempts to save current weights to an `-interrupted.pth` file. Optimizer,
-scheduler, and RNG-state resume are not yet implemented; these files are weights
-checkpoints rather than exact training-resume checkpoints.
+also attempts to save partial weights to an `-interrupted.pth` file. Every completed
+epoch saves an independent `-last.pth` with optimizer, scheduler, and RNG state.
+Use `--resume` with that file; see [CHECKPOINTS.md](CHECKPOINTS.md).
 
 ## Compatibility entry points
 
@@ -101,9 +101,9 @@ BreakHis/
   BreakHisClassification/
   checkpoint/
     binary/
-      40X/vgg/train.pth
-      40X/vgg/prune.pth
-      40X/vgg/finetune.pth
+      40X/vgg/<experiment-id>/train.pth
+      40X/vgg/<experiment-id>/prune.pth
+      40X/vgg/<experiment-id>/finetune.pth
       legacy/             # Existing files; provenance is not inferred
     multiclass/           # Reserved for future multiclass training
 ```
@@ -127,3 +127,13 @@ manifest to obtain checkpoints suitable for the new workflow.
 The preserved `experiments/cifar10/` scripts and notebooks are legacy reference
 material. They are outside the supported command surface and may retain old
 `PruningNAS` names and unresolved logic.
+
+## Stage 6 configuration
+
+All model commands accept `--experiment-id`, generate distinct default run directories,
+and save resolved arguments beside their output as `.config.json`. Existing new-run
+checkpoint outputs are rejected. Evaluation writes a report by default.
+Train/fine-tune accept `--resume` with saved effective defaults; completed epochs,
+optimizer, scheduler and RNG state are restored. Exact resume requires workers zero
+and the original schedule/runtime. See [CHECKPOINTS.md](CHECKPOINTS.md) and the
+[README parameter tables](../README.md).

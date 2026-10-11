@@ -104,7 +104,8 @@ It does not verify patient splits, pruning correctness, or model quality.
 Use `--num-workers 0` for simpler Ctrl+C handling; use background workers after
 checking their throughput on your machine. Supported commands now save best
 weights after validation and attempt an interrupted weights checkpoint on Ctrl+C.
-Exact optimizer/scheduler resume remains future work. See [COMMANDS.md](COMMANDS.md).
+Completed-epoch checkpoints now support optimizer/scheduler/RNG resume with workers
+zero. See [CHECKPOINTS.md](CHECKPOINTS.md) for limits and [COMMANDS.md](COMMANDS.md).
 
 Virtual environments, checkpoints, and generated environment reports are ignored
 by Git. The disposable `.venv-stage2-cpu` directory is a separate installation

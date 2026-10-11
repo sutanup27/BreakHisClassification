@@ -218,7 +218,7 @@ Both binary dataset roots have 40X, 100X, 200X, and 400X folders.
 
 ## Stage 5 — Standardize preprocessing and baseline training
 
-**Status:** Pending.
+**Status:** Complete for the supported binary workflow; verified on 11 October 2026.
 
 **Issues addressed:** Inconsistent image dimensions, test-set model selection,
 fragile best-model tracking, and device handling.
@@ -233,8 +233,8 @@ fragile best-model tracking, and device handling.
 - [x] Select the best checkpoint using validation performance only.
 - [x] Reserve the test split for final evaluation after model decisions are complete.
 - [x] Initialize best-model tracking so the first valid epoch is retained, even at zero accuracy, in supported commands.
-- [ ] Reject invalid epoch counts, empty splits, and nonfinite training values clearly.
-- [ ] Pass the device consistently and make loss aggregation sample-weighted.
+- [x] Reject invalid epoch counts, empty splits, and nonfinite training values clearly.
+- [x] Pass the device consistently and make loss aggregation sample-weighted.
 - [x] Run a small baseline smoke test before a full experiment.
 
 ### Target
@@ -243,26 +243,48 @@ One VGG or ResNet baseline completes training and validation with consistent
 batch shapes, finite losses, and a valid best checkpoint. The test set does not
 influence checkpoint selection or training decisions.
 
-**Files:** `DataPreprocessing.py`, `TrainingModules.py`, `Train.py`, `Viewer.py`, model code.
+### Verification and limits
+
+- Training and validation aggregate loss by sample count, including partial last
+  batches; scalar mean and sum criterion reductions are handled explicitly.
+- Inputs, outputs, losses, accumulated loss, and training gradient norms are
+  checked for nonfinite values. Invalid gradients fail before an optimizer step.
+- Batches, prediction inputs, and criteria follow the model's actual device;
+  explicit CPU models do not follow a global CUDA default.
+- Invalid epoch/loader settings and nonpositive or nonfinite learning rates are
+  rejected. Empty manifest selections name the source, magnification, and split.
+- Regression tests verify first-epoch checkpoint selection at zero accuracy and
+  prohibit iterating the reserved test split during training.
+- An actual v1 40X GPU VGG smoke completed two epochs with uneven batches
+  (batch size 3, four training and four validation images), finite losses, and
+  a reconstructible checkpoint under the parent binary checkpoint directory.
+- Accuracy uses percentages (0-100), consistent with the shared evaluator.
+
+This establishes baseline execution correctness, not full-dataset clinical or
+classification quality. Full experiments and comparative reporting remain work
+for later stages. V1-only manifest rebuilding after removing v2 is still pending.
+
+**Files:** `breakhis/data.py`, `breakhis/training.py`, `breakhis/cli.py`,
+`tests/test_training.py`, `tests/test_manifest_loading.py`, existing preprocessing tests.
 
 ## Stage 6 — Standardize configuration and checkpoints
 
-**Status:** Partially addressed by the primary training command; remaining work pending.
+**Status:** Complete for supported dense and unstructured binary models; verified on 11 October 2026.
 
 **Issues addressed:** Hardcoded paths, missing output directories, incompatible
 checkpoint formats, and insufficient experiment metadata.
 
 ### Steps
 
-- [ ] Extend consistent configuration to evaluation, pruning, and fine-tuning commands.
-- [ ] Resolve input paths consistently and validate missing files before computation begins.
-- [ ] Create output directories and use distinct experiment identifiers.
-- [ ] Save architecture identity/configuration, weights, label mapping, preprocessing,
+- [x] Extend consistent configuration to evaluation, pruning, and fine-tuning commands.
+- [x] Resolve input paths consistently and validate missing files before computation begins.
+- [x] Create output directories and use distinct experiment identifiers.
+- [x] Save architecture identity/configuration, weights, label mapping, preprocessing,
       and the split-manifest reference.
-- [ ] Save optimizer, scheduler, epoch, and random state when training resume is supported.
-- [ ] Save pruning masks or channel configuration needed to reconstruct pruned architectures.
-- [ ] Replace reliance on pickled whole-model objects with a documented reconstruction format.
-- [ ] Verify checkpoint loading in a fresh process and inference on the intended device.
+- [x] Save optimizer, scheduler, epoch, and random state when training resume is supported.
+- [x] Save pruning masks or channel configuration needed to reconstruct pruned architectures.
+- [x] Replace reliance on pickled whole-model objects with a documented reconstruction format.
+- [x] Verify checkpoint loading in a fresh process and inference on the intended device.
 
 ### Target
 
@@ -270,7 +292,31 @@ Dense and pruned checkpoints reload without relying on an old directory layout
 or class import path. Reloaded predictions match within a declared numerical
 tolerance. Supported training resumes restore optimizer and scheduler state.
 
-**Files:** Training/evaluation/pruning entry points, model constructors, future checkpoint utilities.
+### Verification and limits
+
+- All model commands save resolved `.config.json` records and use distinct default
+  experiment IDs under the parent binary checkpoint tree. Explicit existing
+  new-run checkpoint outputs are rejected.
+- Version 2 records architecture, class mapping, preprocessing, manifest hash/path,
+  source/root, split policy, pruning masks, runtime and effective configuration.
+  Version 1 remains readable for weights workflows; whole-model pickles remain rejected.
+- Completed-epoch last checkpoints contain optimizer, scheduler, best accuracy,
+  Python/NumPy/PyTorch CPU/CUDA RNG state and backend determinism settings.
+- Dense and pruned stochastic CPU interruption/resume regressions produce exactly
+  matching weights, optimizer, scheduler and RNG states against uninterrupted runs.
+- Fresh-process VGG dense/pruned predictions match at atol 1e-6, rtol 1e-5.
+- A real v1 GPU smoke interrupted after epoch one, resumed epoch two in a fresh
+  process, then completed pruning, fine-tuning, and reserved-test evaluation with
+  the new format and saved command configurations.
+
+Exact resume uses completed epochs, workers zero, the original planned schedule,
+configuration, runtime and device. Partial epochs are replayed; their interrupted
+weights files cannot resume exactly. Background worker/prefetch state is not saved.
+Full-dataset quality and structured channel architecture reconstruction are outside
+this stage. V1-only manifest rebuilding remains pending after local v2 deletion.
+
+**Files:** `breakhis/cli.py`, `breakhis/checkpoints.py`, `breakhis/paths.py`,
+checkpoint/resume tests, README and `docs/CHECKPOINTS.md`.
 
 ## Stage 7 — Repair pruning and fine-tuning
 
