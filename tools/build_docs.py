@@ -14,6 +14,7 @@ SOURCES = [('readme', ROOT / 'README.md', 'User guide'),
            ('datasets', ROOT / 'docs/DATASETS.md', 'Dataset policy'),
            ('checkpoints', ROOT / 'docs/CHECKPOINTS.md', 'Checkpoints & resume'),
            ('pruning', ROOT / 'docs/PRUNING.md', 'Pruning & fine-tuning'),
+           ('evaluation', ROOT / 'docs/EVALUATION.md', 'Evaluation & efficiency'),
            ('roadmap', ROOT / 'docs/CODEBASE_FIX_ROADMAP.md', 'Repair roadmap')]
 SOURCE_IDS = {path.resolve(): key for key, path, _ in SOURCES}
 
@@ -154,7 +155,7 @@ def main():
 <nav aria-label="Documentation navigation">''' + navigation + '''</nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
 <div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
-<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–7 implemented</span></div></div>
+<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–8 implemented</span></div></div>
 <div class="notice"><strong>Current workspace:</strong> use the saved manifest with <code>cancer_binary</code>. The v2 copy was removed; v1-only manifest rebuilding and multiclass training remain pending.</div>
 <p id="search-status" role="status" aria-live="polite"></p><p id="no-results" hidden>No matching section. Try a command name, parameter, or error message.</p>
 ''' + content + '''

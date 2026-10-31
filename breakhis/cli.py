@@ -42,6 +42,13 @@ def write_json(path, payload):
     temporary.replace(path)
 
 
+def add_benchmark_options(parser):
+    parser.add_argument('--benchmark-batch-size', type=int, default=1, help='Resident forward benchmark batch size (separate from evaluation batches)')
+    parser.add_argument('--benchmark-warmup', type=int, default=10)
+    parser.add_argument('--benchmark-repeats', type=int, default=30)
+    parser.add_argument('--cpu-threads', type=int, help='Fix PyTorch intra-op CPU threads for repeatable comparisons')
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description='BreaKHis classification, pruning and dataset auditing')
     commands = parser.add_subparsers(dest='command', required=True)
@@ -54,6 +61,8 @@ def main(argv=None):
         command = commands.add_parser(name)
         add_data_options(command)
         command.add_argument('--output', type=Path, help='Checkpoint filename/path inside checkpoint/binary, or evaluation JSON path')
+        if name == 'evaluate':
+            add_benchmark_options(command)
         if name in ('train', 'finetune'):
             command.add_argument('--epochs', type=int, help='Total planned epochs; default 20 or saved resume value')
             command.add_argument('--learning-rate', type=float, help='Initial SGD rate; default .001 or saved resume value')
@@ -67,7 +76,23 @@ def main(argv=None):
             command.add_argument('--sparsity', type=float, default=.5)
             command.add_argument('--method', choices=['unstructured', 'channel'], default='unstructured')
             command.add_argument('--layer-sparsities', type=Path, help='JSON object specifying every eligible layer name and ratio')
+    comparison = commands.add_parser('compare', help='Compare dense, pruned and fine-tuned checkpoints on the reserved test split')
+    add_data_options(comparison)
+    add_benchmark_options(comparison)
+    comparison.add_argument('--dense', type=Path, required=True)
+    comparison.add_argument('--pruned', type=Path, required=True)
+    comparison.add_argument('--finetuned', type=Path, required=True)
+    comparison.add_argument('--output', type=Path)
     args = parser.parse_args(argv)
+    if args.command in ('evaluate', 'compare'):
+        if args.benchmark_batch_size < 1 or args.benchmark_warmup < 0 or args.benchmark_repeats < 1 or (args.cpu_threads is not None and args.cpu_threads < 1):
+            parser.error('Benchmark batch size, repeats and CPU threads must be positive; warmup nonnegative')
+        if args.cpu_threads is not None:
+            import torch
+            torch.set_num_threads(args.cpu_threads)
+    if args.command == 'compare':
+        from .comparison import run_comparison
+        return run_comparison(args, parser)
     if args.command == 'prepare-data':
         if args.workers < 1:
             parser.error('workers must be positive')
@@ -179,6 +204,8 @@ def main(argv=None):
             output = args.output.resolve() if args.output else checkpoint_output(
                 args.source, args.magnification, architecture, args.command,
                 experiment_id=args.experiment_id).with_suffix('.json')
+            if output.suffix.lower() != '.json':
+                raise ValueError('Evaluation report output must end in .json')
         else:
             output = checkpoint_output(args.source, args.magnification, architecture, args.command,
                 args.output or (previous.get('output') if resume else None), args.experiment_id)
@@ -223,9 +250,10 @@ def main(argv=None):
     print(f'Device: {device}; source: {args.source}; magnification: {args.magnification}; experiment: {args.experiment_id}', flush=True)
     print('Images:', {split: len(loader.dataset) for split, loader in loaders.items()}, flush=True)
     if args.command == 'evaluate':
-        accuracy, loss = evaluate(model, loaders['test'], criterion)
-        report = dict(split='test', accuracy=accuracy, accuracy_unit='percent', loss=loss,
-                      experiment_id=args.experiment_id, checkpoint=str(input_path), **metadata)
+        from .reporting import checkpoint_report
+        report = checkpoint_report(model, loaders['test'], input_path,
+            batch_size=args.benchmark_batch_size, warmup=args.benchmark_warmup, repeats=args.benchmark_repeats)
+        report.update(schema_version=1, split='test', experiment_id=args.experiment_id, **metadata)
         write_json(output, report)
         print(json.dumps(report, indent=2))
         print(f'Report: {output}; configuration: {config_path}')

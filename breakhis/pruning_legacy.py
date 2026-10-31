@@ -142,20 +142,16 @@ def print_model(model):
 
 #   can directly leads to model size reduction and speed up.
 @torch.no_grad()
-def measure_latency(model, n_warmup=20, n_test=100, d='cpu'):
-    dummy_input=torch.randn(1, 3, 80, 80).to(d)
-    model.to(d)
-    model.eval()
-    # warmup
-    for _ in range(n_warmup):
-        _ = model(dummy_input)
-    # real test
-    t1 = time.time()
-    for _ in range(n_test):
-        _ = model(dummy_input)
-    t2 = time.time()
-    model.to(device)
-    return (t2 - t1) / n_test  # average latency
+def measure_latency(model, n_warmup=20, n_test=100, d="cpu", *, inputs=None):
+    """Mean forward seconds; caller must provide actual preprocessed inputs."""
+    from breakhis.training import clone_model
+    from breakhis.reporting import benchmark_model
+    if inputs is None:
+        raise ValueError('Latency profiling requires actual preprocessed inputs; no CIFAR-sized default is used')
+    copied = clone_model(model).to(d)
+    report = benchmark_model(copied, inputs[:1], batch_size=inputs.size(0), warmup=n_warmup, repeats=n_test)
+    return report['latency_ms']['mean'] / 1000
+
 
 def get_num_channels_to_keep(channels: int, prune_ratio: float) -> int:
     """A function to calculate the number of layers to PRESERVE after pruning

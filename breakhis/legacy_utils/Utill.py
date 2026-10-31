@@ -235,21 +235,16 @@ def print_model(model):
 
 #   can directly leads to model size reduction and speed up.
 @torch.no_grad()
-def measure_latency(main_model,dummy_input, n_warmup=20, n_test=100, d='cpu'):
-    model=copy.deepcopy(main_model)
-    model.to(d)
-    input=copy.deepcopy(dummy_input)
-    input=input.to(d)
-    model.eval()
-    # warmup
-    for _ in range(n_warmup):
-        _ = model(input)
-    # real test
-    t1 = time.time()
-    for _ in range(n_test):
-        _ = model(input)
-    t2 = time.time()
-    return (t2 - t1) / n_test  # average latency
+def measure_latency(main_model, dummy_input, n_warmup=20, n_test=100, d="cpu"):
+    """Mean forward seconds; caller must provide actual preprocessed inputs."""
+    from breakhis.training import clone_model
+    from breakhis.reporting import benchmark_model
+    if dummy_input is None:
+        raise ValueError('Latency profiling requires actual preprocessed inputs; no CIFAR-sized default is used')
+    copied = clone_model(main_model).to(d)
+    report = benchmark_model(copied, dummy_input[:1], batch_size=dummy_input.size(0), warmup=n_warmup, repeats=n_test)
+    return report['latency_ms']['mean'] / 1000
+
 
 def get_sparsity_dic_template(model,prun_type='CP'):
     dct={}

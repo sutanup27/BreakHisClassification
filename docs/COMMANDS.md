@@ -139,3 +139,17 @@ Train/fine-tune accept `--resume` with saved effective defaults; completed epoch
 optimizer, scheduler and RNG state are restored. Exact resume requires workers zero
 and the original schedule/runtime. See [CHECKPOINTS.md](CHECKPOINTS.md) and the
 [README parameter tables](../README.md).
+
+## Stage 8 evaluation and comparison
+
+`evaluate` now reports precision, recall, F1, confusion matrices, filename patient/
+slide aggregates, effective mask-aware parameter counts, measured file/model-state
+bytes, theoretical sparse estimates, actual-shape Conv2d/Linear compute, and
+synchronized forward timings. Existing evaluation wrappers use these reports.
+
+`python -m breakhis compare --dataset breakhis --dense PATH --pruned PATH --finetuned PATH`
+evaluates three matching checkpoints on the reserved test split and saves one
+comparison with measured accuracy/size/latency deltas. Both commands accept
+`--benchmark-batch-size` (1), `--benchmark-warmup` (10), `--benchmark-repeats` (30),
+and optional `--cpu-threads`. Report outputs must be `.json`.
+See [EVALUATION.md](EVALUATION.md) for complete definitions, scope and examples.

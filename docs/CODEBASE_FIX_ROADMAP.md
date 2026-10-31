@@ -376,22 +376,22 @@ These checks do not establish full-dataset accuracy or a latency benefit.
 
 ## Stage 8 — Correct evaluation and efficiency reporting
 
-**Status:** Pending.
+**Status:** Complete for the supported binary workflow; verified on 31 October 2026.
 
 **Issues addressed:** CIFAR-sized profiling inputs, misleading sparse-size
 estimates, and inconsistent latency comparisons.
 
 ### Steps
 
-- [ ] Use the experiment's actual input dimensions for MAC and latency measurements.
-- [ ] Report accuracy, precision, recall, F1, confusion matrix, and relevant patient-level metrics.
-- [ ] Preserve class labels and metric averaging conventions in reports.
-- [ ] Report dense parameters, nonzero parameters, sparsity, actual checkpoint bytes,
+- [x] Use the experiment's actual input dimensions for MAC and latency measurements.
+- [x] Report accuracy, precision, recall, F1, confusion matrix, and relevant patient-level metrics.
+- [x] Preserve class labels and metric averaging conventions in reports.
+- [x] Report dense parameters, nonzero parameters, sparsity, actual checkpoint bytes,
       and theoretical storage estimates as separate quantities.
-- [ ] Benchmark using fixed hardware, input shape, batch size, warm-up, and repeated runs.
-- [ ] Synchronize GPU operations for timing and report the device/runtime used.
-- [ ] Compare dense, pruned-before-fine-tuning, and pruned-after-fine-tuning models.
-- [ ] Report measured efficiency changes even when pruning gives no practical speedup.
+- [x] Benchmark using fixed hardware, input shape, batch size, warm-up, and repeated runs.
+- [x] Synchronize GPU operations for timing and report the device/runtime used.
+- [x] Compare dense, pruned-before-fine-tuning, and pruned-after-fine-tuning models.
+- [x] Report measured efficiency changes even when pruning gives no practical speedup.
 
 ### Target
 
@@ -399,8 +399,36 @@ A saved comparison report can be reproduced from checkpoints and configuration.
 It distinguishes measured file size and latency from theoretical sparse-storage
 estimates and documents the accuracy/efficiency tradeoff.
 
-**Files:** `Model_Evaluation.py`, supported evaluation command,
-`Utills/EvaluatiorUtills.py`, latency utilities, report generation code.
+### Verification and limits
+
+- Enhanced evaluate preserves percentage accuracy and image loss while adding
+  per-class/macro/weighted precision, recall, F1, explicit confusion axes and
+  binary sensitivity/specificity. Undefined divisions are zero.
+- Filename patient/slide metrics aggregate mean softmax probabilities per
+  YEAR-SLIDE_ID, with one observation per group and explicit identity limitations.
+- Parameter accounting uses effective masks, not hidden weight originals. Actual
+  whole-checkpoint/model-state bytes and theoretical value/index estimates are separate.
+- Conv2d/Linear MAC and two-FLOP-per-MAC estimates use actual preprocessed shapes;
+  excluded operators are documented. Mask sparsity does not reduce dense MACs.
+- Benchmarks record resident batch/dtype, warm-up/repeats, individual synchronized
+  wall-clock samples, summary latency/throughput and hardware/runtime/backend settings.
+- Compare validates three checkpoint roles/provenance and matching pruning layouts,
+  runs one fixed test/benchmark protocol, records checkpoint hashes/configuration,
+  and retains negative size/speed outcomes.
+- CPU regressions cover hand-computed metrics/MACs, group aggregation, uneven
+  batches, mask-aware sizes, validation failures and test-only comparison iteration.
+- Real v1 GPU smoke comparisons completed for both unstructured and VGG channel
+  pruning, using four reserved test images and five timing repeats per model.
+
+Filename slide IDs are not independently verified clinical patient identities.
+MAC counts explicitly exclude BN, pooling, activations, residual adds and mask ops.
+Latency excludes loading/preprocessing/transfers; results depend on hardware,
+software, load and protocol. Small smoke comparisons establish execution, not
+full-dataset quality, statistically significant speedup or end-to-end latency.
+Full-data experiments and CPU CI remain Stage 9/final acceptance work.
+
+**Files:** `breakhis/reporting.py`, `breakhis/comparison.py`, `breakhis/cli.py`,
+mask-aware metric/latency compatibility helpers, reporting tests and `docs/EVALUATION.md`.
 
 ## Stage 9 — Add regression checks and operational documentation
 

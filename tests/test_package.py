@@ -19,7 +19,7 @@ class CommandTests(unittest.TestCase):
             self.assertIn('--dataset',result.stderr)
 
     def test_all_supported_commands_offer_help(self):
-        for command in ['prepare-data','train','evaluate','prune','finetune']:
+        for command in ['prepare-data','train','evaluate','prune','finetune','compare']:
             result=subprocess.run([sys.executable,'-m','breakhis',command,'--help'],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)
 

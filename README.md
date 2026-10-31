@@ -138,7 +138,7 @@ Training and fine-tuning use the training split and choose weights using validat
 
 ## Shared parameters
 
-These arguments apply to **train, evaluate, prune, and finetune**. Omitted optional arguments use their defaults. Flags such as `--deterministic` take no value.
+These arguments apply to **train, evaluate, prune, finetune, and compare**. Omitted optional arguments use their defaults. Flags such as `--deterministic` take no value.
 
 | Parameter | Default / allowed values | Purpose and usage |
 | --- | --- | --- |
@@ -152,7 +152,7 @@ These arguments apply to **train, evaluate, prune, and finetune**. Omitted optio
 | `--device` | `auto`; `auto`, `cpu`, `cuda` | `auto` uses CUDA when available, otherwise CPU. `cuda` fails if unavailable. `cpu` forces CPU execution. |
 | `--deterministic` | Off; `--deterministic` / `--no-deterministic` | Enables deterministic cuDNN settings and disables cuDNN benchmarking; may be slower. Does not guarantee identical results across hardware/software versions. Loader RNGs use seed 0; model commands have no `--seed` argument. |
 | `--experiment-id` | Generated UTC timestamp and random suffix | Groups outputs under a distinct experiment directory. Use 1-64 letters, digits, underscores or hyphens, starting with a letter or digit. An explicit existing checkpoint output is rejected to avoid overwriting an experiment. |
-| `--output` | Command-dependent | Checkpoint output for train/prune/finetune; optional report file for evaluate. See checkpoint rules below. |
+| `--output` | Command-dependent | Checkpoint output for train/prune/finetune; optional `.json` report path for evaluate/compare. See checkpoint rules below. |
 
 ## Train parameters
 
@@ -224,7 +224,56 @@ Uses the same optimizer, scheduler, and validation selection as training. Withou
 | `--checkpoint` | **Required**; file path | Model weights; architecture and pruning masks are reconstructed. |
 | `--output` | Experiment-directory `evaluate.json` | JSON report path. Example: `--output artifacts/final-test.json`. Parent folders are created. Evaluation saves no model weights. |
 
-The JSON report is printed even without `--output`. It includes test accuracy, cross-entropy loss, and dataset metadata.
+The JSON report is printed and saved even without `--output`. It now includes
+image and filename patient/slide metrics, size accounting, Conv2d/Linear MAC/FLOP
+estimates, and measured forward latency. Class labels, averaging conventions,
+metric units, checkpoint hashes, and hardware/runtime details are explicit.
+Accuracy is 0-100%; precision, recall, F1, sensitivity and specificity are 0-1.
+Patient/slide results average image probabilities by filename ID, not verified
+clinical identity. See [evaluation definitions](docs/EVALUATION.md).
+
+## Compare dense, pruned, and fine-tuned models
+
+After choosing models with validation, compare them on the same reserved test
+split and benchmark protocol:
+
+```powershell
+python -m breakhis compare --dataset breakhis --dense ../checkpoint/binary/40X/vgg/baseline/train.pth --pruned ../checkpoint/binary/40X/vgg/baseline/prune.pth --finetuned ../checkpoint/binary/40X/vgg/baseline/finetune.pth --device auto --cpu-threads 2 --benchmark-batch-size 1 --benchmark-warmup 10 --benchmark-repeats 30 --output artifacts/comparison.json
+```
+
+Supply the original manifest/source/magnification on each command if different
+from defaults. For channel pruning, point the last two inputs to its channel
+experiment. All inputs must share data provenance and architecture; pruned/fine-
+tuned masks or channel topology must match. File roles are operator-supplied;
+the comparison does not independently establish training history.
+
+| Parameter | Default / accepted values | Purpose |
+| --- | --- | --- |
+| `--dense` | Required for compare | Dense baseline checkpoint path |
+| `--pruned` | Required for compare | Pruned-before-fine-tuning checkpoint path |
+| `--finetuned` | Required for compare | Selected fine-tuned checkpoint path |
+| `--benchmark-batch-size` | `1`; positive integer | Resident forward benchmark batch; independent of evaluation `--batch-size` |
+| `--benchmark-warmup` | `10`; nonnegative integer | Untimed forwards, after one untimed MAC-counting forward |
+| `--benchmark-repeats` | `30`; positive integer | Timed forward repeats; all samples are retained |
+| `--cpu-threads` | Unchanged when omitted; positive integer | Fix PyTorch intra-op CPU threads; actual thread counts are recorded |
+
+The four benchmark options apply to both `evaluate` and `compare`. Comparison
+uses `--dense/--pruned/--finetuned`, not `--checkpoint`. Default report locations
+are `../checkpoint/binary/<magnification>/<architecture>/<experiment-id>/compare.json`
+and `evaluate.json`, with sibling `.config.json` records. Custom report outputs
+must end in `.json` and cannot replace input checkpoints.
+
+Reports distinguish actual checkpoint bytes, measured model-state serialization,
+dense parameter bytes, effective nonzeros, and theoretical sparse-value/index
+estimates. MAC counts cover Conv2d/Linear at actual input dimensions, excluding
+BN/activation/pooling/residual-add/mask operations; the FLOP estimate uses two
+FLOPs per MAC. Masked zeros do not reduce dense MACs.
+
+Latency uses resident copies of a real preprocessed image and GPU synchronization
+around each forward. Disk IO, preprocessing, transfers and metrics are excluded.
+Median speedup below 1 means slower; the report retains slowdowns and larger files.
+Use the same hardware, shapes, dtype, threads, and warm-up/repeats when comparing.
+Full definitions and limitations are in [EVALUATION.md](docs/EVALUATION.md).
 
 ## Checkpoint paths and loading rules
 
@@ -294,6 +343,7 @@ optimizer updates weights. This fail-fast validation can add device checks per b
 python -m breakhis --help
 python -m breakhis train --help
 python -m breakhis evaluate --help
+python -m breakhis compare --help
 python -m breakhis prune --help
 python -m breakhis finetune --help
 python -m breakhis prepare-data --help
@@ -334,7 +384,7 @@ Example: `python Train.py --dataset breakhis --magnification 40X --model vgg`. W
 | Resume configuration differs | Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them. |
 | Run already completed | Start a new fine-tuning run from its weights; resume does not extend the saved schedule. |
 
-Stages 1-7 are implemented and verified for the supported binary workflow, including VGG channel pruning. Full baseline quality, multiclass training, residual/depthwise channel pruning, efficiency reports, and CI remain future work. See [fix roadmap](docs/CODEBASE_FIX_ROADMAP.md) and [command reference](docs/COMMANDS.md).
+Stages 1-8 are implemented and verified for the supported binary workflow, including VGG channel pruning and evaluation/efficiency reports. Full-dataset experiment validation, v1-only manifest rebuilding, multiclass training, residual/depthwise channel pruning, and CPU CI remain future work. See [fix roadmap](docs/CODEBASE_FIX_ROADMAP.md) and [command reference](docs/COMMANDS.md).
 
 CIFAR-10 experiments and mixed tutorials live under `experiments/cifar10/` as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
 
@@ -354,6 +404,8 @@ module rather than adding another implementation to a compatibility wrapper.
 | `breakhis/checkpoints.py` | Model reconstruction, format validation, training/RNG state | Change saved metadata or resume behavior |
 | `breakhis/paths.py` | Task checkpoint directories and experiment path validation | Change checkpoint placement safely |
 | `breakhis/pruning.py` | Weight masks, post-update enforcement, VGG channel surgery | Change supported pruning or layer validation |
+| `breakhis/reporting.py` | Image/group metrics, mask-aware storage, compute and latency measurements | Change evaluation definitions or benchmark protocol |
+| `breakhis/comparison.py` | Fixed-protocol dense/pruned/fine-tuned comparison | Change comparative report validation or deltas |
 | `tests/` | CPU regressions and subprocess reload checks | Verify behavior affected by a code change |
 | `tools/check_environment.py` | Dependency/device verification | Diagnose environment setup |
 | `experiments/cifar10/` and legacy pruning helpers | Historical experiments | Consult reference code; these are outside the supported workflow |
