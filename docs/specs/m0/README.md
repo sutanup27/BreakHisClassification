@@ -2,7 +2,7 @@
 
 Prepared: 7 November 2026. Scope: implementation planning only.
 
-[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. Code implementation has not started.
+[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1 is implemented and self-reviewed; M0.2-M0.6 have not started.
 
 All M0-specific documents live together in this folder:
 
@@ -11,6 +11,7 @@ docs/specs/m0/
   README.md                         # Tracker and starting point
   M0_SPEC.md                        # Master source of truth
   M0_1_RECORDS_INTEGRITY.md
+  M0_1_RECORDS_API.md               # Implemented foundation API
   M0_2_BASELINE_PRESERVATION.md
   M0_3_DATA_READINESS.md
   M0_4_EXPOSURE_GOVERNANCE.md
@@ -22,7 +23,7 @@ docs/specs/m0/
 
 | Package | Master work packages | Depends on | Status | Completion evidence |
 | --- | --- | --- | --- | --- |
-| [M0.1 Records and integrity](M0_1_RECORDS_INTEGRITY.md) | WP0 | None | Not started | Pending |
+| [M0.1 Records and integrity](M0_1_RECORDS_INTEGRITY.md) | WP0 | None | Reviewed | 21 foundation tests; 70 total CPU tests passed, no skips; [API/evidence](M0_1_RECORDS_INTEGRITY.md#progress-evidence) |
 | [M0.2 Baseline preservation](M0_2_BASELINE_PRESERVATION.md) | WP1-WP2 | M0.1 reviewed | Not started | Pending |
 | [M0.3 Data readiness](M0_3_DATA_READINESS.md) | WP3-WP4 | M0.1-M0.2 reviewed | Not started | Pending |
 | [M0.4 Exposure governance](M0_4_EXPOSURE_GOVERNANCE.md) | WP5 | M0.1-M0.3 reviewed | Not started | Pending |
@@ -59,4 +60,4 @@ All M0-T01 through M0-T26 must have final traceability. Test IDs refer to the ma
 
 ## Starting point
 
-Start with [M0.1](M0_1_RECORDS_INTEGRITY.md). The current deliverable is this checklist set; runtime records, new runner commands and scientific experiments remain implementation work.
+M0.1 is complete at package scope; use its [API contract](M0_1_RECORDS_API.md) for subsequent work. [M0.2](M0_2_BASELINE_PRESERVATION.md) is the next package and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.

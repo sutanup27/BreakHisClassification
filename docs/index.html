@@ -26,6 +26,7 @@
 <details open><summary>M0 implementation specification</summary><a href="#m0-spec" data-section="m0-spec">M0 specification: preservation, protocol and data readiness</a><a href="#m0-spec-1-objective-and-completion-boundary" data-section="m0-spec-1-objective-and-completion-boundary">1. Objective and completion boundary</a><a href="#m0-spec-2-scope-and-inputs" data-section="m0-spec-2-scope-and-inputs">2. Scope and inputs</a><a href="#m0-spec-3-proposed-development-structure" data-section="m0-spec-3-proposed-development-structure">3. Proposed development structure</a><a href="#m0-spec-4-run-lifecycle-and-filesystem-contract" data-section="m0-spec-4-run-lifecycle-and-filesystem-contract">4. Run lifecycle and filesystem contract</a><a href="#m0-spec-5-record-schemas-and-semantics" data-section="m0-spec-5-record-schemas-and-semantics">5. Record schemas and semantics</a><a href="#m0-spec-6-integrity-and-reproducibility-contract" data-section="m0-spec-6-integrity-and-reproducibility-contract">6. Integrity and reproducibility contract</a><a href="#m0-spec-7-proposed-runner-interface" data-section="m0-spec-7-proposed-runner-interface">7. Proposed runner interface</a><a href="#m0-spec-8-gate-g0-contract" data-section="m0-spec-8-gate-g0-contract">8. Gate G0 contract</a><a href="#m0-spec-9-implementation-work-packages" data-section="m0-spec-9-implementation-work-packages">9. Implementation work packages</a><a href="#m0-spec-10-acceptance-test-matrix" data-section="m0-spec-10-acceptance-test-matrix">10. Acceptance-test matrix</a><a href="#m0-spec-11-definition-of-done-and-handoff" data-section="m0-spec-11-definition-of-done-and-handoff">11. Definition of done and handoff</a></details>
 <details open><summary>M0 package tracker</summary><a href="#m0-tracker" data-section="m0-tracker">M0 implementation checklist tracker</a><a href="#m0-tracker-work-packages-and-progress" data-section="m0-tracker-work-packages-and-progress">Work packages and progress</a><a href="#m0-tracker-status-rules" data-section="m0-tracker-status-rules">Status rules</a><a href="#m0-tracker-acceptance-test-ownership" data-section="m0-tracker-acceptance-test-ownership">Acceptance-test ownership</a><a href="#m0-tracker-starting-point" data-section="m0-tracker-starting-point">Starting point</a></details>
 <details open><summary>M0.1 Records &amp; integrity</summary><a href="#m0-1" data-section="m0-1">M0.1 — Records and integrity</a><a href="#m0-1-build-checklist" data-section="m0-1-build-checklist">Build checklist</a><a href="#m0-1-tests-and-completion-gate" data-section="m0-1-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-1-progress-evidence" data-section="m0-1-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.1 Records API</summary><a href="#m0-1-api" data-section="m0-1-api">M0.1 records API and schema binding</a><a href="#m0-1-api-record-envelope" data-section="m0-1-api-record-envelope">Record envelope</a><a href="#m0-1-api-content-identity" data-section="m0-1-api-content-identity">Content identity</a><a href="#m0-1-api-paths-and-atomic-writes" data-section="m0-1-api-paths-and-atomic-writes">Paths and atomic writes</a><a href="#m0-1-api-pre-run-configuration" data-section="m0-1-api-pre-run-configuration">Pre-run configuration</a><a href="#m0-1-api-evidence-index-interface-foundation" data-section="m0-1-api-evidence-index-interface-foundation">Evidence-index interface foundation</a><a href="#m0-1-api-test-coverage-and-review-limits" data-section="m0-1-api-test-coverage-and-review-limits">Test coverage and review limits</a></details>
 <details open><summary>M0.2 Baseline preservation</summary><a href="#m0-2" data-section="m0-2">M0.2 — Baseline preservation</a><a href="#m0-2-build-checklist" data-section="m0-2-build-checklist">Build checklist</a><a href="#m0-2-tests-and-completion-gate" data-section="m0-2-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-2-progress-evidence" data-section="m0-2-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.3 Data readiness</summary><a href="#m0-3" data-section="m0-3">M0.3 — Data readiness</a><a href="#m0-3-build-checklist" data-section="m0-3-build-checklist">Build checklist</a><a href="#m0-3-tests-and-completion-gate" data-section="m0-3-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-3-progress-evidence" data-section="m0-3-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.4 Exposure governance</summary><a href="#m0-4" data-section="m0-4">M0.4 — Exposure governance</a><a href="#m0-4-build-checklist" data-section="m0-4-build-checklist">Build checklist</a><a href="#m0-4-tests-and-completion-gate" data-section="m0-4-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-4-progress-evidence" data-section="m0-4-progress-evidence">Progress evidence</a></details>
@@ -1159,6 +1160,7 @@ acceptance/
 <section class="doc-section" id="m0-spec-5-record-schemas-and-semantics" data-guide="M0 implementation specification">
 <p class="eyebrow">M0 implementation specification</p><h2>5. Record schemas and semantics</h2>
 <p>All generated JSON record roots MUST contain <code>schema_version</code>, <code>record_type</code>, <code>run_id</code>, <code>created_at_utc</code>; collection records use an object envelope with an <code>items</code> field. Pre-run templates have their own validated input type and are bound to a run when copied. The evidence index declares JSONL row schema versions/types. Null means unavailable with an accompanying reason, never an invented observation. Validators distinguish malformed records from valid records with unresolved scientific facts.</p>
+<p>M0.1 schema binding: object-record payload fields described below live under <code>data</code>; collections use <code>items</code>. The common envelope validator enforces those exact roots, while later packages validate domain payloads and readiness. See the <a href="#m0-1-api">implemented records API</a> for the concrete pre-run configuration keys, hash policy and evidence-interface boundaries. This binding does not mark M0.2-M0.6 implemented or establish Gate G0.</p>
 <h3 id="m0-spec-51-run-and-source-preservation">5.1 Run and source preservation</h3>
 <p><code>run.json</code>: spec ID/version/hash, requested mode (<code>pilot</code> or <code>confirmatory_design</code>), invocation/config hash, resolved repo/data/output paths, predecessor if any, state/times, and gate/report references.</p>
 <p><code>baseline/git.json</code>: HEAD commit/ref, dirty state, staged/unstaged status and relevant tracked/untracked file inventory. Capture HEAD plus both staged and unstaged changes and relevant untracked source/protocols. A commit hash alone MUST NOT identify a dirty run.</p>
@@ -1324,12 +1326,13 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
 <p>Prepared: 7 November 2026. Scope: implementation planning only.</p>
-<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. Code implementation has not started.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1 is implemented and self-reviewed; M0.2-M0.6 have not started.</p>
 <p>All M0-specific documents live together in this folder:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
   README.md                         # Tracker and starting point
   M0_SPEC.md                        # Master source of truth
   M0_1_RECORDS_INTEGRITY.md
+  M0_1_RECORDS_API.md               # Implemented foundation API
   M0_2_BASELINE_PRESERVATION.md
   M0_3_DATA_READINESS.md
   M0_4_EXPOSURE_GOVERNANCE.md
@@ -1339,7 +1342,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <section class="doc-section" id="m0-tracker-work-packages-and-progress" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Work packages and progress</h2>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master work packages</th><th scope="col">Depends on</th><th scope="col">Status</th><th scope="col">Completion evidence</th></tr></thead><tbody>
-<tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Reviewed</td><td>21 foundation tests; 70 total CPU tests passed, no skips; <a href="#m0-1-progress-evidence">API/evidence</a></td></tr>
 <tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
@@ -1375,44 +1378,121 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>Start with <a href="#m0-1">M0.1</a>. The current deliverable is this checklist set; runtime records, new runner commands and scientific experiments remain implementation work.</p>
+<p>M0.1 is complete at package scope; use its <a href="#m0-1-api">API contract</a> for subsequent work. <a href="#m0-2">M0.2</a> is the next package and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
-<p>Status: Not started. Depends on: none. Master mapping: WP0; sections 3-6, 7 input validation, 10. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Status: Reviewed (Codex implementation/self-review, 7 November 2026). Depends on: none. Master mapping: WP0; sections 3-6, 7 input validation, 10. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
 </section>
 <section class="doc-section" id="m0-1-build-checklist" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Add <code>breakhis/research/records.py</code> and package initialization with no experiment side effects on import.</li>
-<li class="check-item"><span class="check pending">Pending</span>Define versioned generated-record envelopes and separate pre-run input validation; enforce required fields, supported versions, finite values and explicit unknowns.</li>
-<li class="check-item"><span class="check pending">Pending</span>Define exact-byte hashes and separate canonical semantic hashes; stable path/order conventions must not depend on timestamps or absolute roots.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement UTF-8 atomic JSON writes and referenced-artifact verification; reject missing/tampered evidence rather than regenerating it silently.</li>
-<li class="check-item"><span class="check pending">Pending</span>Validate IDs, config keys/types/ranges and config-directory-relative paths; reject traversal, source/output overlap and escaping symlinks/reparse points.</li>
-<li class="check-item"><span class="check pending">Pending</span>Refuse existing nonempty run destinations; prevent self-capture and historical/data overwrite.</li>
-<li class="check-item"><span class="check pending">Pending</span>Define the evidence-index interface needed later by M0.6 without implementing the full gate/runner here.</li>
+<li class="check-item"><span class="check done">Done</span>Add <code>breakhis/research/records.py</code> and package initialization with no experiment side effects on import.</li>
+<li class="check-item"><span class="check done">Done</span>Define versioned generated-record envelopes and separate pre-run input validation; enforce required fields, supported versions, finite values and explicit unknowns.</li>
+<li class="check-item"><span class="check done">Done</span>Define exact-byte hashes and separate canonical semantic hashes; stable path/order conventions must not depend on timestamps or absolute roots.</li>
+<li class="check-item"><span class="check done">Done</span>Implement UTF-8 atomic JSON writes and referenced-artifact verification; reject missing/tampered evidence rather than regenerating it silently.</li>
+<li class="check-item"><span class="check done">Done</span>Validate IDs, config keys/types/ranges and config-directory-relative paths; reject traversal, source/output overlap and escaping symlinks/reparse points.</li>
+<li class="check-item"><span class="check done">Done</span>Refuse existing nonempty run destinations; prevent self-capture and historical/data overwrite.</li>
+<li class="check-item"><span class="check done">Done</span>Define the evidence-index interface needed later by M0.6 without implementing the full gate/runner here.</li>
 </ul>
 </section>
 <section class="doc-section" id="m0-1-tests-and-completion-gate" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Tests and completion gate</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement foundation coverage for M0-T05, M0-T21, M0-T22: unsafe paths/nonempty output, unsupported schema, deleted/tampered records, and semantic versus file hash behavior.</li>
-<li class="check-item"><span class="check pending">Pending</span>Include ordering/relocation fixtures, interrupted-write behavior and read-only verification checks.</li>
-<li class="check-item"><span class="check pending">Pending</span>Preserve existing CLI/checkpoint behavior; run relevant regressions for changed shared code.</li>
-<li class="check-item"><span class="check pending">Pending</span>Review confirms correct hash meanings, explicit unknowns and no data mutation. Full evidence-index/gate integration remains M0.6.</li>
+<li class="check-item"><span class="check done">Done</span>Implement foundation coverage for M0-T05, M0-T21, M0-T22: unsafe paths/nonempty output, unsupported schema, deleted/tampered records, and semantic versus file hash behavior.</li>
+<li class="check-item"><span class="check done">Done</span>Include ordering/relocation fixtures, interrupted-write behavior and read-only verification checks.</li>
+<li class="check-item"><span class="check done">Done</span>Preserve existing CLI/checkpoint behavior; run relevant regressions for changed shared code.</li>
+<li class="check-item"><span class="check done">Done</span>Review confirms correct hash meanings, explicit unknowns and no data mutation. Full evidence-index/gate integration remains M0.6.</li>
 </ul>
 <p>Deliverables: records helper/API, schema contract references, <code>tests/test_research_records.py</code>, and actual test/review evidence. Do not create dataset audits or fit models in this package.</p>
+<p>Implemented interface and schema binding: <a href="#m0-1-api">M0.1 records API</a>.</p>
 </section>
 <section class="doc-section" id="m0-1-progress-evidence" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Test commands/results/logs: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Not assessed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.2 dependency released.</li>
+<li>Source identity: base commit <code>bf32956024bac49dff4099223f137b2b11e0cd46</code> plus exact implementation/test SHA-256 values in <code>artifacts/research/m0_1_acceptance/20261107-16299b64/summary.json</code>. This is package evidence, not the future M0.2 source snapshot.</li>
+<li>Test commands/results/logs: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>: 70 tests passed, zero skips, including 21 M0.1 tests. Retained log: <code>artifacts/research/m0_1_acceptance/20261107-16299b64/full-suite.log</code>; evidence is local/ignored, not a public repository artifact.</li>
+<li>Reviewer/date: Codex self-review, 7 November 2026; no independent scientific/human attestation is implied.</li>
+<li>Open issues/restrictions: full evidence graph/completeness/G0 integration remains M0.6. M0.2 source policy/consistency and later domain payload validators remain required. Atomic no-clobber publication requires hard-link support; static containment does not defend against hostile concurrent directory replacement. See the API contract.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and M0.2 dependency released.</li>
 </ul>
+</section>
+<section class="doc-section" id="m0-1-api" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h1>M0.1 records API and schema binding</h1>
+<p>Implementation: <code>breakhis/research/records.py</code>. Contract: <a href="#m0-spec">M0 master spec</a>. Delivery checklist: <a href="#m0-1">M0.1</a>. This is an implemented foundation API, not an M0 runner, source capture, audit, or readiness evaluator. Importing the research package performs no experiment/IO and imports no PyTorch.</p>
+</section>
+<section class="doc-section" id="m0-1-api-record-envelope" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Record envelope</h2>
+<p>Generated records use strict schema version 1. A noncollection has exactly:</p>
+<div class="code-block"><div class="code-toolbar"><span>json</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>{
+  &quot;schema_version&quot;: 1,
+  &quot;record_type&quot;: &quot;run&quot;,
+  &quot;run_id&quot;: &quot;m0-example&quot;,
+  &quot;created_at_utc&quot;: &quot;2026-11-07T00:00:00Z&quot;,
+  &quot;data&quot;: {&quot;status&quot;: &quot;created&quot;}
+}</code></pre></div>
+<p>Collection types replace <code>data</code> with <code>items</code>, a list of objects. The registry <code>RECORD_SHAPES</code> defines object/collection envelopes for the planned record types. This is the concrete envelope binding for master section 5: object payload fields described there live under <code>data</code>; collections use <code>items</code>. Unknown root fields, record types, schema versions and non-UTC timestamps are rejected.</p>
+<p><code>validate_record</code> validates envelope/JSON structure only. It does not establish that an audit is complete, a source snapshot exists, or G0 is ready. Later packages must validate each record&#x27;s scientific/domain payload and referenced evidence.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Function</th><th scope="col">Contract</th></tr></thead><tbody>
+<tr><td><code>new_record(record_type, run_id, payload, created_at_utc=...)</code></td><td>Selects data/items envelope, validates and detaches caller-owned mutable payload</td></tr>
+<tr><td><code>validate_record(record, expected_type=...)</code></td><td>Strict root/type/version/UTC/JSON validation; returns record without creating outputs</td></tr>
+<tr><td><code>validate_fact(fact)</code></td><td>Validates explicit knowledge status/value/reason/evidence references, not their scientific truth</td></tr>
+<tr><td><code>read_json(path)</code></td><td>UTF-8/BOM-aware strict JSON; rejects duplicate keys, malformed input and nonfinite values</td></tr>
+<tr><td><code>read_record(run_dir, relative, expected_type=...)</code></td><td>Confined read plus envelope validation</td></tr>
+</tbody></table></div>
+<p>Explicit material unknowns use <code>{value: null, status: unknown, reason: text, evidence_refs: []}</code>. Verified/self-reported facts require a value and reference; unknown/disputed facts require a reason. <code>validate_fact</code> must be called by domain validators for material assertions; optional JSON nulls alone do not imply an eligibility state. No missing fact is filled with an invented default.</p>
+</section>
+<section class="doc-section" id="m0-1-api-content-identity" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Content identity</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Function</th><th scope="col">Identity</th></tr></thead><tbody>
+<tr><td><code>file_sha256(path)</code></td><td>SHA-256 over actual file bytes; use safe_child first for confined reads</td></tr>
+<tr><td><code>canonical_json_bytes(value)</code></td><td>UTF-8, sorted object keys, compact separators, finite JSON only</td></tr>
+<tr><td><code>semantic_sha256(value, domain=...)</code></td><td>Hash of version/domain/content; separate namespaces do not share identity</td></tr>
+<tr><td><code>content_id(namespace, identity)</code></td><td>Stable 64-character content ID, independent of row position</td></tr>
+<tr><td><code>snapshot_sha256(entries, policy)</code></td><td>Sorted portable path/SHA pairs plus capture policy; ignores per-entry root/timestamp metadata</td></tr>
+</tbody></table></div>
+<p>This canonical encoding is deliberately defined here, not claimed as RFC 8785. List order matters unless a specialized helper sorts it; numeric <code>1</code> and <code>1.0</code> retain their JSON representations. Snapshot entries must be unique, including case-folded path collisions, and use lowercase SHA-256. Capture policy is part of identity and must itself be root/timestamp-independent in M0.2. Semantic image-inventory field selection remains M0.3 work.</p>
+</section>
+<section class="doc-section" id="m0-1-api-paths-and-atomic-writes" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Paths and atomic writes</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Function</th><th scope="col">Contract</th></tr></thead><tbody>
+<tr><td><code>portable_relative_path(value)</code></td><td>POSIX relative artifact path; no traversal, drives/UNC, streams, ambiguous separators, reserved Windows names or trailing dot/space aliases</td></tr>
+<tr><td><code>safe_child(root, relative, must_exist=...)</code></td><td>Resolve inside trusted root; reject symlinks/junctions below it, even internal links</td></tr>
+<tr><td><code>reject_overlap(output, protected_roots)</code></td><td>Reject both containment directions against data/protected source roots</td></tr>
+<tr><td><code>create_run_directory(output_root, run_id, protected_roots=...)</code></td><td>New/empty destination only; never delete/empty prior content</td></tr>
+<tr><td><code>capture_relative_path(path, repo_root=..., output_root=...)</code></td><td>Validate an individual source file; prohibit outside inputs/self-capture</td></tr>
+<tr><td><code>write_record(run_dir, relative, record, overwrite=False)</code></td><td>UTF-8/fsynced temporary sibling, atomic no-clobber publication; explicit overwrite for intentional state updates</td></tr>
+</tbody></table></div>
+<p>Run roots must first be configuration-validated; these generic helpers do not independently identify a caller&#x27;s dataset. Full source inclusion/exclusion policy and capture consistency checks remain M0.2. Path containment covers static filesystem state, not hostile concurrent directory replacement.</p>
+<p>No-clobber publication uses a same-filesystem hard link; unsupported filesystems fail rather than use a racing check-then-replace fallback. Explicit overwrite uses atomic replacement. Temporary files are cleaned on failed flush/publication and prior destination bytes are preserved. A Windows junction fixture tests real link rejection without requiring symbolic-link privilege; directory junctions are removed without following their targets.</p>
+</section>
+<section class="doc-section" id="m0-1-api-pre-run-configuration" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Pre-run configuration</h2>
+<p><code>validate_m0_config(config, config_file=...)</code> validates a separate input schema without creating outputs/running checks. Required keys:</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Keys</th><th scope="col">Required values / semantics</th></tr></thead><tbody>
+<tr><td><code>schema_version</code>, <code>spec_id</code>, <code>spec_version</code></td><td><code>1</code>, <code>M0-SPEC-001</code>, <code>1.0</code></td></tr>
+<tr><td><code>repo_root</code>, <code>data_root</code></td><td>Existing directories; data root supplies the configured source inventory location for later adapters</td></tr>
+<tr><td><code>output_root</code></td><td>Within resolved repository <code>artifacts/research/m0</code>, nonoverlapping with data</td></tr>
+<tr><td><code>sources</code></td><td>Exactly <code>[&quot;cancer_binary&quot;]</code> for M0 version 1</td></tr>
+<tr><td><code>audit_workers</code>, <code>audit_seed</code></td><td>Positive integer workers; integer seed in 0 through 2^32-1; booleans rejected</td></tr>
+<tr><td><code>check_devices</code></td><td>Unique nonempty CPU/CUDA list containing <code>cpu</code></td></tr>
+<tr><td><code>baseline_checks</code></td><td>All four allowlisted identities: imports, cli_help, environment, regressions</td></tr>
+<tr><td><code>lineage_path</code>, <code>exposure_path</code>, <code>protocol_path</code>, <code>literature_path</code></td><td>Nonempty governance input paths, resolved but not yet ingested</td></tr>
+<tr><td><code>mode</code></td><td>pilot or confirmatory_design; does not authorize an experiment</td></tr>
+<tr><td><code>timeouts</code></td><td>Exactly environment_seconds, regression_seconds, audit_seconds; positive integer seconds</td></tr>
+</tbody></table></div>
+<p>Unknown/missing keys, arbitrary commands, invalid modes/versions and unsafe output paths are rejected. Native config paths resolve relative to the configuration file, not cwd, and can use ordinary parent navigation to locate the repo/data. Portable relative artifact paths never allow <code>..</code>. Relative config outputs are normalized and then checked against the repository artifact anchor. Governance files need not exist during structure validation; M0.4-M0.6 must ingest and verify them before granting readiness. No runnable M0 CLI/template is added in this package.</p>
+</section>
+<section class="doc-section" id="m0-1-api-evidence-index-interface-foundation" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Evidence-index interface foundation</h2>
+<p><code>artifact_entry</code> creates exact-byte metadata with these keys: <code>path</code>, <code>record_type</code>, <code>schema_version</code>, <code>sha256</code>, <code>bytes</code>, <code>operation_id</code>, <code>status</code>. Raw text/binary files use null schema version; versioned JSON uses a registered record type and version 1. Statuses are complete, partial or failed. Metadata creation does not prove payload validity; verification checks it separately.</p>
+<p><code>verify_artifact</code> checks safe path, size, hash, optional envelope and run identity. Incomplete status is rejected by default; explicitly allowing partial evidence does not change its status or make it scientifically eligible. <code>verify_evidence_index</code> verifies entries in an evidence_index envelope, rejects duplicate/case-colliding/self-index paths, and returns a count/run identity. It is read-only and never regenerates invalid artifacts. An empty index can be structurally valid but grants no readiness; completeness, dependency cycles beyond self-indexing, required artifacts and G0 evaluation remain M0.6 responsibilities.</p>
+<p>Errors use <code>RecordError</code> for malformed records/config/paths and <code>IntegrityError</code> for missing/changed/incomplete evidence. Underlying IO errors during publication are preserved. No error is converted into a successful empty record.</p>
+</section>
+<section class="doc-section" id="m0-1-api-test-coverage-and-review-limits" data-guide="M0.1 Records API">
+<p class="eyebrow">M0.1 Records API</p><h2>Test coverage and review limits</h2>
+<p><code>tests/test_research_records.py</code> covers M0-T05/M0-T21/M0-T22 foundation requirements: unsafe output/paths, actual/mock links, source self-capture, malformed versions, explicit unknowns, semantic/file hash distinctions, no-clobber races, interrupted writes, tampering/missing evidence and read-only verification. M0.6 still needs integrated gate/runner coverage before those master acceptance cases are complete.</p>
 </section>
 <section class="doc-section" id="m0-2" data-guide="M0.2 Baseline preservation">
 <p class="eyebrow">M0.2 Baseline preservation</p><h1>M0.2 — Baseline preservation</h1>

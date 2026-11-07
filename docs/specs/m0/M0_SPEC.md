@@ -96,6 +96,13 @@ Requirements:
 
 All generated JSON record roots MUST contain `schema_version`, `record_type`, `run_id`, `created_at_utc`; collection records use an object envelope with an `items` field. Pre-run templates have their own validated input type and are bound to a run when copied. The evidence index declares JSONL row schema versions/types. Null means unavailable with an accompanying reason, never an invented observation. Validators distinguish malformed records from valid records with unresolved scientific facts.
 
+M0.1 schema binding: object-record payload fields described below live under
+`data`; collections use `items`. The common envelope validator enforces those
+exact roots, while later packages validate domain payloads and readiness. See the
+[implemented records API](M0_1_RECORDS_API.md) for the concrete pre-run configuration
+keys, hash policy and evidence-interface boundaries. This binding does not mark
+M0.2-M0.6 implemented or establish Gate G0.
+
 ### 5.1 Run and source preservation
 
 `run.json`: spec ID/version/hash, requested mode (`pilot` or `confirmatory_design`), invocation/config hash, resolved repo/data/output paths, predecessor if any, state/times, and gate/report references.
