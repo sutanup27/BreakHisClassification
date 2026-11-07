@@ -102,6 +102,10 @@ Gate G0: unresolved source/identity issues block strong clinical/patient or nove
 
 ## 5. M1: implement scientific infrastructure
 
+Development and acceptance contract: [M1 specification](../specs/m1/M1_SPEC.md).
+Delivery order and package checklists: [M1 tracker](../specs/m1/README.md).
+These planning documents do not start implementation or clear current G0 scientific restrictions.
+
 ### Folds and partition boundaries
 
 Create immutable stratified outer fold assignments over duplicate-linked filename components. All magnifications and subtype images in a component move together. Inside each outer training partition assign inner training/development roles. Reserve separate calibration/shortlist confirmation groups only if support permits; otherwise declare development reuse as a small-data compromise.

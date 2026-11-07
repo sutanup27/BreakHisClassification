@@ -25,6 +25,7 @@ in a browser; no web server, installation, or internet connection is required.
 | Implement and test the first research milestone | [M0 specification](docs/specs/m0/M0_SPEC.md) |
 | Track M0 implementation package by package | [M0 checklist tracker](docs/specs/m0/README.md) |
 | Generate or verify M0 evidence and read Gate G0 | [M0 runner reference](docs/specs/m0/M0_6_RUNNER_API.md) |
+| Plan M1 infrastructure and track its implementation | [M1 specification and six-package tracker](docs/specs/m1/README.md) |
 
 ## First-run checklist
 
