@@ -38,6 +38,12 @@ def _now():
     return datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
 
+def audit_data(*args, **kwargs):
+    """Lazy M0.3 adapter; see data_readiness.audit_data for its contract."""
+    from .data_readiness import audit_data as audit
+    return audit(*args, **kwargs)
+
+
 def _git(repo, *args):
     return subprocess.run(['git', '-C', str(repo), *args], check=True,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60).stdout

@@ -2,7 +2,7 @@
 
 Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.
 
-[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.2 are implemented and self-reviewed; M0.3-M0.6 have not started.
+[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.3 are implemented and self-reviewed; M0.4-M0.6 have not started.
 
 All M0-specific documents live together in this folder:
 
@@ -15,6 +15,7 @@ docs/specs/m0/
   M0_2_BASELINE_PRESERVATION.md
   M0_2_BASELINE_API.md              # Baseline usage and evidence contracts
   M0_3_DATA_READINESS.md
+  M0_3_DATA_API.md                  # Audit usage and readiness boundaries
   M0_4_EXPOSURE_GOVERNANCE.md
   M0_5_PROTOCOL_LITERATURE.md
   M0_6_RUNNER_GATE.md
@@ -26,7 +27,7 @@ docs/specs/m0/
 | --- | --- | --- | --- | --- |
 | [M0.1 Records and integrity](M0_1_RECORDS_INTEGRITY.md) | WP0 | None | Reviewed | 21 foundation tests; 70 total CPU tests passed, no skips; [API/evidence](M0_1_RECORDS_INTEGRITY.md#progress-evidence) |
 | [M0.2 Baseline preservation](M0_2_BASELINE_PRESERVATION.md) | WP1-WP2 | M0.1 reviewed | Reviewed | 16 baseline tests; 86 total CPU tests passed, no skips; [fresh source/check evidence](M0_2_BASELINE_PRESERVATION.md#progress-evidence) |
-| [M0.3 Data readiness](M0_3_DATA_READINESS.md) | WP3-WP4 | M0.1-M0.2 reviewed | Not started | Pending |
+| [M0.3 Data readiness](M0_3_DATA_READINESS.md) | WP3-WP4 | M0.1-M0.2 reviewed | Reviewed | 19 data tests; 105 total CPU tests passed, no skips; [synthetic audit evidence](M0_3_DATA_READINESS.md#progress-evidence) |
 | [M0.4 Exposure governance](M0_4_EXPOSURE_GOVERNANCE.md) | WP5 | M0.1-M0.3 reviewed | Not started | Pending |
 | [M0.5 Protocol and literature](M0_5_PROTOCOL_LITERATURE.md) | WP6 | M0.1-M0.4 reviewed | Not started | Pending |
 | [M0.6 Runner and Gate G0](M0_6_RUNNER_GATE.md) | WP7-WP9 | M0.1-M0.5 reviewed | Not started | Pending |
@@ -61,4 +62,4 @@ All M0-T01 through M0-T26 must have final traceability. Test IDs refer to the ma
 
 ## Starting point
 
-M0.1-M0.2 are complete at package scope; use their [records API](M0_1_RECORDS_API.md) and [baseline API](M0_2_BASELINE_API.md) for subsequent work. [M0.3 data readiness](M0_3_DATA_READINESS.md) is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.
+M0.1-M0.3 are complete at package scope; use the [records API](M0_1_RECORDS_API.md), [baseline API](M0_2_BASELINE_API.md) and [data API](M0_3_DATA_API.md) for subsequent work. [M0.4 exposure governance](M0_4_EXPOSURE_GOVERNANCE.md) is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.

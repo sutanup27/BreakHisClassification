@@ -30,6 +30,7 @@
 <details open><summary>M0.2 Baseline preservation</summary><a href="#m0-2" data-section="m0-2">M0.2 — Baseline preservation</a><a href="#m0-2-build-checklist" data-section="m0-2-build-checklist">Build checklist</a><a href="#m0-2-tests-and-completion-gate" data-section="m0-2-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-2-progress-evidence" data-section="m0-2-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.2 Baseline API</summary><a href="#m0-2-api" data-section="m0-2-api">M0.2 baseline preservation API</a><a href="#m0-2-api-run-a-baseline" data-section="m0-2-api-run-a-baseline">Run a baseline</a><a href="#m0-2-api-functions-and-outputs" data-section="m0-2-api-functions-and-outputs">Functions and outputs</a><a href="#m0-2-api-developer-tests" data-section="m0-2-api-developer-tests">Developer tests</a></details>
 <details open><summary>M0.3 Data readiness</summary><a href="#m0-3" data-section="m0-3">M0.3 — Data readiness</a><a href="#m0-3-build-checklist" data-section="m0-3-build-checklist">Build checklist</a><a href="#m0-3-tests-and-completion-gate" data-section="m0-3-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-3-progress-evidence" data-section="m0-3-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.3 Data API</summary><a href="#m0-3-api" data-section="m0-3-api">M0.3 data readiness API</a><a href="#m0-3-api-calling-the-audit" data-section="m0-3-api-calling-the-audit">Calling the audit</a><a href="#m0-3-api-records-and-accounting" data-section="m0-3-api-records-and-accounting">Records and accounting</a><a href="#m0-3-api-lineage-declarations" data-section="m0-3-api-lineage-declarations">Lineage declarations</a><a href="#m0-3-api-readiness-boundaries" data-section="m0-3-api-readiness-boundaries">Readiness boundaries</a><a href="#m0-3-api-developer-validation" data-section="m0-3-api-developer-validation">Developer validation</a></details>
 <details open><summary>M0.4 Exposure governance</summary><a href="#m0-4" data-section="m0-4">M0.4 — Exposure governance</a><a href="#m0-4-build-checklist" data-section="m0-4-build-checklist">Build checklist</a><a href="#m0-4-tests-and-completion-gate" data-section="m0-4-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-4-progress-evidence" data-section="m0-4-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.5 Protocol &amp; literature</summary><a href="#m0-5" data-section="m0-5">M0.5 — Protocol and literature</a><a href="#m0-5-build-checklist" data-section="m0-5-build-checklist">Build checklist</a><a href="#m0-5-tests-and-completion-gate" data-section="m0-5-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-5-progress-evidence" data-section="m0-5-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.6 Runner &amp; Gate G0</summary><a href="#m0-6" data-section="m0-6">M0.6 — Runner and Gate G0</a><a href="#m0-6-build-checklist" data-section="m0-6-build-checklist">Build checklist</a><a href="#m0-6-tests-and-completion-gate" data-section="m0-6-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-6-progress-evidence" data-section="m0-6-progress-evidence">Progress evidence</a></details></details>
@@ -1327,7 +1328,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
 <p>Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.</p>
-<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.2 are implemented and self-reviewed; M0.3-M0.6 have not started.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.3 are implemented and self-reviewed; M0.4-M0.6 have not started.</p>
 <p>All M0-specific documents live together in this folder:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
   README.md                         # Tracker and starting point
@@ -1337,6 +1338,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
   M0_2_BASELINE_PRESERVATION.md
   M0_2_BASELINE_API.md              # Baseline usage and evidence contracts
   M0_3_DATA_READINESS.md
+  M0_3_DATA_API.md                  # Audit usage and readiness boundaries
   M0_4_EXPOSURE_GOVERNANCE.md
   M0_5_PROTOCOL_LITERATURE.md
   M0_6_RUNNER_GATE.md</code></pre></div>
@@ -1346,7 +1348,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master work packages</th><th scope="col">Depends on</th><th scope="col">Status</th><th scope="col">Completion evidence</th></tr></thead><tbody>
 <tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Reviewed</td><td>21 foundation tests; 70 total CPU tests passed, no skips; <a href="#m0-1-progress-evidence">API/evidence</a></td></tr>
 <tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Reviewed</td><td>16 baseline tests; 86 total CPU tests passed, no skips; <a href="#m0-2-progress-evidence">fresh source/check evidence</a></td></tr>
-<tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Reviewed</td><td>19 data tests; 105 total CPU tests passed, no skips; <a href="#m0-3-progress-evidence">synthetic audit evidence</a></td></tr>
 <tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-5">M0.5 Protocol and literature</a></td><td>WP6</td><td>M0.1-M0.4 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-6">M0.6 Runner and Gate G0</a></td><td>WP7-WP9</td><td>M0.1-M0.5 reviewed</td><td>Not started</td><td>Pending</td></tr>
@@ -1380,7 +1382,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>M0.1-M0.2 are complete at package scope; use their <a href="#m0-1-api">records API</a> and <a href="#m0-2-api">baseline API</a> for subsequent work. <a href="#m0-3">M0.3 data readiness</a> is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
+<p>M0.1-M0.3 are complete at package scope; use the <a href="#m0-1-api">records API</a>, <a href="#m0-2-api">baseline API</a> and <a href="#m0-3-api">data API</a> for subsequent work. <a href="#m0-4">M0.4 exposure governance</a> is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
@@ -1590,41 +1592,104 @@ python -m unittest discover -s tests -v</code></pre></div>
 </section>
 <section class="doc-section" id="m0-3" data-guide="M0.3 Data readiness">
 <p class="eyebrow">M0.3 Data readiness</p><h1>M0.3 — Data readiness</h1>
-<p>Status: Not started. Depends on: M0.1-M0.2 reviewed. Master mapping: WP3-WP4; sections 5.3-5.4, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Status: Reviewed (implementation/self-review, 7 November 2026). Depends on: M0.1-M0.2 reviewed. Master mapping: WP3-WP4; sections 5.3-5.4, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Implemented usage and record contracts: <a href="#m0-3-api">data readiness API</a>.</p>
 </section>
 <section class="doc-section" id="m0-3-build-checklist" data-guide="M0.3 Data readiness">
 <p class="eyebrow">M0.3 Data readiness</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Adapt existing inventory/parser/duplicate logic for <code>cancer_binary</code>; preserve CLI/manifest compatibility and use a new research-only output.</li>
-<li class="check-item"><span class="check pending">Pending</span>Account for every supported image, including failures, with available raw hashes, decoded-pixel hashes, parse/decode status and exclusion reasons.</li>
-<li class="check-item"><span class="check pending">Pending</span>Preserve filename suffixes/all-magnification grouping; create stable image/component IDs and deterministic duplicate representatives.</li>
-<li class="check-item"><span class="check pending">Pending</span>Detect mixed-label duplicates/components as blockers; never silently fix labels or merge groups to match published counts.</li>
-<li class="check-item"><span class="check pending">Pending</span>Produce class/subtype/magnification/group, size, dimension, exclusion and historical-discrepancy summaries; record absent magnifications without imputation.</li>
-<li class="check-item"><span class="check pending">Pending</span>Ingest lineage evidence with verified/self-reported/unknown/disputed states and owners for missing derivative/original facts.</li>
-<li class="check-item"><span class="check pending">Pending</span>Record bounded near-duplicate screening/review or its incompleteness; no automatic exclusion of merely similar tissue.</li>
-<li class="check-item"><span class="check pending">Pending</span>Validate boundaries if reusing a legacy pilot manifest; label it as legacy pilot assignment, not research outer folds. Recheck content/file-set consistency.</li>
+<li class="check-item"><span class="check done">Done</span>Adapt existing inventory/parser/duplicate logic for <code>cancer_binary</code>; preserve CLI/manifest compatibility and use a new research-only output.</li>
+<li class="check-item"><span class="check done">Done</span>Account for every supported image, including failures, with available raw hashes, decoded-pixel hashes, parse/decode status and exclusion reasons.</li>
+<li class="check-item"><span class="check done">Done</span>Preserve filename suffixes/all-magnification grouping; create stable image/component IDs and deterministic duplicate representatives.</li>
+<li class="check-item"><span class="check done">Done</span>Detect mixed-label duplicates/components as blockers; never silently fix labels or merge groups to match published counts.</li>
+<li class="check-item"><span class="check done">Done</span>Produce class/subtype/magnification/group, size, dimension, exclusion and historical-discrepancy summaries; record absent magnifications without imputation.</li>
+<li class="check-item"><span class="check done">Done</span>Ingest lineage evidence with verified/self-reported/unknown/disputed states and owners for missing derivative/original facts.</li>
+<li class="check-item"><span class="check done">Done</span>Record bounded near-duplicate screening/review or its incompleteness; no automatic exclusion of merely similar tissue.</li>
+<li class="check-item"><span class="check done">Done</span>Validate boundaries if reusing a legacy pilot manifest; label it as legacy pilot assignment, not research outer folds. Recheck content/file-set consistency.</li>
 </ul>
 </section>
 <section class="doc-section" id="m0-3-tests-and-completion-gate" data-guide="M0.3 Data readiness">
 <p class="eyebrow">M0.3 Data readiness</p><h2>Tests and completion gate</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T06 through M0-T10: synthetic magnifications, alternate encodings/duplicate names, label conflicts, corrupt/misplaced/unreadable images, missing/empty sources and absent magnifications.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T15: unknown lineage/clinical identity stays unknown and yields truthful restrictions.</li>
-<li class="check-item"><span class="check pending">Pending</span>Assert discovered/included/excluded accounting reconciles and original inputs are not modified.</li>
-<li class="check-item"><span class="check pending">Pending</span>Review verifies evidence quality, not just output existence. Valid unresolved lineage may permit restricted exploratory work; label conflicts must still block affected readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T06 through M0-T10: synthetic magnifications, alternate encodings/duplicate names, label conflicts, corrupt/misplaced/unreadable images, missing/empty sources and absent magnifications.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T15: unknown lineage/clinical identity stays unknown and yields truthful restrictions.</li>
+<li class="check-item"><span class="check done">Done</span>Assert discovered/included/excluded accounting reconciles and original inputs are not modified.</li>
+<li class="check-item"><span class="check done">Done</span>Review verifies evidence quality, not just output existence. Valid unresolved lineage may permit restricted exploratory work; label conflicts must still block affected readiness.</li>
 </ul>
 <p>Deliverables: audit adapters, complete inventory/component/summary records, lineage/review records and tests. Real local audit execution is coordinated in M0.6; no fold generation or model fitting here.</p>
 </section>
 <section class="doc-section" id="m0-3-progress-evidence" data-guide="M0.3 Data readiness">
 <p class="eyebrow">M0.3 Data readiness</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Test commands/results/logs: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Not assessed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.4 dependency released.</li>
+<li>Source identity: HEAD <code>3c9b542fb2789d97c1bd9bf5a6b2c491c42bc6a0</code> plus dirty source snapshot <code>94ec5769fb20eeeb4d9240fe0621e622a18438f0c1cf6bc6337bfe6fc24d9ddd</code>. The commit alone is not the tested implementation. Snapshot precedes final acceptance-note edits; exact implementation/test hashes are recorded in <code>acceptance-summary.json</code>.</li>
+<li>Current local evidence: <code>artifacts/research/m0/m0-3-acceptance-20261107T103919Z/</code> (ignored local outputs, not committed). Includes attributable M0.2 source/environment/check evidence, <code>audit/</code> synthetic inventory and summaries, and <code>fixtures/label-conflict/audit/</code> blocked evidence. <code>acceptance-summary.json</code> explicitly labels inputs synthetic-only and real-dataset audit false; <code>verification-summary.json</code> records independent source/log/image-hash/accounting checks.</li>
+<li>Actual full-suite command: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>; 105 tests passed, no skips, in 60.765 seconds. Logs: <code>logs/regressions.stdout.log</code> / <code>logs/regressions.stderr.log</code> in that run. Current imports, six CLI help commands, pip commands and synthetic CPU environment checks also passed; source remained consistent throughout checks.</li>
+<li>Coverage: 19 <code>tests/test_m0_data.py</code> tests cover M0-T06-T10/M0-T15 plus source drift, unsafe paths, immutable historical-manifest validation and no-overwrite failures. The previous 86 tests also passed. Canonical parser/RGB hashes are compared directly, not redefined for compatibility.</li>
+<li>Saved fixture result: 9 supported synthetic images = 8 included + 1 exact decoded duplicate excluded, with stable representative/group references. The two-image mixed-label duplicate fixture reports <code>DATA_LABEL_CONFLICT</code> and data-integrity readiness false; labels are preserved.</li>
+<li>Reviewer/date: Codex implementation/self-review, 7 November 2026; engineering package review, not independent scientific adjudication.</li>
+<li>Restrictions: Real BreaKHis audit remains M0.6; no real inventory totals, verified identities, untouched groups, folds or scientific fits are claimed. Perceptual near-duplicate screening is explicitly incomplete in v1; no suspicious-pair adjudication or image-specific clinical mapping is implemented. Unknown lineage needs a reviewed scope decision; exposure/protocol/fold support remain downstream. Package completion does not grant exploratory/confirmatory readiness or G0. GPU execution remains unvalidated in this CPU acceptance run.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and M0.4 dependency released.</li>
 </ul>
+</section>
+<section class="doc-section" id="m0-3-api" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h1>M0.3 data readiness API</h1>
+<p>Implemented in <code>breakhis/research/data_readiness.py</code>, exposed through the lazy <code>breakhis.research.m0.audit_data</code> adapter. Existing <code>prepare-data</code>, manifests, training and checkpoints are unchanged. This package creates no folds or fits. Real local M0 execution remains coordinated in M0.6; acceptance uses synthetic temporary images, not the user&#x27;s BreaKHis files.</p>
+</section>
+<section class="doc-section" id="m0-3-api-calling-the-audit" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h2>Calling the audit</h2>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>from pathlib import Path
+from breakhis.research.records import create_run_directory
+from breakhis.research.m0 import audit_data
+
+repo = Path.cwd().resolve()  # repository root
+data = repo.parent / &#x27;Dataset/dataset_cancer_v1/classificacao_binaria&#x27;
+run_id = &#x27;data-audit-unique-id&#x27;  # choose a new ID for each invocation
+run = create_run_directory(repo / &#x27;artifacts/research/m0&#x27;, run_id,
+                           protected_roots=[data])
+result = audit_data(data, run, run_id, repo_root=repo, workers=4)
+print(result[&#x27;counts&#x27;], result[&#x27;blockers&#x27;], result[&#x27;restrictions&#x27;])</code></pre></div>
+<p>This example performs a real read-only audit if explicitly run. Use a synthetic fixture root during development. Images and old manifests are never rewritten. All output goes into a new <code>audit/</code> below the supplied run; an existing audit directory is refused. Paths must not overlap the source. Symlink/junction roots and child directories are refused; escaping or missing image paths are excluded and block data-integrity readiness. Containment follows M0.1&#x27;s static filesystem contract, not a hostile concurrent filesystem guarantee.</p>
+<p><code>workers</code> is a positive integer, default 1. <code>repo_root</code> defaults to the installed source repository; explicitly set it when using temporary fixture repositories. Optional <code>lineage</code> is a validated input object described below. Optional <code>legacy_manifest</code> is a path to an existing, binary-only legacy v1 manifest; it is read and hashed, never rewritten. Invalid reuse blocks data readiness.</p>
+</section>
+<section class="doc-section" id="m0-3-api-records-and-accounting" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h2>Records and accounting</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Output under <code>audit/</code></th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td><code>inventory.jsonl</code></td><td>One v1 <code>image_inventory_row</code> per supported image discovery, including failures</td></tr>
+<tr><td><code>exclusions.jsonl</code></td><td>Full excluded rows, not just an aggregate count</td></tr>
+<tr><td><code>duplicate_components.json</code></td><td>Stable exact-content/full-filename-group linked components; label conflicts explicit</td></tr>
+<tr><td><code>group_summary.json</code></td><td>Counts, distributions, dimensions, group support, exclusions and historical discrepancies</td></tr>
+<tr><td><code>lineage.json</code></td><td>Evidence-status declarations, reviewer, unknowns, owners and claim restrictions</td></tr>
+<tr><td><code>near_duplicate_review.json</code></td><td>Explicitly incomplete perceptual screening; no similar-tissue auto-removal</td></tr>
+<tr><td><code>manifest.json</code></td><td>Research inventory references; no train/validation/test assignment generated</td></tr>
+<tr><td><code>audit.json</code></td><td>Source identity, execution metadata, counts, blockers, restrictions and optional legacy validation</td></tr>
+</tbody></table></div>
+<p>JSON records use the M0.1 envelope. JSONL row fields follow section 5.3 of the <a href="#m0-spec">master spec</a>, with <code>record_type</code>, <code>issues</code> and <code>unavailable_reasons</code> added for machine-readable failures. All supported discoveries appear even if parsing, reading or decoding fails. Raw bytes are hashed independently of name validation and decoding. Unknown fields remain null with reasons. Non-image paths are listed and counted separately; linked directories are reported without traversing them. Discovery errors, file-set changes and byte changes block data integrity. Missing/empty/all-invalid sources produce explicit blocked records.</p>
+<p>The existing canonical filename parser supplies binary label, subtype, magnification and full YEAR-SLIDE_ID including suffixes. Supported non-PNG extensions use the same filename stem grammar; decoding checks actual content. Dimensions are measured. Decoded hashes reuse the existing <code>SHA256(ASCII(width + &#x27;x&#x27; + height + &#x27;:&#x27;) + RGB bytes)</code> semantics.</p>
+<p>Image IDs derive from source plus normalized relative path. Component IDs derive from sorted image membership under versioned transitive raw-hash, decoded-hash and full-filename-group linkage. Identity links span magnifications. Stable pixel-equivalent representatives use the lexicographically smallest eligible relative path. Every duplicate exclusion references that representative. Mixed label components block readiness; their eligible members retain their labels and are not silently discarded to resolve the conflict. Excluded rows also participate in linkage whenever their hashes/group metadata are available.</p>
+<p>Discovered = included + excluded. Every class/subtype/magnification/group bucket reports these three counts, with unknown metadata in an explicit unknown bucket. Group support lists available/missing retained magnifications; no imputation is performed. Historical 7,909 / 7,784 / 125 / 81 figures are comparison references with observed deltas requiring review, never enforced totals or identity proof.</p>
+</section>
+<section class="doc-section" id="m0-3-api-lineage-declarations" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h2>Lineage declarations</h2>
+<p>Input shape: <code>{&quot;schema_version&quot;: 1, &quot;reviewer&quot;: null, &quot;facts&quot;: {...}}</code>. Each fact has exactly <code>value</code>, <code>status</code>, <code>reason</code>, <code>evidence_refs</code>, following M0.1 fact validation. Allowed fields:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>source_release, acquisition_date, archive_sha256, original_url, citation,
+usage_terms, terms_review_date, derivative_parent, transformation_parameters,
+transformation_code_history, backup_location, linkage_confidence,
+clinical_identity</code></pre></div>
+<p>Omitted facts become unknown/null, with an open question owned by <code>research_owner</code> and a review deadline of M1. Self-reported facts remain self-reported. Verified/disputed declarations require a named reviewer; evidence references are declarations for later review, not automatically authenticated external sources. No download or browsing occurs. Unknown keys/versions/malformed facts fail before audit output creation. The resolved lineage payload is hashed.</p>
+<p>Clinical identity is never inferred from the directory name, a published group count or even a general verified lineage statement. Image-specific clinical identity mapping is not implemented here: <code>verified_patient_id</code> and <code>identity_evidence_ref</code> remain null, and terminology remains filename/slide groups.</p>
+</section>
+<section class="doc-section" id="m0-3-api-readiness-boundaries" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h2>Readiness boundaries</h2>
+<p><code>data_integrity_ready</code> means only that this inventory passed its data consistency and label checks. <code>status</code> remains restricted when those checks pass. Exploratory and confirmatory readiness remain false: lineage scope, exclusions, exposure, protocol, fold support and similarity review need downstream adjudication. A lineage exception needs an explicit decision in later governance, not an automatic scientific pass.</p>
+<p>Perceptual near-duplicate screening is deliberately recorded as incomplete, algorithm <code>not_run</code>, threshold null with a reason, and no approved links or automatic similar-image exclusions. Exact hashes do not prove the absence of near-duplicates. Supplied suspicious-pair adjudication is not implemented in this version and cannot be represented as completed review.</p>
+<p>Legacy reuse requires an exact retained file set and matching raw/pixel hashes, labels, magnifications and full filename groups. Group, duplicate-component and hash boundaries must stay within a single partition. Validated assignments are always labeled <code>legacy_pilot_assignment</code>, never research outer folds; they make no claim that groups are historically untouched. Reseeding is not an exposure fix.</p>
+</section>
+<section class="doc-section" id="m0-3-api-developer-validation" data-guide="M0.3 Data API">
+<p class="eyebrow">M0.3 Data API</p><h2>Developer validation</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m unittest discover -s tests -p test_m0_data.py -v
+python -m unittest discover -s tests -v</code></pre></div>
+<p>See <a href="#m0-3">package acceptance and evidence</a>.</p>
 </section>
 <section class="doc-section" id="m0-4" data-guide="M0.4 Exposure governance">
 <p class="eyebrow">M0.4 Exposure governance</p><h1>M0.4 — Exposure governance</h1>
