@@ -24,6 +24,7 @@ RECORD_SHAPES = {
     'exposure_register': 'items', 'protocol.initial': 'data', 'decisions': 'items',
     'literature_matrix': 'items', 'evidence_index': 'items', 'gate_g0': 'data',
     'completion_receipt': 'data',
+    'component_eligibility': 'items', 'exposure_summary': 'data',
 }
 _ENVELOPE = {'schema_version', 'record_type', 'run_id', 'created_at_utc'}
 _ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}\Z')

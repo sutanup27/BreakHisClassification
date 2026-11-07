@@ -32,6 +32,7 @@
 <details open><summary>M0.3 Data readiness</summary><a href="#m0-3" data-section="m0-3">M0.3 — Data readiness</a><a href="#m0-3-build-checklist" data-section="m0-3-build-checklist">Build checklist</a><a href="#m0-3-tests-and-completion-gate" data-section="m0-3-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-3-progress-evidence" data-section="m0-3-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.3 Data API</summary><a href="#m0-3-api" data-section="m0-3-api">M0.3 data readiness API</a><a href="#m0-3-api-calling-the-audit" data-section="m0-3-api-calling-the-audit">Calling the audit</a><a href="#m0-3-api-records-and-accounting" data-section="m0-3-api-records-and-accounting">Records and accounting</a><a href="#m0-3-api-lineage-declarations" data-section="m0-3-api-lineage-declarations">Lineage declarations</a><a href="#m0-3-api-readiness-boundaries" data-section="m0-3-api-readiness-boundaries">Readiness boundaries</a><a href="#m0-3-api-developer-validation" data-section="m0-3-api-developer-validation">Developer validation</a></details>
 <details open><summary>M0.4 Exposure governance</summary><a href="#m0-4" data-section="m0-4">M0.4 — Exposure governance</a><a href="#m0-4-build-checklist" data-section="m0-4-build-checklist">Build checklist</a><a href="#m0-4-tests-and-completion-gate" data-section="m0-4-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-4-progress-evidence" data-section="m0-4-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.4 Exposure API</summary><a href="#m0-4-api" data-section="m0-4-api">M0.4 exposure governance API</a><a href="#m0-4-api-calling-the-resolver" data-section="m0-4-api-calling-the-resolver">Calling the resolver</a><a href="#m0-4-api-event-schema" data-section="m0-4-api-event-schema">Event schema</a><a href="#m0-4-api-derivative-equivalence" data-section="m0-4-api-derivative-equivalence">Derivative equivalence</a><a href="#m0-4-api-reviewed-history-boundary" data-section="m0-4-api-reviewed-history-boundary">Reviewed history boundary</a><a href="#m0-4-api-outputs-and-readiness-limits" data-section="m0-4-api-outputs-and-readiness-limits">Outputs and readiness limits</a><a href="#m0-4-api-tests" data-section="m0-4-api-tests">Tests</a></details>
 <details open><summary>M0.5 Protocol &amp; literature</summary><a href="#m0-5" data-section="m0-5">M0.5 — Protocol and literature</a><a href="#m0-5-build-checklist" data-section="m0-5-build-checklist">Build checklist</a><a href="#m0-5-tests-and-completion-gate" data-section="m0-5-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-5-progress-evidence" data-section="m0-5-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.6 Runner &amp; Gate G0</summary><a href="#m0-6" data-section="m0-6">M0.6 — Runner and Gate G0</a><a href="#m0-6-build-checklist" data-section="m0-6-build-checklist">Build checklist</a><a href="#m0-6-tests-and-completion-gate" data-section="m0-6-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-6-progress-evidence" data-section="m0-6-progress-evidence">Progress evidence</a></details></details>
 <details class="documentation-group"><summary>Historical archive</summary><details open><summary>Archive index</summary><a href="#archive-index" data-section="archive-index">Historical documentation archive</a></details>
@@ -1141,6 +1142,8 @@ audit/
   near_duplicate_review.json
 governance/
   exposure_register.json
+  component_eligibility.json
+  exposure_summary.json
   protocol.initial.json
   decisions.json
   literature_matrix.json
@@ -1204,6 +1207,7 @@ restriction(development_only|synthetic_not_real|unresolved), reviewer_note</code
 <p>Synthetic checks have separate source identity and MUST NOT quarantine real groups merely because generated filenames resemble BreaKHis. Operator recollections are self-reported, not automatically exact coverage.</p>
 <p>Component eligibility: known exposed/development-only; exposure unknown/requires adjudication; or candidate untouched within a stated reviewed coverage boundary. No-log evidence alone cannot mean verified unexposed. Require a reviewed history-coverage declaration before confirmatory eligibility. Missing manifests, unresolved references and contradictions remain open blockers.</p>
 <p>M0 records eligibility, not folds. It cannot select held-out groups using past metric quality. Confirmed equivalent identities/content across derivative copies carry the same exposure restrictions.</p>
+<p>M0.4 schema binding: <code>component_eligibility/items</code> stores per-component statuses; <code>exposure_summary/data</code> stores reviewed-scope declarations, blockers and limits. These additive v1 record types follow the common envelope and do not grant G0. See the <a href="#m0-4-api">exposure API</a> for the implemented input contracts.</p>
 <h3 id="m0-spec-56-initial-protocol-and-decision-register">5.6 Initial protocol and decision register</h3>
 <p>Protocol lifecycle: <code>draft</code>, <code>pilot_ready</code>, <code>initial_design_reviewed</code>. M0 MUST NOT emit <code>confirmatory_frozen</code>; final method/outer evaluation freeze belongs to M6.</p>
 <p>For each topic store value/null, status <code>agreed|proposed|deferred|blocked</code>, rationale/evidence, owner and freeze-by milestone. Mandatory topics:</p>
@@ -1328,7 +1332,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
 <p>Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.</p>
-<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.3 are implemented and self-reviewed; M0.4-M0.6 have not started.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.4 are implemented and self-reviewed; M0.5-M0.6 have not started.</p>
 <p>All M0-specific documents live together in this folder:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
   README.md                         # Tracker and starting point
@@ -1340,6 +1344,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
   M0_3_DATA_READINESS.md
   M0_3_DATA_API.md                  # Audit usage and readiness boundaries
   M0_4_EXPOSURE_GOVERNANCE.md
+  M0_4_EXPOSURE_API.md              # Historical access and coverage contracts
   M0_5_PROTOCOL_LITERATURE.md
   M0_6_RUNNER_GATE.md</code></pre></div>
 </section>
@@ -1349,7 +1354,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Reviewed</td><td>21 foundation tests; 70 total CPU tests passed, no skips; <a href="#m0-1-progress-evidence">API/evidence</a></td></tr>
 <tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Reviewed</td><td>16 baseline tests; 86 total CPU tests passed, no skips; <a href="#m0-2-progress-evidence">fresh source/check evidence</a></td></tr>
 <tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Reviewed</td><td>19 data tests; 105 total CPU tests passed, no skips; <a href="#m0-3-progress-evidence">synthetic audit evidence</a></td></tr>
-<tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Reviewed</td><td>23 exposure tests; 128 total CPU tests passed, no skips; <a href="#m0-4-progress-evidence">synthetic history evidence</a></td></tr>
 <tr><td><a href="#m0-5">M0.5 Protocol and literature</a></td><td>WP6</td><td>M0.1-M0.4 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-6">M0.6 Runner and Gate G0</a></td><td>WP7-WP9</td><td>M0.1-M0.5 reviewed</td><td>Not started</td><td>Pending</td></tr>
 </tbody></table></div>
@@ -1382,7 +1387,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>M0.1-M0.3 are complete at package scope; use the <a href="#m0-1-api">records API</a>, <a href="#m0-2-api">baseline API</a> and <a href="#m0-3-api">data API</a> for subsequent work. <a href="#m0-4">M0.4 exposure governance</a> is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
+<p>M0.1-M0.4 are complete at package scope; use the <a href="#m0-1-api">records API</a>, <a href="#m0-2-api">baseline API</a>, <a href="#m0-3-api">data API</a> and <a href="#m0-4-api">exposure API</a> for subsequent work. <a href="#m0-5">M0.5 protocol and literature</a> is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
@@ -1693,41 +1698,130 @@ python -m unittest discover -s tests -v</code></pre></div>
 </section>
 <section class="doc-section" id="m0-4" data-guide="M0.4 Exposure governance">
 <p class="eyebrow">M0.4 Exposure governance</p><h1>M0.4 — Exposure governance</h1>
-<p>Status: Not started. Depends on: M0.1-M0.3 reviewed. Master mapping: WP5; section 5.5 and G0 exposure rules. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Status: Reviewed (implementation/self-review, 7 November 2026). Depends on: M0.1-M0.3 reviewed. Master mapping: WP5; section 5.5 and G0 exposure rules. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Implemented schemas and usage: <a href="#m0-4-api">exposure API</a>.</p>
 </section>
 <section class="doc-section" id="m0-4-build-checklist" data-guide="M0.4 Exposure governance">
 <p class="eyebrow">M0.4 Exposure governance</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement exposure-record validation and resolution against historical manifests plus current inventory/component identity.</li>
-<li class="check-item"><span class="check pending">Pending</span>Resolve prior real evaluate/compare access using metadata, partition and magnification filters; preserve evidence references and confidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Without per-image access logs, mark the selected partition/filter as a conservative superset; unresolved manifests/contradictions remain unresolved.</li>
-<li class="check-item"><span class="check pending">Pending</span>Propagate restrictions to duplicate-linked components and all associated magnifications, including confirmed equivalent derivative identities.</li>
-<li class="check-item"><span class="check pending">Pending</span>Keep synthetic evidence under separate source identity; realistic filenames must not quarantine real groups accidentally.</li>
-<li class="check-item"><span class="check pending">Pending</span>Produce known-exposed/development-only, unresolved and candidate-untouched-with-reviewed-coverage records; no-log evidence cannot prove untouched status.</li>
-<li class="check-item"><span class="check pending">Pending</span>Require a history-coverage declaration and reviewer evidence before confirmatory eligibility. Record missing coverage as a blocker.</li>
-<li class="check-item"><span class="check pending">Pending</span>Inspect only metadata needed for governance; do not rerun old models or inspect probability/error values to decide exposure.</li>
+<li class="check-item"><span class="check done">Done</span>Implement exposure-record validation and resolution against historical manifests plus current inventory/component identity.</li>
+<li class="check-item"><span class="check done">Done</span>Resolve prior real evaluate/compare access using metadata, partition and magnification filters; preserve evidence references and confidence.</li>
+<li class="check-item"><span class="check done">Done</span>Without per-image access logs, mark the selected partition/filter as a conservative superset; unresolved manifests/contradictions remain unresolved.</li>
+<li class="check-item"><span class="check done">Done</span>Propagate restrictions to duplicate-linked components and all associated magnifications, including confirmed equivalent derivative identities.</li>
+<li class="check-item"><span class="check done">Done</span>Keep synthetic evidence under separate source identity; realistic filenames must not quarantine real groups accidentally.</li>
+<li class="check-item"><span class="check done">Done</span>Produce known-exposed/development-only, unresolved and candidate-untouched-with-reviewed-coverage records; no-log evidence cannot prove untouched status.</li>
+<li class="check-item"><span class="check done">Done</span>Require a history-coverage declaration and reviewer evidence before confirmatory eligibility. Record missing coverage as a blocker.</li>
+<li class="check-item"><span class="check done">Done</span>Inspect only metadata needed for governance; do not rerun old models or inspect probability/error values to decide exposure.</li>
 </ul>
 </section>
 <section class="doc-section" id="m0-4-tests-and-completion-gate" data-guide="M0.4 Exposure governance">
 <p class="eyebrow">M0.4 Exposure governance</p><h2>Tests and completion gate</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T11 through M0-T14: exact historical filters, conservative coverage, missing/contradictory history and synthetic-real separation.</li>
-<li class="check-item"><span class="check pending">Pending</span>Assert component-wide propagation, no accidental unrelated-group exposure and no test inference during resolution.</li>
-<li class="check-item"><span class="check pending">Pending</span>Review confirms that reseeding or rebuilding splits cannot erase exposure; eligibility is not chosen using historical metric quality.</li>
-<li class="check-item"><span class="check pending">Pending</span>Carry unresolvable history forward with explicit owners/restrictions; engineering review cannot silently approve independent confirmation.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T11 through M0-T14: exact historical filters, conservative coverage, missing/contradictory history and synthetic-real separation.</li>
+<li class="check-item"><span class="check done">Done</span>Assert component-wide propagation, no accidental unrelated-group exposure and no test inference during resolution.</li>
+<li class="check-item"><span class="check done">Done</span>Review confirms that reseeding or rebuilding splits cannot erase exposure; eligibility is not chosen using historical metric quality.</li>
+<li class="check-item"><span class="check done">Done</span>Carry unresolvable history forward with explicit owners/restrictions; engineering review cannot silently approve independent confirmation.</li>
 </ul>
 <p>Deliverables: exposure resolver/register and component eligibility record, tests and reviewed coverage limitations. No held-out split selection or prediction collection.</p>
 </section>
 <section class="doc-section" id="m0-4-progress-evidence" data-guide="M0.4 Exposure governance">
 <p class="eyebrow">M0.4 Exposure governance</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Test commands/results/logs: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Not assessed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.5 dependency released.</li>
+<li>Source identity: HEAD <code>9ddc9c937ff5d8b7d5a9cef9e08b12b8805a98fd</code> plus dirty snapshot <code>a893777c6245b323ec6940f9b29af361dbcf6b75aa5d0c28a8ff45a0dacbee56</code>. Commit alone does not identify the tested implementation. Snapshot precedes these final acceptance notes; exact code/test hashes are in <code>acceptance-summary.json</code>.</li>
+<li>Current local evidence: <code>artifacts/research/m0/m0-4-acceptance-20261107T111937Z/</code> (ignored local outputs, not committed). Contains current source/environment/check evidence, synthetic <code>audit/</code> plus <code>governance/</code>, and <code>fixtures/missing-history/</code> blocked evidence. <code>acceptance-summary.json</code> explicitly labels inputs synthetic-only and real-history review false; <code>verification-summary.json</code> records source/log/reference hashes, component propagation and eligibility accounting.</li>
+<li>Actual command: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>; 128 tests passed, no skips, in 63.375 seconds. Logs: <code>logs/regressions.stdout.log</code> / <code>logs/regressions.stderr.log</code> in that run. Imports, six CLI help commands, pip commands and synthetic CPU environment checks passed; source remained consistent throughout checks.</li>
+<li>Coverage: 23 <code>tests/test_m0_exposure.py</code> cases trace M0-T11-T14 and reviewer/coverage failure handling. They check exact/conservative filters, missing/stale/contradictory references, changed equivalence evidence, partial coverage, operator recollections, synthetic identity collision, derivative linkage, inventory tampering, no image decoding/metric inputs, no overwrite and reseed-invariant exposure. The prior 105 tests passed in this fresh run.</li>
+<li>Saved synthetic result: one component containing three images across linked filename groups/magnifications becomes development-only; two unrelated components remain candidates solely within the fixture&#x27;s reviewed boundary. A valid synthetic event maps to no real images/components. The missing-history fixture leaves all three components unknown and blocks history review. These are software acceptance fixtures, not statements about real BreaKHis access.</li>
+<li>Reviewer/date: Codex implementation/self-review, 7 November 2026; engineering review, not independent history adjudication.</li>
+<li>Restrictions: Real historical artifact discovery, coverage completeness and reviewer attestations remain unreviewed and are not inferred from missing logs. Hash-matched statements are attributable declarations, not proof of their truth. M0.4 always leaves final confirmatory-design readiness false; lineage/protocol, fold support and Gate G0 remain downstream. GPU execution is unvalidated in this CPU acceptance run. No actual historical prediction, metric quality or model inference was inspected for exposure decisions.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and M0.5 dependency released.</li>
 </ul>
+</section>
+<section class="doc-section" id="m0-4-api" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h1>M0.4 exposure governance API</h1>
+<p><code>breakhis/research/exposure.py</code> resolves explicit historical metadata against an existing M0.3 audit. <code>breakhis.research.m0.resolve_exposure</code> is the lazy adapter. It does not discover all history automatically, read images/weights, run models, collect predictions, compare metric quality, select held-out groups or freeze G0.</p>
+</section>
+<section class="doc-section" id="m0-4-api-calling-the-resolver" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Calling the resolver</h2>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>from pathlib import Path
+from breakhis.research.records import read_json
+from breakhis.research.exposure import inventory_scope
+from breakhis.research.m0 import resolve_exposure
+
+run = Path(&#x27;artifacts/research/m0/existing-run-id&#x27;).resolve()
+history = Path(&#x27;path/to/reviewed/metadata&#x27;).resolve()
+scope = inventory_scope(run, &#x27;existing-run-id&#x27;)  # read-only; not a review
+print(scope)  # bind these identities into a separately reviewed declaration
+result = resolve_exposure(
+    run, &#x27;existing-run-id&#x27;, history_root=history,
+    source_instance_id=&#x27;deliberately-identified-current-derivative&#x27;,
+    events=read_json(history / &#x27;events.json&#x27;),
+    history_coverage=read_json(history / &#x27;history_coverage.json&#x27;),
+)
+print(result[&#x27;eligibility_counts&#x27;], result[&#x27;blockers&#x27;])</code></pre></div>
+<p>This requires a current M0.3 audit, not a legacy manifest alone. Inventory bytes, schema, component membership and linkage policy are checked before resolution. All three output paths must be new; an existing register is never overwritten. M0.6 will provide the full configuration/runner and evidence-graph verification.</p>
+<p><code>history_root</code> is the trusted directory anchoring references. Every reference is exactly <code>{&quot;path&quot;: &quot;relative/metadata.json&quot;, &quot;sha256&quot;: &quot;&lt;64 lowercase hex&gt;&quot;}</code>. Paths follow M0.1 containment rules and cannot refer inside this run. Only <code>.json</code>, <code>.jsonl</code>, <code>.log</code>, <code>.txt</code>, <code>.md</code>, <code>.yaml</code>, <code>.yml</code> metadata is accepted; weights and images are not read. Opaque log/config evidence is hashed without parsing scores or error/probability values. Historical manifests are read for source, relative path, filename group, partition, magnification and raw/pixel hashes only. References are rechecked before candidate statuses are assigned.</p>
+</section>
+<section class="doc-section" id="m0-4-api-event-schema" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Event schema</h2>
+<p>Every event has exactly these fields; unknown keys, including metric arrays, are rejected:</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Field</th><th scope="col">Input</th></tr></thead><tbody>
+<tr><td><code>event_id</code></td><td>Unique M0.1 token/ID</td></tr>
+<tr><td><code>artifact</code></td><td>Historical metadata reference with expected hash</td></tr>
+<tr><td><code>manifest</code></td><td>Historical v1 manifest reference; may be null for synthetic checks</td></tr>
+<tr><td><code>source</code></td><td>Source key used in the historical manifest</td></tr>
+<tr><td><code>source_instance_id</code></td><td>Deliberately declared derivative/fixture identity, distinct from source key</td></tr>
+<tr><td><code>source_kind</code></td><td><code>real</code> or <code>synthetic</code></td></tr>
+<tr><td><code>selected_partition</code></td><td><code>train</code>, <code>validation</code>, <code>test</code>, <code>all</code></td></tr>
+<tr><td><code>magnification_filter</code></td><td>Distinct available values <code>40X</code>, <code>100X</code>, <code>200X</code>, <code>400X</code>, or exactly <code>[&quot;all&quot;]</code></td></tr>
+<tr><td><code>access_type</code></td><td><code>train</code>, <code>selection</code>, <code>threshold</code>, <code>test_metric_inspection</code>, <code>test_prediction_inspection</code>, <code>synthetic_check</code>, <code>unknown</code></td></tr>
+<tr><td><code>accessed_paths</code></td><td>Distinct manifest-relative paths from per-image access logs, or null</td></tr>
+<tr><td><code>evidence_source</code></td><td><code>config</code>, <code>log</code>, <code>manifest</code>, <code>operator_attestation</code></td></tr>
+<tr><td><code>occurred_at</code></td><td>Attributable time string or null with generated unknown-time reason</td></tr>
+<tr><td><code>reviewer_note</code></td><td>Scope/uncertainty text or null</td></tr>
+</tbody></table></div>
+<p>For real history, the partition/magnification filter is applied to the *historical* manifest. Missing per-image access logs quarantine the entire selected filter as <code>conservative_superset</code>. A nonempty consistent <code>accessed_paths</code> list with evidence source <code>log</code> permits <code>exact</code> coverage; operator recollections remain self-reported and conservative. Empty per-image lists, contradictory filters/content, missing manifests, changed hashes, unknown access types and unresolved identities remain unresolved. Known matched exposures are retained even when other evidence is contradictory. Unknown history blocks candidate untouched claims globally.</p>
+<p>Matching exact hashes or current-instance filename groups propagates access to the entire linked component, including other magnifications and exact duplicates. Unrelated groups are not exposed merely because they share a magnification. Historical preparation seeds and new split generation cannot remove exposure.</p>
+<p><code>source_kind=synthetic</code> requires <code>access_type=synthetic_check</code> and a distinct instance ID. Its valid artifact evidence produces <code>synthetic_not_real</code>, with no real image/component mapping even if hashes and filenames resemble real data. An identity collision is unresolved, not an excuse to approve real non-exposure.</p>
+</section>
+<section class="doc-section" id="m0-4-api-derivative-equivalence" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Derivative equivalence</h2>
+<p>Across different real source instances, filename similarity alone never proves equivalence. Exact raw/decoded hashes can establish content linkage. Additional reviewed identity bridges may be supplied using <code>equivalences=[...]</code>, each with:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>source_instance_id, filename_group_id, current_component_id,
+reviewer, evidence_refs</code></pre></div>
+<p>The reviewer must be named, component must exist, and evidence references must have matching hashes. These are attributable reviewer declarations, not automatically authenticated clinical identity. They propagate development-only restrictions; they cannot erase an existing exposure.</p>
+</section>
+<section class="doc-section" id="m0-4-api-reviewed-history-boundary" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Reviewed history boundary</h2>
+<p><code>history_coverage=None</code> is valid unresolved input. It never means no previous access. A declaration requires exactly:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>schema_version: 1
+status: reviewed
+reviewer: nonempty named reviewer
+inventory_sha256: digest from inventory_scope
+source_instance_id: current instance
+component_ids: explicit reviewed coverage boundary
+events_complete: true (explicit reviewer assertion)
+evidence_refs: nonempty metadata references with hashes
+reviewer_note: explicit scope, review limits and history completeness rationale</code></pre></div>
+<p>A stale inventory hash, missing reviewer/evidence, incomplete declaration or unresolved event cannot approve candidates. Partial reviewed coverage may mark unexposed components as candidates only within that boundary; uncovered components remain unknown and the overall history review is blocked. Evidence quality and history completeness require human review; hashing a statement does not prove its truth. Coverage statements should enumerate the reviewed history scope and known limitations, not infer completeness from an empty directory.</p>
+</section>
+<section class="doc-section" id="m0-4-api-outputs-and-readiness-limits" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Outputs and readiness limits</h2>
+<p>M0.1 v1 envelope types added by this package:</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Output under <code>governance/</code></th><th scope="col">Type and meaning</th></tr></thead><tbody>
+<tr><td><code>exposure_register.json</code></td><td><code>exposure_register/items</code>: resolved/unresolved events with actual evidence, confidence, image/group/component propagation and issues</td></tr>
+<tr><td><code>component_eligibility.json</code></td><td><code>component_eligibility/items</code>: development-only, unknown, or candidate untouched within a reviewed boundary</td></tr>
+<tr><td><code>exposure_summary.json</code></td><td><code>exposure_summary/data</code>: inventory scope, declarations, equivalences, blockers, counts and restrictions</td></tr>
+</tbody></table></div>
+<p>Eligibility precedence is known <code>development_only</code>, then <code>candidate_untouched_with_reviewed_coverage</code> only with valid coverage and no unresolved events/data blockers, otherwise <code>exposure_unknown</code>. Open items carry owner <code>research_owner</code>, M1 review deadline and a resolution condition. Candidates are not approved folds, verified patients or untouched confirmatory samples.</p>
+<p><code>history_review_ready</code> refers only to recorded history review consistency. <code>confirmatory_design_ready</code> always remains false at this package boundary; lineage/protocol, eligible fold support and final Gate G0 remain downstream. Engineering package completion does not adjudicate the real study&#x27;s past access.</p>
+</section>
+<section class="doc-section" id="m0-4-api-tests" data-guide="M0.4 Exposure API">
+<p class="eyebrow">M0.4 Exposure API</p><h2>Tests</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m unittest discover -s tests -p test_m0_exposure.py -v
+python -m unittest discover -s tests -v</code></pre></div>
+<p>See <a href="#m0-4">package checklist/evidence</a>.</p>
 </section>
 <section class="doc-section" id="m0-5" data-guide="M0.5 Protocol &amp; literature">
 <p class="eyebrow">M0.5 Protocol &amp; literature</p><h1>M0.5 — Protocol and literature</h1>

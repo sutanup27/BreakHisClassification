@@ -73,6 +73,8 @@ audit/
   near_duplicate_review.json
 governance/
   exposure_register.json
+  component_eligibility.json
+  exposure_summary.json
   protocol.initial.json
   decisions.json
   literature_matrix.json
@@ -176,6 +178,11 @@ Synthetic checks have separate source identity and MUST NOT quarantine real grou
 Component eligibility: known exposed/development-only; exposure unknown/requires adjudication; or candidate untouched within a stated reviewed coverage boundary. No-log evidence alone cannot mean verified unexposed. Require a reviewed history-coverage declaration before confirmatory eligibility. Missing manifests, unresolved references and contradictions remain open blockers.
 
 M0 records eligibility, not folds. It cannot select held-out groups using past metric quality. Confirmed equivalent identities/content across derivative copies carry the same exposure restrictions.
+
+M0.4 schema binding: `component_eligibility/items` stores per-component statuses;
+`exposure_summary/data` stores reviewed-scope declarations, blockers and limits.
+These additive v1 record types follow the common envelope and do not grant G0.
+See the [exposure API](M0_4_EXPOSURE_API.md) for the implemented input contracts.
 
 ### 5.6 Initial protocol and decision register
 

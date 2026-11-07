@@ -44,6 +44,12 @@ def audit_data(*args, **kwargs):
     return audit(*args, **kwargs)
 
 
+def resolve_exposure(*args, **kwargs):
+    """Lazy M0.4 metadata-only exposure adapter."""
+    from .exposure import resolve_exposure as resolve
+    return resolve(*args, **kwargs)
+
+
 def _git(repo, *args):
     return subprocess.run(['git', '-C', str(repo), *args], check=True,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60).stdout
