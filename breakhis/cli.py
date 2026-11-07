@@ -57,6 +57,7 @@ def main(argv=None):
     prepare.add_argument('--output', type=Path, default=ROOT/'artifacts/data')
     prepare.add_argument('--seed', type=int, default=0)
     prepare.add_argument('--workers', type=int, default=8)
+    prepare.add_argument('--sources', nargs='+', choices=['breakhis_v2', 'cancer_binary', 'cancer_multiclass'], help='Audit only these sources; otherwise discover available configured folders')
     for name in ('train', 'evaluate', 'prune', 'finetune'):
         command = commands.add_parser(name)
         add_data_options(command)
@@ -99,7 +100,7 @@ def main(argv=None):
         from .manifest import prepare_dataset
         try:
             root = resolve_input(args.dataset_root, 'Dataset root', directory=True)
-            prepare_dataset(root, args.output.expanduser().resolve(), args.seed, args.workers)
+            prepare_dataset(root, args.output.expanduser().resolve(), args.seed, args.workers, args.sources)
         except ValueError as error:
             parser.error(str(error))
         return

@@ -2,6 +2,11 @@
 
 ## Audited local sources
 
+The counts below are the historical 11 October 2026 audit snapshot, including the
+subsequently removed local v2 copy. Current preparation discovers existing folders
+or audits the explicit `--sources` selection; v2 is optional. New manifests have
+their own hashes and must not replace the provenance of earlier checkpoints.
+
 The audit decodes every supported image, checks filename metadata against its
 folder, computes SHA-256 hashes for the original file and decoded RGB pixels,
 and records the accepted images in a saved manifest. It does not edit dataset files.
@@ -63,10 +68,16 @@ are unrelated; the filename identifier remains the patient-group reference.
 From the repository directory, in the activated environment:
 
 ```powershell
-python -m breakhis prepare-data --seed 0
+python -m breakhis prepare-data --sources cancer_binary --seed 0
 ```
 
 Outputs:
+
+Omit `--sources` to audit all existing configured folders, or use
+`--sources cancer_binary cancer_multiclass` to select both v1 datasets. Explicit
+missing sources fail. Reports list skipped sources and mark the original-v2/v1
+comparison unavailable if both were not selected. See [TESTING.md](TESTING.md)
+for v1-only setup and generated-data CPU acceptance.
 
 - `artifacts/data/manifest.json`: source roots, seed, split fractions, patient-group
   rule, image paths, labels, magnifications, file/pixel hashes, and split assignments.

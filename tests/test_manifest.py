@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 from PIL import Image
-from breakhis.manifest import assign_splits, compare_sources, inventory, parse_filename, validate_splits
+from breakhis.manifest import assign_splits, compare_sources, inventory, parse_filename, validate_splits, prepare_dataset
 
 
 def sample_rows():
@@ -18,6 +18,25 @@ def sample_rows():
 
 
 class ManifestTests(unittest.TestCase):
+    def test_v1_only_discovery_and_missing_explicit_source(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            for label, code, start in [('benign','B_A',100),('malignant','M_DC',200)]:
+                directory=root/'dataset_cancer_v1/classificacao_binaria/40X'/label
+                directory.mkdir(parents=True)
+                for index in range(4):
+                    Image.new('RGB',(12,8),(start,index*40,40)).save(directory/f'SOB_{code}-14-{start+index}-40-001.png')
+            with contextlib.redirect_stdout(io.StringIO()):
+                manifest,report=prepare_dataset(root,root/'out',workers=1)
+            self.assertEqual(set(manifest['roots']),{'cancer_binary'})
+            self.assertFalse(report['comparison']['available'])
+            self.assertIn('breakhis_v2',report['skipped_sources'])
+            with self.assertRaisesRegex(ValueError,'Explicitly selected'):
+                prepare_dataset(root,root/'missing',sources=['breakhis_v2'])
+            self.assertFalse((root/'missing').exists())
+
     def test_official_filename_identifier_preserves_suffix(self):
         a=parse_filename('SOB_B_A-14-22549AB-40-001.png')
         b=parse_filename('SOB_B_A-14-22549AB-400-019.png')

@@ -262,7 +262,7 @@ influence checkpoint selection or training decisions.
 
 This establishes baseline execution correctness, not full-dataset clinical or
 classification quality. Full experiments and comparative reporting remain work
-for later stages. V1-only manifest rebuilding after removing v2 is still pending.
+for later stages. V1-only rebuilding was subsequently added in Stage 9.
 
 **Files:** `breakhis/data.py`, `breakhis/training.py`, `breakhis/cli.py`,
 `tests/test_training.py`, `tests/test_manifest_loading.py`, existing preprocessing tests.
@@ -313,7 +313,7 @@ Exact resume uses completed epochs, workers zero, the original planned schedule,
 configuration, runtime and device. Partial epochs are replayed; their interrupted
 weights files cannot resume exactly. Background worker/prefetch state is not saved.
 Full-dataset quality and structured channel architecture reconstruction are outside
-this stage. V1-only manifest rebuilding remains pending after local v2 deletion.
+this stage. V1-only rebuilding was subsequently added in Stage 9.
 
 **Files:** `breakhis/cli.py`, `breakhis/checkpoints.py`, `breakhis/paths.py`,
 checkpoint/resume tests, README and `docs/CHECKPOINTS.md`.
@@ -425,34 +425,61 @@ MAC counts explicitly exclude BN, pooling, activations, residual adds and mask o
 Latency excludes loading/preprocessing/transfers; results depend on hardware,
 software, load and protocol. Small smoke comparisons establish execution, not
 full-dataset quality, statistically significant speedup or end-to-end latency.
-Full-data experiments and CPU CI remain Stage 9/final acceptance work.
+CPU CI configuration was subsequently added in Stage 9; full-data experiments remain final acceptance work.
 
 **Files:** `breakhis/reporting.py`, `breakhis/comparison.py`, `breakhis/cli.py`,
 mask-aware metric/latency compatibility helpers, reporting tests and `docs/EVALUATION.md`.
 
 ## Stage 9 — Add regression checks and operational documentation
 
-**Status:** Initial separation tests exist; broader coverage pending.
+**Status:** Implementation complete; 49 local CPU regressions passed on 31 October 2026. First hosted CI execution remains pending.
 
 **Issues addressed:** Manual-only demonstrations, weak setup documentation, and
 lack of checks against recurring correctness failures.
 
 ### Steps
 
-- [ ] Add regression tests for the repaired data, training, checkpoint, and pruning failures.
-- [ ] Add a small actual PyTorch integration test using temporary synthetic images.
-- [ ] Check patient split isolation, output shapes, mask persistence, and checkpoint round trips.
-- [ ] Add lightweight CPU continuous integration; keep full dataset/GPU experiments separate.
-- [ ] Document environment setup, supported datasets, commands, outputs, and troubleshooting.
-- [ ] Mark legacy demonstrations and incomplete architectures clearly.
-- [ ] Record the limitations of the final experiment and the supported operating environment.
+- [x] Add regression tests for the repaired data, training, checkpoint, and pruning failures.
+- [x] Add a small actual PyTorch integration test using temporary synthetic images.
+- [x] Check patient split isolation, output shapes, mask persistence, and checkpoint round trips.
+- [x] Configure lightweight Windows CPU continuous integration; keep full dataset/GPU
+      experiments separate and verify hosted execution after push.
+- [x] Document environment setup, supported datasets, commands, outputs, and troubleshooting.
+- [x] Mark legacy demonstrations and incomplete architectures clearly.
+- [x] Record the limitations of the final experiment and the supported operating environment.
 
 ### Target
 
 A new user can reproduce the smoke workflow from the README. Automated checks
 catch the repaired correctness failures without requiring the full dataset or a GPU.
 
-**Files:** `tests/`, future CI workflow, `README.md`, dependency documentation.
+### Verification and limits
+
+- The complete 49-test suite passed in the independent PyTorch 2.11 CPU-only
+  environment. Environment imports, tensor/VGG execution and pip consistency passed.
+- An actual fresh-process integration generates twelve PNGs, audits a binary-only
+  manifest, trains VGG, prunes masks/channels, fine-tunes and writes comparisons.
+  Tests verify isolation, shapes, saved masks/channel configuration, group metrics
+  and CPU execution. No BreaKHis files, downloads or pretrained weights are needed.
+- `tools/smoke_workflow.py` reproduces the same workflow with retained generated
+  data, manifests, actual/equivalent command records, reports, configurations and logs.
+- CI configures pinned CPU dependencies/Python, editable installation, external-cwd
+  import, environment checks, full regressions, HTML freshness and synthetic evidence
+  upload. Its first remote run is not yet verified; this is a configuration result.
+- Preparation now discovers available sources or audits explicit `--sources`;
+  local v2 deletion no longer blocks v1-only fresh setup. Existing experiment
+  manifests should be retained because rebuilt hashes differ.
+- README, offline HTML and TESTING.md describe supported/experimental code paths,
+  source preparation, CI, smoke commands, limitations and final experimental acceptance.
+
+The synthetic run verifies engineering correctness, not full-dataset model quality,
+clinical validity or measured performance significance. The full-data final
+acceptance checklist below is intentionally separate and remains outstanding.
+
+**Files:** `tests/`, `.github/workflows/cpu-tests.yml`, `tools/smoke_workflow.py`,
+source-discovery code, README and `docs/TESTING.md`.
+
+
 
 ## Final acceptance run
 

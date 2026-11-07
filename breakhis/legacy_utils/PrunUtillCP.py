@@ -1,3 +1,8 @@
+"""Experimental historical architecture-specific channel helpers.
+
+Supported sequential VGG surgery lives in breakhis.pruning; these helpers are not
+certified by the supported CLI acceptance tests. See docs/PRUNING.md.
+"""
 import copy
 from torch import nn
 from typing import Union

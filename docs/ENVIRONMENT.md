@@ -92,7 +92,7 @@ see [pip's repeatable installation documentation](https://pip.pypa.io/en/stable/
 ```powershell
 .\.venv313\Scripts\python.exe tools/check_environment.py --device cuda --output artifacts/environment.json
 .\.venv313\Scripts\python.exe -m unittest discover -s tests -v
-.\.venv313\Scripts\python.exe -m breakhis prepare-data --seed 0
+.\.venv313\Scripts\python.exe -m breakhis prepare-data --sources cancer_binary --seed 0
 .\.venv313\Scripts\python.exe Train.py --dataset breakhis --magnification 40X --model vgg --num-workers 0
 ```
 
@@ -110,3 +110,6 @@ zero. See [CHECKPOINTS.md](CHECKPOINTS.md) for limits and [COMMANDS.md](COMMANDS
 Virtual environments, checkpoints, and generated environment reports are ignored
 by Git. The disposable `.venv-stage2-cpu` directory is a separate installation
 verification environment; it does not replace `.venv313`.
+
+For generated-image CPU acceptance and hosted CI scope, see [TESTING.md](TESTING.md).
+The smoke tool needs no real dataset or GPU; full-data acceptance remains separate.

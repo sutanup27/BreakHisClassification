@@ -38,8 +38,9 @@ resolved against this repository. Default checkpoints are resolved against its p
 
 ## Supported commands
 
-Use the existing patient manifest with the remaining v1 binary source; see
-[DATASETS.md](DATASETS.md). Rebuilding currently requires the removed v2 source.
+Use the patient manifest for the remaining v1 binary source; see
+[DATASETS.md](DATASETS.md). New manifests can be prepared with
+`python -m breakhis prepare-data --sources cancer_binary` without restoring v2.
 The following supported pipeline uses a shared experiment ID:
 
 ```powershell
@@ -153,3 +154,15 @@ comparison with measured accuracy/size/latency deltas. Both commands accept
 `--benchmark-batch-size` (1), `--benchmark-warmup` (10), `--benchmark-repeats` (30),
 and optional `--cpu-threads`. Report outputs must be `.json`.
 See [EVALUATION.md](EVALUATION.md) for complete definitions, scope and examples.
+
+## Stage 9 operational checks
+
+`prepare-data --sources cancer_binary` audits only the binary v1 source. Omit
+`--sources` to discover available configured folders. Explicit missing sources
+fail, and skipped sources/unavailable cross-source comparisons are recorded.
+New manifests change checkpoint provenance; retain originals for old runs.
+
+`python tools/smoke_workflow.py` runs fresh-process CPU training/pruning/fine-tuning/
+comparison on generated images, retaining commands, logs and reports. The regression
+suite includes the same integration path with temporary checkpoints. See
+[TESTING.md](TESTING.md) for CI, smoke options, supported scope and final acceptance.

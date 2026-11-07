@@ -18,6 +18,7 @@ in a browser; no web server, installation, or internet connection is required.
 | Find or interpret saved files | [Checkpoint paths](#checkpoint-paths-and-loading-rules), [format details](docs/CHECKPOINTS.md) |
 | Modify the implementation | [Working on the codebase](#working-on-the-codebase) |
 | Diagnose an error | [Troubleshooting](#troubleshooting-and-remaining-work) |
+| Plan the research experiments | [7-9 day research implementation roadmap](docs/RESEARCH_IMPLEMENTATION_ROADMAP.md) |
 
 ## First-run checklist
 
@@ -36,13 +37,19 @@ Test-Path artifacts/data/manifest.json
 Both `Test-Path` results must be `True`. Use `--device cpu` in the environment
 checker for a CPU installation. The checker runs a forward pass, not training.
 The dataset and manifest are local artifacts and are not included in Git. A fresh
-clone therefore needs those files copied into the layout below. If images moved,
+clone therefore needs the images copied into the layout below and a restored or
+newly prepared manifest. If images moved,
 use `--data-root` while keeping their contents and manifest assignments unchanged.
 
-**Current setup limitation:** after removing v2, the existing v1 manifest works,
-but the audit command cannot yet rebuild using v1 alone. Restore the existing
-manifest from your local backup; do not assume `prepare-data` works in a clean
-v1-only workspace. See [prepare-data limitation](#prepare-data-parameters-and-current-limitation).
+If the manifest is missing, build it from the remaining v1 binary source:
+
+```powershell
+python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/data --seed 0
+```
+
+V2 is no longer required. To retain existing experiments, keep their original
+manifest and write a separate new audit directory; checkpoint provenance includes
+the manifest hash. See [prepare-data parameters](#prepare-data-parameters).
 
 4. Run the tests before a long experiment:
 
@@ -308,21 +315,24 @@ Exact epoch-boundary resume requires `--num-workers 0`. Background-worker RNG/pr
 
 Supported checkpoints contain architecture, binary labels, state dictionaries, epoch, and dataset metadata. Loading requires matching manifest hash, source, magnification, and preprocessing. Regenerating a manifest may invalidate checkpoint metadata. Old whole-model pickle files require explicit migration and are not automatically loaded.
 
-## Prepare-data parameters and current limitation
+## Prepare-data parameters
 
 `prepare-data` decodes and hashes images, checks folder/filename labels, links duplicate content, and saves approximately 70%/15%/15% patient-group splits for train/validation/test. Group fractions do not guarantee identical image fractions. See [dataset details](docs/DATASETS.md) for the grouping policy.
 
 | Parameter | Default / allowed values | Purpose |
 | --- | --- | --- |
-| `--dataset-root` | `<workspace>/Dataset` | Parent containing `BreaKHis_v2` and `dataset_cancer_v1`, not a magnification folder. |
+| `--dataset-root` | `<workspace>/Dataset` | Parent of configured source folders, not a magnification folder. V2 is optional; v1-only audits are supported. |
 | `--output` | `<codebase>/artifacts/data` | Directory receiving `manifest.json` and `audit.json`. This is a directory, unlike checkpoint/report outputs. |
 | `--seed` | `0`; integer | Reproducible patient-group split seed. Does not configure training seed. |
 | `--workers` | `8`; positive integer | Image-audit threads. Separate from loader `--num-workers`. |
+| `--sources` | Discover existing configured folders; one or more of `breakhis_v2`, `cancer_binary`, `cancer_multiclass` | Audit a selected subset, e.g. `--sources cancer_binary`. Explicitly missing sources fail; skipped sources and unavailable cross-source comparisons are recorded. |
 
-**After deleting v2, rebuilding is currently blocked:** this command still requires all three configured sources, including `BreaKHis_v2`. Continue using the existing manifest with `--source cancer_binary`. A v1-only rebuild needs a further code change. The following example requires restoring v2 or implementing that change first:
+V1-only rebuilding is supported. With no `--sources`, only existing configured
+folders are audited; selecting binary alone avoids scanning multiclass images.
+Choose a new output directory when retaining older checkpoint/manifest lineages:
 
 ```powershell
-python -m breakhis prepare-data --dataset-root ../Dataset --output artifacts/data --seed 0 --workers 8
+python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/v1-data --seed 0 --workers 8
 ```
 
 ## Preprocessing and runtime
@@ -375,8 +385,8 @@ Example: `python Train.py --dataset breakhis --magnification 40X --model vgg`. W
 | `python` is not recognized | Activate the environment or use its executable directly. |
 | `No module named torch` | Check the interpreter and install pinned requirements into that environment. |
 | CUDA unavailable | Check the CUDA wheel selection and NVIDIA driver with the environment checker; use `--device cpu` if needed. |
-| Manifest missing | Restore the saved manifest; rebuilding currently needs the removed v2 source as described above. |
-| Image changed since audit | Restore the audited image or rebuild after resolving the v1-only audit limitation. |
+| Manifest missing | Restore the original for old checkpoints, or run `prepare-data --sources cancer_binary` for a new experiment. |
+| Image changed since audit | Restore the audited image or create a new manifest; retain original manifests for old checkpoints. |
 | Checkpoint metadata mismatch | Match source, magnification, and manifest to the checkpoint's original run. |
 | Checkpoint output rejected | Use a bare `.pth` filename or a path inside `../checkpoint/binary/`. |
 | Legacy checkpoint rejected | Train a new supported checkpoint or implement explicit migration. |
@@ -384,7 +394,12 @@ Example: `python Train.py --dataset breakhis --magnification 40X --model vgg`. W
 | Resume configuration differs | Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them. |
 | Run already completed | Start a new fine-tuning run from its weights; resume does not extend the saved schedule. |
 
-Stages 1-8 are implemented and verified for the supported binary workflow, including VGG channel pruning and evaluation/efficiency reports. Full-dataset experiment validation, v1-only manifest rebuilding, multiclass training, residual/depthwise channel pruning, and CPU CI remain future work. See [fix roadmap](docs/CODEBASE_FIX_ROADMAP.md) and [command reference](docs/COMMANDS.md).
+Stages 1-9 are implemented for the documented binary workflow, including v1-only
+audits, CPU CI configuration, and generated-image end-to-end tests. Full-dataset
+experimental acceptance, the first remote CI run, multiclass training and
+residual/depthwise channel pruning remain separate work. See the
+[fix roadmap](docs/CODEBASE_FIX_ROADMAP.md), [testing guide](docs/TESTING.md), and
+[command reference](docs/COMMANDS.md).
 
 CIFAR-10 experiments and mixed tutorials live under `experiments/cifar10/` as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
 
@@ -408,6 +423,7 @@ module rather than adding another implementation to a compatibility wrapper.
 | `breakhis/comparison.py` | Fixed-protocol dense/pruned/fine-tuned comparison | Change comparative report validation or deltas |
 | `tests/` | CPU regressions and subprocess reload checks | Verify behavior affected by a code change |
 | `tools/check_environment.py` | Dependency/device verification | Diagnose environment setup |
+| `tools/smoke_workflow.py` | Generated-image fresh-process CPU workflow | Check the full pipeline without a dataset download or GPU |
 | `experiments/cifar10/` and legacy pruning helpers | Historical experiments | Consult reference code; these are outside the supported workflow |
 
 To change behavior, locate the canonical module, implement the change, run the
@@ -420,6 +436,32 @@ The supported pruning command applies L1 unstructured masks or VGG channel remov
 Other architecture-specific channel helpers remain experimental. Model
 commands do not currently support multiclass training, configurable image sizes,
 training-seed arguments, or quick-subset flags; avoid inventing CLI options.
+
+## CPU smoke workflow and CI
+
+Run a self-contained real PyTorch smoke workflow, retaining logs and reports:
+
+```powershell
+python tools/smoke_workflow.py --work-dir artifacts/my-smoke --threads 2
+```
+
+It generates twelve PNGs and runs audit, one-epoch VGG training, both pruning
+methods, fine-tuning and comparison in fresh CPU processes. Synthetic data stays
+in the work directory; weights go to a unique parent `checkpoint/binary/smoke-...`
+directory listed in `summary.json`. Choose a new/empty work directory.
+
+| Smoke-tool option | Default | Meaning |
+| --- | --- | --- |
+| `--work-dir` | Unique `artifacts/smoke-<id>` | Generated images, manifests, logs and reports |
+| `--methods` | `unstructured channel` | Select one or both pruning methods |
+| `--threads` | `2`; positive integer | CPU intra-op threads for each subprocess |
+
+The regression suite includes this integration workflow with temporary data and
+checkpoints. The Windows CPU GitHub Actions workflow installs pinned dependencies,
+checks the environment, runs tests, checks HTML freshness and retains synthetic
+evidence. Its first remote result requires pushing the workflow; local tests do
+not establish a green hosted CI run. See [TESTING.md](docs/TESTING.md) for commands,
+artifacts, limitations and full-data acceptance requirements.
 
 ## Documentation maintenance
 

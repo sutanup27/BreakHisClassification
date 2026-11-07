@@ -141,15 +141,29 @@ def compare_sources(rows, first='breakhis_v2', second='cancer_binary'):
                 only_first=sorted(left.keys()-right.keys()), only_second=sorted(right.keys()-left.keys()))
 
 
-def prepare_dataset(dataset_root, output, seed=0, workers=8):
+def prepare_dataset(dataset_root, output, seed=0, workers=8, sources=None):
     dataset_root, output = Path(dataset_root).resolve(), Path(output).resolve()
-    sources = {'breakhis_v2':dataset_root/'BreaKHis_v2',
+    configured = {'breakhis_v2':dataset_root/'BreaKHis_v2',
                'cancer_binary':dataset_root/'dataset_cancer_v1'/'classificacao_binaria',
                'cancer_multiclass':dataset_root/'dataset_cancer_v1'/'classificacao_multiclasse'}
+    if sources is not None and (not sources or len(set(sources)) != len(sources) or set(sources) - configured.keys()):
+        raise ValueError('Select distinct known dataset sources')
+    selected = list(sources) if sources is not None else [name for name, root in configured.items() if root.is_dir()]
+    if not selected:
+        raise ValueError(f'No configured dataset sources found under {dataset_root}')
+    sources = {name: configured[name] for name in selected}
+    missing = [str(root) for root in sources.values() if not root.is_dir()]
+    if missing:
+        raise ValueError(f'Explicitly selected dataset source does not exist: {missing}')
+    skipped = sorted(set(configured) - set(sources))
+    if skipped:
+        print(f'Unselected or absent sources: {", ".join(skipped)}', flush=True)
     rows, audits = [], {}
     for source, root in sources.items():
         print(f'Auditing {source}: {root}', flush=True)
         accepted, audit = inventory(source, root, workers)
+        if not accepted:
+            raise ValueError(f'No valid images in selected source {source}: {root}')
         rows.extend(accepted)
         audits[source] = audit
         print(f'  accepted {len(accepted)}; excluded {len(audit["excluded"])}', flush=True)
@@ -165,11 +179,13 @@ def prepare_dataset(dataset_root, output, seed=0, workers=8):
             seen.add(key)
             unique.append(row)
     comparison = compare_sources(rows)
+    comparison['available'] = {'breakhis_v2', 'cancer_binary'} <= set(sources)
+    comparison['note'] = 'Original v2 versus v1 binary comparison' if comparison['available'] else 'Cross-source comparison unavailable: both binary sources were not selected'
     output.mkdir(parents=True, exist_ok=True)
     manifest = dict(schema_version=1, seed=seed, fractions=[.70,.15,.15],
                     patient_rule='YEAR-SLIDE_ID from official filename; subtype and magnification excluded',
                     roots={key:str(value) for key,value in sources.items()}, rows=unique)
-    report = dict(audits=audits, comparison=comparison, duplicate_exclusions=duplicates,
+    report = dict(audits=audits, comparison=comparison, skipped_sources=skipped, duplicate_exclusions=duplicates,
                   integrity=integrity, patient_groups=len({r['patient_id'] for r in rows}),
                   split_groups=len({r['group_id'] for r in rows}), distributions=summarize(unique))
     report['dimensions'] = {source:{f'{width}x{height}':count for (width,height),count in
