@@ -9,15 +9,28 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = [('readme', ROOT / 'README.md', 'User guide'),
-           ('environment', ROOT / 'docs/ENVIRONMENT.md', 'Environment'),
-           ('commands', ROOT / 'docs/COMMANDS.md', 'Command reference'),
-           ('datasets', ROOT / 'docs/DATASETS.md', 'Dataset policy'),
-           ('checkpoints', ROOT / 'docs/CHECKPOINTS.md', 'Checkpoints & resume'),
-           ('pruning', ROOT / 'docs/PRUNING.md', 'Pruning & fine-tuning'),
-           ('evaluation', ROOT / 'docs/EVALUATION.md', 'Evaluation & efficiency'),
-           ('testing', ROOT / 'docs/TESTING.md', 'Testing & operations'),
-           ('research-roadmap', ROOT / 'docs/RESEARCH_IMPLEMENTATION_ROADMAP.md', 'Research implementation roadmap'),
-           ('roadmap', ROOT / 'docs/CODEBASE_FIX_ROADMAP.md', 'Repair roadmap')]
+           ('documentation-map', ROOT / 'docs/README.md', 'Documentation map'),
+           ('guides-index', ROOT / 'docs/guides/README.md', 'Guide index'),
+           ('environment', ROOT / 'docs/guides/ENVIRONMENT.md', 'Environment'),
+           ('commands', ROOT / 'docs/guides/COMMANDS.md', 'Command reference'),
+           ('datasets', ROOT / 'docs/guides/DATASETS.md', 'Dataset policy'),
+           ('checkpoints', ROOT / 'docs/guides/CHECKPOINTS.md', 'Checkpoints & resume'),
+           ('pruning', ROOT / 'docs/guides/PRUNING.md', 'Pruning & fine-tuning'),
+           ('evaluation', ROOT / 'docs/guides/EVALUATION.md', 'Evaluation & efficiency'),
+           ('testing', ROOT / 'docs/guides/TESTING.md', 'Testing & operations'),
+           ('research-index', ROOT / 'docs/research/README.md', 'Research index'),
+           ('research-roadmap', ROOT / 'docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md', 'Research implementation roadmap'),
+           ('specs-index', ROOT / 'docs/specs/README.md', 'Milestone specification index'),
+           ('m0-spec', ROOT / 'docs/specs/m0/M0_SPEC.md', 'M0 implementation specification'),
+           ('m0-tracker', ROOT / 'docs/specs/m0/README.md', 'M0 package tracker'),
+           ('m0-1', ROOT / 'docs/specs/m0/M0_1_RECORDS_INTEGRITY.md', 'M0.1 Records & integrity'),
+           ('m0-2', ROOT / 'docs/specs/m0/M0_2_BASELINE_PRESERVATION.md', 'M0.2 Baseline preservation'),
+           ('m0-3', ROOT / 'docs/specs/m0/M0_3_DATA_READINESS.md', 'M0.3 Data readiness'),
+           ('m0-4', ROOT / 'docs/specs/m0/M0_4_EXPOSURE_GOVERNANCE.md', 'M0.4 Exposure governance'),
+           ('m0-5', ROOT / 'docs/specs/m0/M0_5_PROTOCOL_LITERATURE.md', 'M0.5 Protocol & literature'),
+           ('m0-6', ROOT / 'docs/specs/m0/M0_6_RUNNER_GATE.md', 'M0.6 Runner & Gate G0'),
+           ('archive-index', ROOT / 'docs/archive/README.md', 'Archive index'),
+           ('roadmap', ROOT / 'docs/archive/CODEBASE_FIX_ROADMAP.md', 'Historical repair roadmap')]
 SOURCE_IDS = {path.resolve(): key for key, path, _ in SOURCES}
 
 
@@ -32,7 +45,7 @@ def link_target(target, source):
         if resolved in SOURCE_IDS:
             prefix = SOURCE_IDS[resolved]
             return '#' + prefix + ('-' + slug(anchor) if anchor else '')
-        return str(Path('..') / resolved.relative_to(ROOT)) if resolved.is_relative_to(ROOT) else '#'
+        return (Path('..') / resolved.relative_to(ROOT)).as_posix() if resolved.is_relative_to(ROOT) else '#'
     return target if target.startswith(('https://', 'http://', 'mailto:')) else '#'
 
 
@@ -144,7 +157,22 @@ def render(source, key, label):
 def main():
     rendered = [render(path, key, label) for key, path, label in SOURCES]
     content = '\n'.join(body for body, _ in rendered)
-    navigation = '\n'.join(nav for _, nav in rendered)
+    groups = {name: [] for name in ('Start here', 'User and developer guides', 'Research plans', 'Milestone specifications', 'Historical archive')}
+    for (_, path, _), (_, nav) in zip(SOURCES, rendered):
+        if path.is_relative_to(ROOT / 'docs/guides'):
+            group = 'User and developer guides'
+        elif path.is_relative_to(ROOT / 'docs/research'):
+            group = 'Research plans'
+        elif path.is_relative_to(ROOT / 'docs/specs'):
+            group = 'Milestone specifications'
+        elif path.is_relative_to(ROOT / 'docs/archive'):
+            group = 'Historical archive'
+        else:
+            group = 'Start here'
+        groups[group].append(nav)
+    navigation = '\n'.join('<details class="documentation-group"' + (' open' if name == 'Start here' else '') +
+        '><summary>' + html.escape(name) + '</summary>' + '\n'.join(items) + '</details>'
+        for name, items in groups.items())
     css = (ROOT / 'docs/assets/guide.css').read_text(encoding='utf-8-sig')
     script = (ROOT / 'docs/assets/guide.js').read_text(encoding='utf-8-sig')
     page = '''<!doctype html>
@@ -161,7 +189,7 @@ def main():
 <div class="notice"><strong>Current workspace:</strong> use the saved manifest with <code>cancer_binary</code>. The v2 copy was removed; prepare-data supports v1-only sources. Multiclass training and full-data experimental acceptance remain pending.</div>
 <p id="search-status" role="status" aria-live="polite"></p><p id="no-results" hidden>No matching section. Try a command name, parameter, or error message.</p>
 ''' + content + '''
-<footer class="page-footer">Edit README.md or docs/*.md, then run <code>python tools/build_docs.py</code> to refresh this guide. No network resources are used.</footer></main></div>
+<footer class="page-footer">Edit README.md or docs/**/*.md, then run <code>python tools/build_docs.py</code> to refresh this guide. No network resources are used.</footer></main></div>
 <script>''' + script + '''</script></body></html>'''
     output = ROOT / 'docs/index.html'
     output.write_text(page, encoding='utf-8')

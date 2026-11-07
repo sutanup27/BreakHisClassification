@@ -4,20 +4,35 @@
 <title>BreaKHis · Codebase guide</title><style>:root{--ink:#182a38;--muted:#566873;--teal:#087a76;--nav:#132d3c;--paper:#fff;--line:#dbe5e7;--back:#f3f7f7}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:120px}body{margin:0;background:var(--back);color:var(--ink);font:16px/1.65 "Segoe UI",Arial,sans-serif}a{color:var(--teal);text-underline-offset:3px}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:8px;background:white;padding:8px 14px;color:var(--ink)}button:hover{background:#e7f4f2}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,.table-wrap:focus-visible{outline:3px solid #20aaa0;outline-offset:3px}.sidebar{position:fixed;inset:0 auto 0 0;width:285px;background:var(--nav);color:#d4e4e9;overflow-y:auto;padding:30px 22px}.brand{display:flex;gap:13px;align-items:center;color:white;text-decoration:none;font-size:23px;font-weight:700;letter-spacing:-.5px}.brand-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#59cec0;color:#102d3c;font-size:25px}.brand small{display:block;font-size:10px;letter-spacing:2px;color:#9fc4cc;font-weight:600}.sidebar-note{font-size:13px;color:#a7c2cd;margin:21px 0 25px}.sidebar details{margin:0 0 19px}.sidebar summary{cursor:pointer;font-weight:650;color:#e9f2f4;font-size:14px;margin-bottom:8px}.sidebar nav a{display:block;font-size:12px;line-height:1.5;padding:6px 10px;margin:2px 0;border-radius:6px;color:#afcbd5;text-decoration:none;overflow-wrap:anywhere}.sidebar nav a:hover,.sidebar nav a.active{background:#224858;color:#fff}.sidebar-footer{border-top:1px solid #31505e;padding-top:20px;font-size:11px;color:#97b2bd}.workspace{margin-left:285px}.topbar{position:sticky;top:0;z-index:5;background:#f3f7f7f2;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:15px 40px;display:flex;gap:20px;justify-content:space-between;align-items:center}.search-wrap{width:min(560px,80%)}.search-wrap label{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-bottom:4px}.search-row{display:flex;gap:8px}.search-row input{min-width:0;width:100%;border:1px solid #c3d6d8;background:white;border-radius:8px;padding:9px 13px}.search-row button{font-size:13px}main{max-width:1130px;margin:auto;padding:44px 40px 75px}.intro{padding:0 0 25px}.eyebrow{font-size:11px;letter-spacing:1.7px;font-weight:700;color:var(--teal);text-transform:uppercase;margin:0 0 8px}.intro h1{font-size:clamp(30px,4vw,49px);line-height:1.12;letter-spacing:-1.5px;margin:12px 0 20px;max-width:700px}.intro>p:not(.eyebrow){max-width:720px;color:var(--muted);font-size:18px}.badges{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.badges span{font-size:12px;font-weight:600;padding:5px 10px;border:1px solid #c6dfdd;border-radius:20px;background:#e8f3f1;color:#176b68}.notice{border-left:4px solid var(--teal);background:#e8f2f1;padding:16px 20px;border-radius:0 9px 9px 0;font-size:14px;margin-bottom:30px}#search-status{font-size:13px;color:var(--muted)}#search-status:empty{display:none}#no-results{padding:24px;border:1px solid var(--line);border-radius:10px;background:white}.doc-section{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:28px 30px;margin:0 0 20px;scroll-margin-top:115px;box-shadow:0 2px 5px #182a3803;overflow-wrap:break-word}.doc-section[hidden]{display:none}h1,h2,h3,h4{line-height:1.3;letter-spacing:-.35px;color:var(--ink)}.doc-section h1{font-size:29px;margin:8px 0 20px}.doc-section h2{font-size:25px;margin:7px 0 20px}.doc-section h3{font-size:19px;margin:27px 0 12px}.doc-section p{margin:13px 0}.doc-section .eyebrow{margin:0;color:#738b90;font-size:10px}.doc-section li{padding:3px 0}.doc-section ol,.doc-section ul{padding-left:24px}code{font:13px/1.6 Consolas,"Courier New",monospace;color:#09696a;background:#eff5f5;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}.code-block{background:#152d3b;border-radius:9px;margin:20px 0;overflow:hidden}.code-toolbar{display:flex;justify-content:space-between;align-items:center;background:#203c4b;border-bottom:1px solid #35505c;padding:8px 13px;color:#b8d4dc;font:11px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px}.code-toolbar button{border:1px solid #52727f;background:transparent;color:#e4f0f4;font:12px "Segoe UI",Arial,sans-serif;text-transform:none;letter-spacing:0;padding:4px 10px}.code-toolbar button:hover{background:#345665}.code-block pre{margin:0;padding:19px 18px;overflow-x:auto;tab-size:2}.code-block code{display:block;font-size:12px;line-height:1.8;color:#deeff3;background:none;border-radius:0;padding:0;white-space:pre;overflow-wrap:normal}.table-wrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:19px 0}table{width:100%;border-collapse:collapse;font-size:13px;text-align:left;min-width:610px}th{background:#edf5f4;padding:12px 14px;color:#305a62;font-size:11px;letter-spacing:.35px}td{padding:13px 14px;border-top:1px solid #e3ebec;vertical-align:top}td:first-child{min-width:160px}tr:nth-child(even){background:#fbfdfd}table code{font-size:12px}.check-item{list-style:none;display:flex;gap:10px;align-items:baseline}.check{font-size:10px;font-weight:700;border-radius:5px;padding:2px 6px;white-space:nowrap}.check.done{background:#dff2e9;color:#226d4b}.check.pending{background:#f4ecda;color:#876019}.page-footer{border-top:1px solid var(--line);padding-top:25px;color:var(--muted);font-size:12px}.skip-link{position:fixed;top:-70px;left:12px;z-index:10;background:white;padding:12px}.skip-link:focus{top:12px}[hidden]{display:none!important}@media(max-width:1000px){.sidebar{width:235px;padding:24px 16px}.workspace{margin-left:235px}.topbar{padding:15px 22px}main{padding:32px 22px}.doc-section{padding:25px 22px}}@media(max-width:720px){.sidebar{position:relative;width:100%;max-height:270px;padding:18px 22px}.sidebar-note,.sidebar-footer{display:none}.sidebar nav{margin-top:17px}.sidebar details{margin-bottom:10px}.workspace{margin-left:0}.topbar{padding:12px 16px;gap:8px}.search-wrap{width:100%}#print{display:none}main{padding:28px 16px}.intro h1{font-size:34px;letter-spacing:-.8px}.intro>p:not(.eyebrow){font-size:16px}.doc-section{padding:22px 18px}.doc-section h2{font-size:22px}.code-block pre{padding:15px 13px}}@media print{body{background:white;font-size:10pt}.sidebar,.topbar,.copy,.skip-link,#search-status,#no-results{display:none!important}.workspace{margin:0}main{max-width:none;padding:0}.intro h1{font-size:25pt}.doc-section{display:block!important;border:0;border-radius:0;padding:0;margin:22pt 0;box-shadow:none}.code-block,.code-toolbar{background:#f1f3f3!important;color:#222!important}.code-block code{color:#222!important;white-space:pre-wrap;font-size:8pt}.table-wrap{overflow:visible}table{min-width:0;font-size:8pt}td,th{padding:6pt;min-width:0!important}h1,h2,h3{break-after:avoid}tr,.notice{break-inside:avoid}a{color:#222}html{scroll-padding:0}}
 
 @media print{.doc-section[hidden]{display:block!important}}
+
+.sidebar .documentation-group>details{margin-left:10px}.sidebar .documentation-group>details>summary{font-size:12px;color:#afcbd5}
 </style></head><body>
 <a class="skip-link" href="#main">Skip to documentation</a>
 <aside class="sidebar"><a class="brand" href="#readme"><span class="brand-mark">B</span><span>BreaKHis<small>CODEBASE GUIDE</small></span></a>
 <p class="sidebar-note">Setup, experiments, and implementation</p>
-<nav aria-label="Documentation navigation"><details open><summary>User guide</summary><a href="#readme" data-section="readme">BreaKHis classification and pruning</a><a href="#readme-start-here" data-section="readme-start-here">Start here</a><a href="#readme-first-run-checklist" data-section="readme-first-run-checklist">First-run checklist</a><a href="#readme-workspace-and-checkpoint-layout" data-section="readme-workspace-and-checkpoint-layout">Workspace and checkpoint layout</a><a href="#readme-environment-setup" data-section="readme-environment-setup">Environment setup</a><a href="#readme-complete-binary-workflow" data-section="readme-complete-binary-workflow">Complete binary workflow</a><a href="#readme-shared-parameters" data-section="readme-shared-parameters">Shared parameters</a><a href="#readme-train-parameters" data-section="readme-train-parameters">Train parameters</a><a href="#readme-prune-parameters" data-section="readme-prune-parameters">Prune parameters</a><a href="#readme-fine-tune-parameters" data-section="readme-fine-tune-parameters">Fine-tune parameters</a><a href="#readme-evaluate-parameters" data-section="readme-evaluate-parameters">Evaluate parameters</a><a href="#readme-compare-dense-pruned-and-fine-tuned-models" data-section="readme-compare-dense-pruned-and-fine-tuned-models">Compare dense, pruned, and fine-tuned models</a><a href="#readme-checkpoint-paths-and-loading-rules" data-section="readme-checkpoint-paths-and-loading-rules">Checkpoint paths and loading rules</a><a href="#readme-prepare-data-parameters" data-section="readme-prepare-data-parameters">Prepare-data parameters</a><a href="#readme-preprocessing-and-runtime" data-section="readme-preprocessing-and-runtime">Preprocessing and runtime</a><a href="#readme-help-environment-checking-and-wrappers" data-section="readme-help-environment-checking-and-wrappers">Help, environment checking, and wrappers</a><a href="#readme-troubleshooting-and-remaining-work" data-section="readme-troubleshooting-and-remaining-work">Troubleshooting and remaining work</a><a href="#readme-working-on-the-codebase" data-section="readme-working-on-the-codebase">Working on the codebase</a><a href="#readme-cpu-smoke-workflow-and-ci" data-section="readme-cpu-smoke-workflow-and-ci">CPU smoke workflow and CI</a><a href="#readme-documentation-maintenance" data-section="readme-documentation-maintenance">Documentation maintenance</a></details>
+<nav aria-label="Documentation navigation"><details class="documentation-group" open><summary>Start here</summary><details open><summary>User guide</summary><a href="#readme" data-section="readme">BreaKHis classification and pruning</a><a href="#readme-start-here" data-section="readme-start-here">Start here</a><a href="#readme-first-run-checklist" data-section="readme-first-run-checklist">First-run checklist</a><a href="#readme-workspace-and-checkpoint-layout" data-section="readme-workspace-and-checkpoint-layout">Workspace and checkpoint layout</a><a href="#readme-environment-setup" data-section="readme-environment-setup">Environment setup</a><a href="#readme-complete-binary-workflow" data-section="readme-complete-binary-workflow">Complete binary workflow</a><a href="#readme-shared-parameters" data-section="readme-shared-parameters">Shared parameters</a><a href="#readme-train-parameters" data-section="readme-train-parameters">Train parameters</a><a href="#readme-prune-parameters" data-section="readme-prune-parameters">Prune parameters</a><a href="#readme-fine-tune-parameters" data-section="readme-fine-tune-parameters">Fine-tune parameters</a><a href="#readme-evaluate-parameters" data-section="readme-evaluate-parameters">Evaluate parameters</a><a href="#readme-compare-dense-pruned-and-fine-tuned-models" data-section="readme-compare-dense-pruned-and-fine-tuned-models">Compare dense, pruned, and fine-tuned models</a><a href="#readme-checkpoint-paths-and-loading-rules" data-section="readme-checkpoint-paths-and-loading-rules">Checkpoint paths and loading rules</a><a href="#readme-prepare-data-parameters" data-section="readme-prepare-data-parameters">Prepare-data parameters</a><a href="#readme-preprocessing-and-runtime" data-section="readme-preprocessing-and-runtime">Preprocessing and runtime</a><a href="#readme-help-environment-checking-and-wrappers" data-section="readme-help-environment-checking-and-wrappers">Help, environment checking, and wrappers</a><a href="#readme-troubleshooting-and-remaining-work" data-section="readme-troubleshooting-and-remaining-work">Troubleshooting and remaining work</a><a href="#readme-working-on-the-codebase" data-section="readme-working-on-the-codebase">Working on the codebase</a><a href="#readme-cpu-smoke-workflow-and-ci" data-section="readme-cpu-smoke-workflow-and-ci">CPU smoke workflow and CI</a><a href="#readme-documentation-maintenance" data-section="readme-documentation-maintenance">Documentation maintenance</a></details>
+<details open><summary>Documentation map</summary><a href="#documentation-map" data-section="documentation-map">Documentation map</a></details></details>
+<details class="documentation-group"><summary>User and developer guides</summary><details open><summary>Guide index</summary><a href="#guides-index" data-section="guides-index">User and developer guides</a></details>
 <details open><summary>Environment</summary><a href="#environment" data-section="environment">Environment setup</a><a href="#environment-create-a-virtual-environment" data-section="environment-create-a-virtual-environment">Create a virtual environment</a><a href="#environment-nvidia-gpu-installation" data-section="environment-nvidia-gpu-installation">NVIDIA GPU installation</a><a href="#environment-cpu-installation" data-section="environment-cpu-installation">CPU installation</a><a href="#environment-what-the-files-cover" data-section="environment-what-the-files-cover">What the files cover</a><a href="#environment-verify-and-run" data-section="environment-verify-and-run">Verify and run</a></details>
 <details open><summary>Command reference</summary><a href="#commands" data-section="commands">Package and command reference</a><a href="#commands-canonical-package" data-section="commands-canonical-package">Canonical package</a><a href="#commands-supported-commands" data-section="commands-supported-commands">Supported commands</a><a href="#commands-compatibility-entry-points" data-section="commands-compatibility-entry-points">Compatibility entry points</a><a href="#commands-checkpoints-and-limits" data-section="commands-checkpoints-and-limits">Checkpoints and limits</a><a href="#commands-stage-6-configuration" data-section="commands-stage-6-configuration">Stage 6 configuration</a><a href="#commands-stage-8-evaluation-and-comparison" data-section="commands-stage-8-evaluation-and-comparison">Stage 8 evaluation and comparison</a><a href="#commands-stage-9-operational-checks" data-section="commands-stage-9-operational-checks">Stage 9 operational checks</a></details>
 <details open><summary>Dataset policy</summary><a href="#datasets" data-section="datasets">Dataset audit and patient-separated splits</a><a href="#datasets-audited-local-sources" data-section="datasets-audited-local-sources">Audited local sources</a><a href="#datasets-identifier-rule" data-section="datasets-identifier-rule">Identifier rule</a><a href="#datasets-split-policy" data-section="datasets-split-policy">Split policy</a><a href="#datasets-prepare-and-reuse" data-section="datasets-prepare-and-reuse">Prepare and reuse</a></details>
 <details open><summary>Checkpoints &amp; resume</summary><a href="#checkpoints" data-section="checkpoints">Experiment configuration and checkpoint format</a><a href="#checkpoints-experiment-outputs" data-section="checkpoints-experiment-outputs">Experiment outputs</a><a href="#checkpoints-format-version-2" data-section="checkpoints-format-version-2">Format version 2</a><a href="#checkpoints-resume-semantics" data-section="checkpoints-resume-semantics">Resume semantics</a><a href="#checkpoints-verification" data-section="checkpoints-verification">Verification</a></details>
 <details open><summary>Pruning &amp; fine-tuning</summary><a href="#pruning" data-section="pruning">Pruning and fine-tuning</a><a href="#pruning-supported-methods" data-section="pruning-supported-methods">Supported methods</a><a href="#pruning-channel-pruning-workflow" data-section="pruning-channel-pruning-workflow">Channel-pruning workflow</a><a href="#pruning-per-layer-settings" data-section="pruning-per-layer-settings">Per-layer settings</a><a href="#pruning-mask-invariants-and-edge-cases" data-section="pruning-mask-invariants-and-edge-cases">Mask invariants and edge cases</a><a href="#pruning-validation-saved-files-and-resume" data-section="pruning-validation-saved-files-and-resume">Validation, saved files, and resume</a><a href="#pruning-compatibility-and-verification" data-section="pruning-compatibility-and-verification">Compatibility and verification</a></details>
 <details open><summary>Evaluation &amp; efficiency</summary><a href="#evaluation" data-section="evaluation">Evaluation and efficiency reporting</a><a href="#evaluation-evaluate-one-checkpoint" data-section="evaluation-evaluate-one-checkpoint">Evaluate one checkpoint</a><a href="#evaluation-compare-three-selected-checkpoints" data-section="evaluation-compare-three-selected-checkpoints">Compare three selected checkpoints</a><a href="#evaluation-arguments" data-section="evaluation-arguments">Arguments</a><a href="#evaluation-classification-definitions" data-section="evaluation-classification-definitions">Classification definitions</a><a href="#evaluation-filename-patientslide-metrics" data-section="evaluation-filename-patientslide-metrics">Filename patient/slide metrics</a><a href="#evaluation-size-accounting" data-section="evaluation-size-accounting">Size accounting</a><a href="#evaluation-compute-and-latency-protocol" data-section="evaluation-compute-and-latency-protocol">Compute and latency protocol</a><a href="#evaluation-reading-comparisons" data-section="evaluation-reading-comparisons">Reading comparisons</a></details>
-<details open><summary>Testing &amp; operations</summary><a href="#testing" data-section="testing">Testing and operational acceptance</a><a href="#testing-run-the-regression-suite" data-section="testing-run-the-regression-suite">Run the regression suite</a><a href="#testing-retain-a-reproducible-smoke-workflow" data-section="testing-retain-a-reproducible-smoke-workflow">Retain a reproducible smoke workflow</a><a href="#testing-v1-only-data-preparation" data-section="testing-v1-only-data-preparation">V1-only data preparation</a><a href="#testing-cpu-ci" data-section="testing-cpu-ci">CPU CI</a><a href="#testing-supported-surface-and-limits" data-section="testing-supported-surface-and-limits">Supported surface and limits</a><a href="#testing-full-data-acceptance-still-required" data-section="testing-full-data-acceptance-still-required">Full-data acceptance still required</a></details>
-<details open><summary>Research implementation roadmap</summary><a href="#research-roadmap" data-section="research-roadmap">Research implementation roadmap: BreaKHis pruning</a><a href="#research-roadmap-1-agreed-scope-and-decisions-to-freeze" data-section="research-roadmap-1-agreed-scope-and-decisions-to-freeze">1. Agreed scope and decisions to freeze</a><a href="#research-roadmap-2-existing-foundation-and-implementation-gaps" data-section="research-roadmap-2-existing-foundation-and-implementation-gaps">2. Existing foundation and implementation gaps</a><a href="#research-roadmap-3-milestones-schedule-and-hard-gates" data-section="research-roadmap-3-milestones-schedule-and-hard-gates">3. Milestones, schedule and hard gates</a><a href="#research-roadmap-4-m0-preserve-audit-and-freeze-the-initial-protocol" data-section="research-roadmap-4-m0-preserve-audit-and-freeze-the-initial-protocol">4. M0: preserve, audit and freeze the initial protocol</a><a href="#research-roadmap-5-m1-implement-scientific-infrastructure" data-section="research-roadmap-5-m1-implement-scientific-infrastructure">5. M1: implement scientific infrastructure</a><a href="#research-roadmap-6-m2-dense-models-and-measured-compute-gate" data-section="research-roadmap-6-m2-dense-models-and-measured-compute-gate">6. M2: dense models and measured compute gate</a><a href="#research-roadmap-7-m3-conventional-controls-and-reconstruction-interface" data-section="research-roadmap-7-m3-conventional-controls-and-reconstruction-interface">7. M3: conventional controls and reconstruction interface</a><a href="#research-roadmap-8-m4-characterize-vulnerability-before-adding-the-mechanism" data-section="research-roadmap-8-m4-characterize-vulnerability-before-adding-the-mechanism">8. M4: characterize vulnerability before adding the mechanism</a><a href="#research-roadmap-9-m5-candidate-mechanism-and-decisive-comparisons" data-section="research-roadmap-9-m5-candidate-mechanism-and-decisive-comparisons">9. M5: candidate mechanism and decisive comparisons</a><a href="#research-roadmap-10-m6-freeze-and-execute-held-out-evaluation" data-section="research-roadmap-10-m6-freeze-and-execute-held-out-evaluation">10. M6: freeze and execute held-out evaluation</a><a href="#research-roadmap-11-m7-statistics-benchmark-confirmation-and-handoff" data-section="research-roadmap-11-m7-statistics-benchmark-confirmation-and-handoff">11. M7: statistics, benchmark confirmation and handoff</a><a href="#research-roadmap-12-budget-reductions-and-stop-rules" data-section="research-roadmap-12-budget-reductions-and-stop-rules">12. Budget reductions and stop rules</a><a href="#research-roadmap-13-run-ledger-and-initial-work-order" data-section="research-roadmap-13-run-ledger-and-initial-work-order">13. Run ledger and initial work order</a></details>
-<details open><summary>Repair roadmap</summary><a href="#roadmap" data-section="roadmap">Codebase repair roadmap</a><a href="#roadmap-objective" data-section="roadmap-objective">Objective</a><a href="#roadmap-current-state" data-section="roadmap-current-state">Current state</a><a href="#roadmap-stage-1--separate-dataset-workflows" data-section="roadmap-stage-1--separate-dataset-workflows">Stage 1 — Separate dataset workflows</a><a href="#roadmap-stage-2--establish-a-reproducible-environment" data-section="roadmap-stage-2--establish-a-reproducible-environment">Stage 2 — Establish a reproducible environment</a><a href="#roadmap-stage-3--repair-package-imports-and-command-structure" data-section="roadmap-stage-3--repair-package-imports-and-command-structure">Stage 3 — Repair package imports and command structure</a><a href="#roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-section="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits">Stage 4 — Audit datasets and create patient-separated splits</a><a href="#roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-section="roadmap-stage-5--standardize-preprocessing-and-baseline-training">Stage 5 — Standardize preprocessing and baseline training</a><a href="#roadmap-stage-6--standardize-configuration-and-checkpoints" data-section="roadmap-stage-6--standardize-configuration-and-checkpoints">Stage 6 — Standardize configuration and checkpoints</a><a href="#roadmap-stage-7--repair-pruning-and-fine-tuning" data-section="roadmap-stage-7--repair-pruning-and-fine-tuning">Stage 7 — Repair pruning and fine-tuning</a><a href="#roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-section="roadmap-stage-8--correct-evaluation-and-efficiency-reporting">Stage 8 — Correct evaluation and efficiency reporting</a><a href="#roadmap-stage-9--add-regression-checks-and-operational-documentation" data-section="roadmap-stage-9--add-regression-checks-and-operational-documentation">Stage 9 — Add regression checks and operational documentation</a><a href="#roadmap-final-acceptance-run" data-section="roadmap-final-acceptance-run">Final acceptance run</a></details></nav>
+<details open><summary>Testing &amp; operations</summary><a href="#testing" data-section="testing">Testing and operational acceptance</a><a href="#testing-run-the-regression-suite" data-section="testing-run-the-regression-suite">Run the regression suite</a><a href="#testing-retain-a-reproducible-smoke-workflow" data-section="testing-retain-a-reproducible-smoke-workflow">Retain a reproducible smoke workflow</a><a href="#testing-v1-only-data-preparation" data-section="testing-v1-only-data-preparation">V1-only data preparation</a><a href="#testing-cpu-ci" data-section="testing-cpu-ci">CPU CI</a><a href="#testing-supported-surface-and-limits" data-section="testing-supported-surface-and-limits">Supported surface and limits</a><a href="#testing-full-data-acceptance-still-required" data-section="testing-full-data-acceptance-still-required">Full-data acceptance still required</a><a href="#testing-full-data-acceptance-checklist" data-section="testing-full-data-acceptance-checklist">Full-data acceptance checklist</a></details></details>
+<details class="documentation-group"><summary>Research plans</summary><details open><summary>Research index</summary><a href="#research-index" data-section="research-index">Research plans</a></details>
+<details open><summary>Research implementation roadmap</summary><a href="#research-roadmap" data-section="research-roadmap">Research implementation roadmap: BreaKHis pruning</a><a href="#research-roadmap-1-agreed-scope-and-decisions-to-freeze" data-section="research-roadmap-1-agreed-scope-and-decisions-to-freeze">1. Agreed scope and decisions to freeze</a><a href="#research-roadmap-2-existing-foundation-and-implementation-gaps" data-section="research-roadmap-2-existing-foundation-and-implementation-gaps">2. Existing foundation and implementation gaps</a><a href="#research-roadmap-3-milestones-schedule-and-hard-gates" data-section="research-roadmap-3-milestones-schedule-and-hard-gates">3. Milestones, schedule and hard gates</a><a href="#research-roadmap-4-m0-preserve-audit-and-freeze-the-initial-protocol" data-section="research-roadmap-4-m0-preserve-audit-and-freeze-the-initial-protocol">4. M0: preserve, audit and freeze the initial protocol</a><a href="#research-roadmap-5-m1-implement-scientific-infrastructure" data-section="research-roadmap-5-m1-implement-scientific-infrastructure">5. M1: implement scientific infrastructure</a><a href="#research-roadmap-6-m2-dense-models-and-measured-compute-gate" data-section="research-roadmap-6-m2-dense-models-and-measured-compute-gate">6. M2: dense models and measured compute gate</a><a href="#research-roadmap-7-m3-conventional-controls-and-reconstruction-interface" data-section="research-roadmap-7-m3-conventional-controls-and-reconstruction-interface">7. M3: conventional controls and reconstruction interface</a><a href="#research-roadmap-8-m4-characterize-vulnerability-before-adding-the-mechanism" data-section="research-roadmap-8-m4-characterize-vulnerability-before-adding-the-mechanism">8. M4: characterize vulnerability before adding the mechanism</a><a href="#research-roadmap-9-m5-candidate-mechanism-and-decisive-comparisons" data-section="research-roadmap-9-m5-candidate-mechanism-and-decisive-comparisons">9. M5: candidate mechanism and decisive comparisons</a><a href="#research-roadmap-10-m6-freeze-and-execute-held-out-evaluation" data-section="research-roadmap-10-m6-freeze-and-execute-held-out-evaluation">10. M6: freeze and execute held-out evaluation</a><a href="#research-roadmap-11-m7-statistics-benchmark-confirmation-and-handoff" data-section="research-roadmap-11-m7-statistics-benchmark-confirmation-and-handoff">11. M7: statistics, benchmark confirmation and handoff</a><a href="#research-roadmap-12-budget-reductions-and-stop-rules" data-section="research-roadmap-12-budget-reductions-and-stop-rules">12. Budget reductions and stop rules</a><a href="#research-roadmap-13-run-ledger-and-initial-work-order" data-section="research-roadmap-13-run-ledger-and-initial-work-order">13. Run ledger and initial work order</a></details></details>
+<details class="documentation-group"><summary>Milestone specifications</summary><details open><summary>Milestone specification index</summary><a href="#specs-index" data-section="specs-index">Milestone specifications</a></details>
+<details open><summary>M0 implementation specification</summary><a href="#m0-spec" data-section="m0-spec">M0 specification: preservation, protocol and data readiness</a><a href="#m0-spec-1-objective-and-completion-boundary" data-section="m0-spec-1-objective-and-completion-boundary">1. Objective and completion boundary</a><a href="#m0-spec-2-scope-and-inputs" data-section="m0-spec-2-scope-and-inputs">2. Scope and inputs</a><a href="#m0-spec-3-proposed-development-structure" data-section="m0-spec-3-proposed-development-structure">3. Proposed development structure</a><a href="#m0-spec-4-run-lifecycle-and-filesystem-contract" data-section="m0-spec-4-run-lifecycle-and-filesystem-contract">4. Run lifecycle and filesystem contract</a><a href="#m0-spec-5-record-schemas-and-semantics" data-section="m0-spec-5-record-schemas-and-semantics">5. Record schemas and semantics</a><a href="#m0-spec-6-integrity-and-reproducibility-contract" data-section="m0-spec-6-integrity-and-reproducibility-contract">6. Integrity and reproducibility contract</a><a href="#m0-spec-7-proposed-runner-interface" data-section="m0-spec-7-proposed-runner-interface">7. Proposed runner interface</a><a href="#m0-spec-8-gate-g0-contract" data-section="m0-spec-8-gate-g0-contract">8. Gate G0 contract</a><a href="#m0-spec-9-implementation-work-packages" data-section="m0-spec-9-implementation-work-packages">9. Implementation work packages</a><a href="#m0-spec-10-acceptance-test-matrix" data-section="m0-spec-10-acceptance-test-matrix">10. Acceptance-test matrix</a><a href="#m0-spec-11-definition-of-done-and-handoff" data-section="m0-spec-11-definition-of-done-and-handoff">11. Definition of done and handoff</a></details>
+<details open><summary>M0 package tracker</summary><a href="#m0-tracker" data-section="m0-tracker">M0 implementation checklist tracker</a><a href="#m0-tracker-work-packages-and-progress" data-section="m0-tracker-work-packages-and-progress">Work packages and progress</a><a href="#m0-tracker-status-rules" data-section="m0-tracker-status-rules">Status rules</a><a href="#m0-tracker-acceptance-test-ownership" data-section="m0-tracker-acceptance-test-ownership">Acceptance-test ownership</a><a href="#m0-tracker-starting-point" data-section="m0-tracker-starting-point">Starting point</a></details>
+<details open><summary>M0.1 Records &amp; integrity</summary><a href="#m0-1" data-section="m0-1">M0.1 — Records and integrity</a><a href="#m0-1-build-checklist" data-section="m0-1-build-checklist">Build checklist</a><a href="#m0-1-tests-and-completion-gate" data-section="m0-1-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-1-progress-evidence" data-section="m0-1-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.2 Baseline preservation</summary><a href="#m0-2" data-section="m0-2">M0.2 — Baseline preservation</a><a href="#m0-2-build-checklist" data-section="m0-2-build-checklist">Build checklist</a><a href="#m0-2-tests-and-completion-gate" data-section="m0-2-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-2-progress-evidence" data-section="m0-2-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.3 Data readiness</summary><a href="#m0-3" data-section="m0-3">M0.3 — Data readiness</a><a href="#m0-3-build-checklist" data-section="m0-3-build-checklist">Build checklist</a><a href="#m0-3-tests-and-completion-gate" data-section="m0-3-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-3-progress-evidence" data-section="m0-3-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.4 Exposure governance</summary><a href="#m0-4" data-section="m0-4">M0.4 — Exposure governance</a><a href="#m0-4-build-checklist" data-section="m0-4-build-checklist">Build checklist</a><a href="#m0-4-tests-and-completion-gate" data-section="m0-4-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-4-progress-evidence" data-section="m0-4-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.5 Protocol &amp; literature</summary><a href="#m0-5" data-section="m0-5">M0.5 — Protocol and literature</a><a href="#m0-5-build-checklist" data-section="m0-5-build-checklist">Build checklist</a><a href="#m0-5-tests-and-completion-gate" data-section="m0-5-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-5-progress-evidence" data-section="m0-5-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.6 Runner &amp; Gate G0</summary><a href="#m0-6" data-section="m0-6">M0.6 — Runner and Gate G0</a><a href="#m0-6-build-checklist" data-section="m0-6-build-checklist">Build checklist</a><a href="#m0-6-tests-and-completion-gate" data-section="m0-6-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-6-progress-evidence" data-section="m0-6-progress-evidence">Progress evidence</a></details></details>
+<details class="documentation-group"><summary>Historical archive</summary><details open><summary>Archive index</summary><a href="#archive-index" data-section="archive-index">Historical documentation archive</a></details>
+<details open><summary>Historical repair roadmap</summary><a href="#roadmap" data-section="roadmap">Codebase repair roadmap</a><a href="#roadmap-objective" data-section="roadmap-objective">Objective</a><a href="#roadmap-current-state" data-section="roadmap-current-state">Current state</a><a href="#roadmap-stage-1--separate-dataset-workflows" data-section="roadmap-stage-1--separate-dataset-workflows">Stage 1 — Separate dataset workflows</a><a href="#roadmap-stage-2--establish-a-reproducible-environment" data-section="roadmap-stage-2--establish-a-reproducible-environment">Stage 2 — Establish a reproducible environment</a><a href="#roadmap-stage-3--repair-package-imports-and-command-structure" data-section="roadmap-stage-3--repair-package-imports-and-command-structure">Stage 3 — Repair package imports and command structure</a><a href="#roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-section="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits">Stage 4 — Audit datasets and create patient-separated splits</a><a href="#roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-section="roadmap-stage-5--standardize-preprocessing-and-baseline-training">Stage 5 — Standardize preprocessing and baseline training</a><a href="#roadmap-stage-6--standardize-configuration-and-checkpoints" data-section="roadmap-stage-6--standardize-configuration-and-checkpoints">Stage 6 — Standardize configuration and checkpoints</a><a href="#roadmap-stage-7--repair-pruning-and-fine-tuning" data-section="roadmap-stage-7--repair-pruning-and-fine-tuning">Stage 7 — Repair pruning and fine-tuning</a><a href="#roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-section="roadmap-stage-8--correct-evaluation-and-efficiency-reporting">Stage 8 — Correct evaluation and efficiency reporting</a><a href="#roadmap-stage-9--add-regression-checks-and-operational-documentation" data-section="roadmap-stage-9--add-regression-checks-and-operational-documentation">Stage 9 — Add regression checks and operational documentation</a><a href="#roadmap-final-acceptance-run" data-section="roadmap-final-acceptance-run">Final acceptance run</a></details></details></nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
 <div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
 <main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–9 implemented</span></div></div>
@@ -29,7 +44,8 @@
 </section>
 <section class="doc-section" id="readme-start-here" data-guide="User guide">
 <p class="eyebrow">User guide</p><h2>Start here</h2>
-<p>Read this guide from setup through training before running an experiment. An <a href="..\docs\index.html">offline HTML guide</a> presents this README and the detailed documentation with navigation, search, and copy buttons. Open <code>docs/index.html</code> in a browser; no web server, installation, or internet connection is required.</p>
+<p>See the <a href="#documentation-map">documentation map</a> for guides, research plans, milestone specifications and historical archives.</p>
+<p>Read this guide from setup through training before running an experiment. An <a href="../docs/index.html">offline HTML guide</a> presents this README and the detailed documentation with navigation, search, and copy buttons. Open <code>docs/index.html</code> in a browser; no web server, installation, or internet connection is required.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Goal</th><th scope="col">Read next</th></tr></thead><tbody>
 <tr><td>Run the project for the first time</td><td><a href="#readme-first-run-checklist">First-run checklist</a>, then <a href="#readme-environment-setup">environment setup</a></td></tr>
 <tr><td>Train, prune, and evaluate</td><td><a href="#readme-complete-binary-workflow">Complete binary workflow</a></td></tr>
@@ -39,6 +55,8 @@
 <tr><td>Modify the implementation</td><td><a href="#readme-working-on-the-codebase">Working on the codebase</a></td></tr>
 <tr><td>Diagnose an error</td><td><a href="#readme-troubleshooting-and-remaining-work">Troubleshooting</a></td></tr>
 <tr><td>Plan the research experiments</td><td><a href="#research-roadmap">7-9 day research implementation roadmap</a></td></tr>
+<tr><td>Implement and test the first research milestone</td><td><a href="#m0-spec">M0 specification</a></td></tr>
+<tr><td>Track M0 implementation package by package</td><td><a href="#m0-tracker">M0 checklist tracker</a></td></tr>
 </tbody></table></div>
 </section>
 <section class="doc-section" id="readme-first-run-checklist" data-guide="User guide">
@@ -323,6 +341,41 @@ python -m unittest discover -s tests -v</code></pre></div>
 <div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python tools/build_docs.py
 Start-Process docs/index.html</code></pre></div>
 <p>The builder uses only the Python standard library. Keep CLI parameter tables and examples aligned with <code>python -m breakhis &lt;command&gt; --help</code>. The page embeds its styles and scripts, so it can be opened directly or printed to PDF from a browser.</p>
+</section>
+<section class="doc-section" id="documentation-map" data-guide="Documentation map">
+<p class="eyebrow">Documentation map</p><h1>Documentation map</h1>
+<p>Start with the repository <a href="#readme">README</a>, or open the searchable offline <a href="../docs/index.html">HTML guide</a>. Documentation is grouped by purpose:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/
+  README.md                # This map
+  index.html               # Generated offline guide
+  guides/                  # Setup, commands, data, checkpoints and testing
+  research/                # Scientific objectives and execution plans
+  specs/m0/                # M0 master contract, tracker and six checklists
+  archive/                 # Historical engineering roadmap and citations
+  assets/                  # HTML guide styles and scripts</code></pre></div>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Need</th><th scope="col">Start here</th></tr></thead><tbody>
+<tr><td>Install and operate the project</td><td><a href="#guides-index">User/developer guides</a></td></tr>
+<tr><td>Understand the research objective and implementation path</td><td><a href="#research-index">Research plans</a></td></tr>
+<tr><td>Implement M0 in manageable packages</td><td><a href="#m0-tracker">M0 tracker</a>, then <a href="#m0-spec">master spec</a></td></tr>
+<tr><td>Check outstanding full-data experimental acceptance</td><td><a href="#testing-full-data-acceptance-checklist">Active testing checklist</a></td></tr>
+<tr><td>Understand previous repairs or collected source references</td><td><a href="#archive-index">Historical archive</a></td></tr>
+</tbody></table></div>
+<p>The research roadmap is the active research plan. The archived repair roadmap is engineering history. M0&#x27;s master specification remains the implementation source of truth; its package checklists track delivery. Planned features are not existing capabilities.</p>
+<p>Edit Markdown in the appropriate group, then run <code>python tools/build_docs.py</code> to refresh <code>index.html</code>. Command examples assume the repository root as working directory, regardless of the Markdown file&#x27;s folder. Runtime data/checkpoints retain their documented locations.</p>
+</section>
+<section class="doc-section" id="guides-index" data-guide="Guide index">
+<p class="eyebrow">Guide index</p><h1>User and developer guides</h1>
+<p><a href="#documentation-map">Documentation map</a></p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Guide</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><a href="#environment">ENVIRONMENT.md</a></td><td>Python, virtual environment, pinned CPU/CUDA dependencies and verification</td></tr>
+<tr><td><a href="#commands">COMMANDS.md</a></td><td>Canonical package, CLI workflow and compatibility scripts</td></tr>
+<tr><td><a href="#datasets">DATASETS.md</a></td><td>Audit, lineage limits, filename grouping, duplicates and manifests</td></tr>
+<tr><td><a href="#checkpoints">CHECKPOINTS.md</a></td><td>Formats, experiment paths, reconstruction and resume</td></tr>
+<tr><td><a href="#pruning">PRUNING.md</a></td><td>Weight masks, supported VGG channel removal and fine-tuning invariants</td></tr>
+<tr><td><a href="#evaluation">EVALUATION.md</a></td><td>Metrics, size/compute definitions, latency and checkpoint comparisons</td></tr>
+<tr><td><a href="#testing">TESTING.md</a></td><td>Regressions, CPU CI, smoke workflow and active full-data acceptance</td></tr>
+</tbody></table></div>
+<p>For research implementation, use the <a href="#research-roadmap">research roadmap</a> and <a href="#m0-tracker">M0 package tracker</a>.</p>
 </section>
 <section class="doc-section" id="environment" data-guide="Environment">
 <p class="eyebrow">Environment</p><h1>Environment setup</h1>
@@ -754,17 +807,43 @@ python -m breakhis train --dataset breakhis --source cancer_binary --manifest ar
 <section class="doc-section" id="testing-supported-surface-and-limits" data-guide="Testing &amp; operations">
 <p class="eyebrow">Testing &amp; operations</p><h2>Supported surface and limits</h2>
 <p>Supported: binary VGG/ResNet18 training, saved patient/slide splits, unstructured weight masks, sequential VGG channel pruning, validation selection, versioned checkpoint reconstruction, workers-zero completed-epoch resume, and Stage 8 evaluation/comparison reports. The baseline platform is Windows x64/Python 3.13; other OS environments need separate verification.</p>
-<p>Experimental/unsupported: multiclass training, residual/depthwise channel surgery, mixed channel/mask models, historical architecture-specific helpers and CIFAR demonstrations. See <a href="#pruning">pruning limits</a> and <a href="..\experiments\cifar10\README.md">legacy experiments</a>.</p>
+<p>Experimental/unsupported: multiclass training, residual/depthwise channel surgery, mixed channel/mask models, historical architecture-specific helpers and CIFAR demonstrations. See <a href="#pruning">pruning limits</a> and <a href="../experiments/cifar10/README.md">legacy experiments</a>.</p>
 <p>Filename IDs are slide/patient surrogates, not independently verified clinical identities. No full-dataset accuracy, clinical validity, end-to-end latency benefit or statistically significant speedup is established by these smoke tests.</p>
 </section>
 <section class="doc-section" id="testing-full-data-acceptance-still-required" data-guide="Testing &amp; operations">
 <p class="eyebrow">Testing &amp; operations</p><h2>Full-data acceptance still required</h2>
-<p>Before declaring a final experiment complete, install a fresh environment, audit the chosen real source and saved splits, train a full baseline, select on validation, reload in a fresh process, prune and verify invariants, fine-tune with validation, then evaluate the selected baseline/pruned models once on reserved test data. Save configurations, checkpoint hashes, original manifests, logs and fixed-protocol accuracy/size/MAC/latency comparisons. The roadmap&#x27;s final acceptance checklist tracks this separately from implementation and synthetic regression acceptance.</p>
+<p>Before declaring a final experiment complete, install a fresh environment, audit the chosen real source and saved splits, train a full baseline, select on validation, reload in a fresh process, prune and verify invariants, fine-tune with validation, then evaluate the selected baseline/pruned models once on reserved test data. Save configurations, checkpoint hashes, original manifests, logs and fixed-protocol accuracy/size/MAC/latency comparisons. The active checklist below tracks this separately from implementation and synthetic regression acceptance.</p>
+</section>
+<section class="doc-section" id="testing-full-data-acceptance-checklist" data-guide="Testing &amp; operations">
+<p class="eyebrow">Testing &amp; operations</p><h2>Full-data acceptance checklist</h2>
+<p>Status: outstanding. Historical repair evidence remains in the <a href="#roadmap">archived engineering roadmap</a>. Check items only when evidence for the actual declared experiment is recorded.</p>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Install dependencies into a fresh virtual environment.</li>
+<li class="check-item"><span class="check pending">Pending</span>Validate the chosen real dataset and saved patient/slide splits.</li>
+<li class="check-item"><span class="check pending">Pending</span>Train a full binary baseline and select its checkpoint using validation.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reload the baseline in a fresh process.</li>
+<li class="check-item"><span class="check pending">Pending</span>Prune and verify structural or mask invariants.</li>
+<li class="check-item"><span class="check pending">Pending</span>Fine-tune using validation selection, then save/reload the result.</li>
+<li class="check-item"><span class="check pending">Pending</span>Evaluate selected baseline and pruned models on reserved test data.</li>
+<li class="check-item"><span class="check pending">Pending</span>Generate the accuracy, size, compute and latency comparison report.</li>
+<li class="check-item"><span class="check pending">Pending</span>Preserve configurations, split references, checkpoint hashes and logs.</li>
+</ul>
+</section>
+<section class="doc-section" id="research-index" data-guide="Research index">
+<p class="eyebrow">Research index</p><h1>Research plans</h1>
+<p><a href="#documentation-map">Documentation map</a></p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Document</th><th scope="col">Role</th></tr></thead><tbody>
+<tr><td><a href="#research-roadmap">Research implementation roadmap</a></td><td>Active 7-9 day milestone schedule, implementation gaps, acceptance gates and scope cuts</td></tr>
+<tr><td><a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">End-to-end research guide</a></td><td>Scientific objectives, novelty boundaries, design, baselines, statistics and publication gates</td></tr>
+<tr><td><a href="../docs/research/RESEARCH_PAPER_PLAN.md">Operational experiment plan</a></td><td>Detailed P0/P1/P2 and E01-E14 execution sequence and dependencies</td></tr>
+</tbody></table></div>
+<p>Use the roadmap for the current sprint, the guide for scientific intent, and the operational plan for experiment detail. Later scoped decisions must be recorded in the protocol/decision register; historical proposed choices are not frozen automatically. The M0 protocol is still a proposed deliverable.</p>
+<p><a href="#m0-tracker">M0 specifications and checklists</a> translate the first milestone into development/test contracts. The <a href="#testing">active testing guide</a> separates engineering validation from full-data experimental acceptance.</p>
 </section>
 <section class="doc-section" id="research-roadmap" data-guide="Research implementation roadmap">
 <p class="eyebrow">Research implementation roadmap</p><h1>Research implementation roadmap: BreaKHis pruning</h1>
 <p>Prepared: 7 November 2026. Status: proposed implementation and experiment schedule; no new scientific results claimed. Planning window: 7-9 elapsed days from the agreed start, subject to measured compute costs. This is a scoped sprint, not a publication or successful-novelty guarantee.</p>
-<p>This is the time-bounded implementation companion to the <a href="..\docs\Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">end-to-end research guide</a> and <a href="..\docs\RESEARCH_PAPER_PLAN.md">operational experiment plan</a>. The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older <a href="#roadmap">codebase repair roadmap</a> concerns engineering reliability; its nine stages do not establish research completion.</p>
+<p>This is the time-bounded implementation companion to the <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">end-to-end research guide</a> and <a href="../docs/research/RESEARCH_PAPER_PLAN.md">operational experiment plan</a>. The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older <a href="#roadmap">codebase repair roadmap</a> concerns engineering reliability; its nine stages do not establish research completion.</p>
 </section>
 <section class="doc-section" id="research-roadmap-1-agreed-scope-and-decisions-to-freeze" data-guide="Research implementation roadmap">
 <p class="eyebrow">Research implementation roadmap</p><h2>1. Agreed scope and decisions to freeze</h2>
@@ -793,7 +872,7 @@ python -m breakhis train --dataset breakhis --source cancer_binary --manifest ar
 <p class="eyebrow">Research implementation roadmap</p><h2>2. Existing foundation and implementation gaps</h2>
 <p>Existing supported foundation: canonical package, audited hashes and duplicate links, a grouped 70/15/15 split, VGG/ResNet18 binary training, L1 masks, VGG L1 channel surgery, saved configurations and resumable weights, test reports and model comparisons, synthetic CPU regressions and CI configuration. Historical test counts and smoke artifacts are execution evidence only; rerun relevant checks at the sprint start.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Gap</th><th scope="col">Intended implementation location</th><th scope="col">Dependency</th></tr></thead><tbody>
-<tr><td>Explicit scientific protocol and run ledger</td><td>Proposed <code>configs/research/</code>, <code>docs/RESEARCH_PROTOCOL.md</code>, <code>artifacts/research/</code></td><td>M0</td></tr>
+<tr><td>Explicit scientific protocol and run ledger</td><td>Proposed <code>configs/research/</code>, <code>docs/research/RESEARCH_PROTOCOL.md</code>, <code>artifacts/research/</code></td><td>M0</td></tr>
 <tr><td>Outer folds and inner roles</td><td>Proposed <code>breakhis/research/splits.py</code>; existing <code>manifest.py</code>, <code>data.py</code></td><td>Audited inventory</td></tr>
 <tr><td>Public independent seeds and epoch history</td><td><code>cli.py</code>, <code>data.py</code>, <code>training.py</code>, <code>checkpoints.py</code></td><td>Protocol/run schema</td></tr>
 <tr><td>Development-only prediction exports</td><td><code>reporting.py</code>; proposed research reporting interface</td><td>Partition permissions</td></tr>
@@ -822,6 +901,7 @@ python -m breakhis train --dataset breakhis --source cancer_binary --manifest ar
 </section>
 <section class="doc-section" id="research-roadmap-4-m0-preserve-audit-and-freeze-the-initial-protocol" data-guide="Research implementation roadmap">
 <p class="eyebrow">Research implementation roadmap</p><h2>4. M0: preserve, audit and freeze the initial protocol</h2>
+<p>Implementation and acceptance contract: <a href="#m0-spec">M0 specification</a>.</p>
 <p>Implementation and records:</p>
 <ul>
 <li>Record Git commit and dirty diff; snapshot relevant untracked source separately. Never identify a dirty experiment by commit hash alone.</li>
@@ -984,17 +1064,568 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 </ol>
 <p>This roadmap does not launch training, freeze unresolved scientific choices, create new CLI capabilities, or commit/push the current worktree. Those are separate execution steps.</p>
 </section>
-<section class="doc-section" id="roadmap" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h1>Codebase repair roadmap</h1>
+<section class="doc-section" id="specs-index" data-guide="Milestone specification index">
+<p class="eyebrow">Milestone specification index</p><h1>Milestone specifications</h1>
+<p><a href="#documentation-map">Documentation map</a></p>
+<p>Keep each milestone&#x27;s master contract and execution checklists together.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Milestone</th><th scope="col">Source of truth</th><th scope="col">Progress</th></tr></thead><tbody>
+<tr><td>M0: preservation, protocol and data readiness</td><td><a href="#m0-spec">M0_SPEC.md</a></td><td><a href="#m0-tracker">Tracker and six package checklists</a></td></tr>
+</tbody></table></div>
+<p>Only M0 has a detailed specification/checklist set at present. Later milestones remain in the <a href="#research-roadmap">research roadmap</a>.</p>
+</section>
+<section class="doc-section" id="m0-spec" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h1>M0 specification: preservation, protocol and data readiness</h1>
+<p>Specification: M0-SPEC-001, version 1.0. Prepared: 7 November 2026. Status: specification for implementation; creating this document does not execute M0.</p>
+<p>Parent: <a href="#research-roadmap">research implementation roadmap</a>, M0/G0. Scientific intent: <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">research guide</a>. Experiment mapping: <a href="../docs/research/RESEARCH_PAPER_PLAN.md">operational plan</a>, P0/E01. Existing behavior: <a href="#datasets">dataset audit</a> and <a href="#testing">testing</a>.</p>
+<p>MUST denotes an acceptance requirement; SHOULD permits a justified documented exception; MAY is optional. Proposed files, schemas and commands below are development targets, not existing capabilities. This document governs M0 coding, review and testing. M1 implementation and scientific experiments are outside its execution scope.</p>
+</section>
+<section class="doc-section" id="m0-spec-1-objective-and-completion-boundary" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>1. Objective and completion boundary</h2>
+<p>M0 MUST produce an attributable code/environment baseline, auditable BreaKHis inventory, source/identity uncertainty records, historical test-exposure register, focused literature matrix, initial protocol/decision register and evidence-backed Gate G0.</p>
+<p>The handoff must answer: which code/environment produced the evidence; which images/groups exist and are excluded; which provenance/identity facts are known; which groups have prior exposure; which decisions remain proposed; and which kinds of subsequent work are eligible.</p>
+<p>Completing M0 does not prove clinical identity, novelty or scientific model quality. Unknowns MUST become named restrictions, not silently passing checks. M1 engineering readiness, exploratory-pilot readiness and untouched confirmatory-design readiness are separate outcomes.</p>
+</section>
+<section class="doc-section" id="m0-spec-2-scope-and-inputs" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>2. Scope and inputs</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Input</th><th scope="col">Required interpretation</th></tr></thead><tbody>
+<tr><td>Repository</td><td><code>D:\Sutanu_WorkSpace\BreakHis\BreakHisClassification</code></td></tr>
+<tr><td>Data</td><td><code>D:\Sutanu_WorkSpace\BreakHis\Dataset\dataset_cancer_v1\classificacao_binaria</code></td></tr>
+<tr><td>Source/task</td><td><code>cancer_binary</code>; benign/malignant; all available 40X/100X/200X/400X images</td></tr>
+<tr><td>Group identity</td><td>Full YEAR-SLIDE_ID including suffixes; filename/slide groups unless independently verified</td></tr>
+<tr><td>Working images</td><td>Retained 224 x 224 derivative; measure dimensions rather than assume them</td></tr>
+<tr><td>Hardware</td><td>CPU primary deployment target; RTX 5070 Ti training/secondary inference target</td></tr>
+<tr><td>Historical inputs</td><td>Existing manifests, audit/checkpoint configurations, logs and prior evaluation metadata</td></tr>
+<tr><td>Time box</td><td>Day 1 target; unresolved investigations retained with owners/deadlines</td></tr>
+</tbody></table></div>
+<p>Original-resolution backup location and transformation lineage remain unknown until evidence is supplied. The deleted v2 folder MUST NOT be assumed present. The multiclass folder is another label arrangement of BreaKHis, not an independent dataset.</p>
+<p>Out of scope: research outer folds, training/search, candidate pruning, threshold fitting, vulnerability scoring, second-dataset downloads, manuscript result claims and automatic Git commit/push. M0 MUST NOT run test inference to reconstruct historical exposure.</p>
+</section>
+<section class="doc-section" id="m0-spec-3-proposed-development-structure" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>3. Proposed development structure</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Target</th><th scope="col">Responsibility</th></tr></thead><tbody>
+<tr><td><code>breakhis/research/records.py</code></td><td>Record validation, canonical hashes, safe paths, atomic JSON writes</td></tr>
+<tr><td><code>breakhis/research/m0.py</code></td><td>Source/environment capture, audit orchestration, exposure/protocol validation and gates</td></tr>
+<tr><td><code>tools/run_m0.py</code></td><td>Thin runner and read-only evidence verifier</td></tr>
+<tr><td><code>configs/research/m0.example.json</code></td><td>Documented input configuration with unknowns explicit</td></tr>
+<tr><td><code>configs/research/protocol.initial.json</code></td><td>Initial declarations and pending scientific decisions</td></tr>
+<tr><td><code>docs/research/RESEARCH_PROTOCOL.md</code></td><td>Human-readable protocol and restrictions</td></tr>
+<tr><td><code>tests/test_research_records.py</code></td><td>Schema/path/hash unit tests</td></tr>
+<tr><td><code>tests/test_m0.py</code></td><td>Synthetic integration, exposure propagation and gate failures</td></tr>
+</tbody></table></div>
+<p>Reuse existing manifest parsing, inventory, hash/duplicate/group logic, environment checks and regressions where semantics match. Do not duplicate the loader/pruner or reorganize the canonical package. Preserve existing CLI, historical manifests and checkpoint compatibility. Prefer existing dependencies/standard library; a new package needs justification and environment/CI updates.</p>
+</section>
+<section class="doc-section" id="m0-spec-4-run-lifecycle-and-filesystem-contract" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>4. Run lifecycle and filesystem contract</h2>
+<p>Each unique run writes under ignored <code>artifacts/research/m0/&lt;run_id&gt;/</code>:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>run.json
+config.resolved.json
+baseline/
+  git.json
+  tracked.patch
+  source_inventory.json
+  source_snapshot/
+  environment.cpu.json
+  environment.cuda.json
+  checks.json
+audit/
+  manifest.json
+  audit.json
+  inventory.jsonl
+  exclusions.jsonl
+  duplicate_components.json
+  group_summary.json
+  lineage.json
+  near_duplicate_review.json
+governance/
+  exposure_register.json
+  protocol.initial.json
+  decisions.json
+  literature_matrix.json
+logs/
+acceptance/
+  evidence_index.json
+  gate_g0.json
+  M0_REPORT.md</code></pre></div>
+<p>Requirements:</p>
+<ul>
+<li>Create a new run directory; refuse an existing nonempty destination. Resolve paths before IO. Reject traversal, dataset/output overlap, escaping symlinks/reparse points and recursively capturing outputs as source.</li>
+<li>Read images/historical artifacts without overwriting, moving or deleting them. A new audit never replaces an old experiment manifest. M0 creates no model checkpoints; later weights remain in parent <code>checkpoint/binary/</code>.</li>
+<li>Run states: <code>created</code>, <code>running</code>, <code>completed</code>, <code>blocked</code>, <code>failed</code>. <code>completed</code> means evidence/report generation completed; scientific readiness is determined separately.</li>
+<li>Log operation ID, start/end UTC, argv/cwd, input hashes, return code, elapsed time and output/log references. Keep partial evidence on failure; never manufacture empty successful outputs.</li>
+<li>Version 1 does not silently resume/overwrite partial runs. A new run may reference a failed predecessor.</li>
+<li>Write UTF-8 JSON with finite numbers and atomic sibling-temp replacement. Store UTC ISO-8601 timestamps; IDs derive from content/identity rather than row order. Unsupported schema versions fail clearly.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-spec-5-record-schemas-and-semantics" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>5. Record schemas and semantics</h2>
+<p>All generated JSON record roots MUST contain <code>schema_version</code>, <code>record_type</code>, <code>run_id</code>, <code>created_at_utc</code>; collection records use an object envelope with an <code>items</code> field. Pre-run templates have their own validated input type and are bound to a run when copied. The evidence index declares JSONL row schema versions/types. Null means unavailable with an accompanying reason, never an invented observation. Validators distinguish malformed records from valid records with unresolved scientific facts.</p>
+<h3 id="m0-spec-51-run-and-source-preservation">5.1 Run and source preservation</h3>
+<p><code>run.json</code>: spec ID/version/hash, requested mode (<code>pilot</code> or <code>confirmatory_design</code>), invocation/config hash, resolved repo/data/output paths, predecessor if any, state/times, and gate/report references.</p>
+<p><code>baseline/git.json</code>: HEAD commit/ref, dirty state, staged/unstaged status and relevant tracked/untracked file inventory. Capture HEAD plus both staged and unstaged changes and relevant untracked source/protocols. A commit hash alone MUST NOT identify a dirty run.</p>
+<p>Store a binary-capable tracked diff against HEAD and source copies/hashes sufficient to reconstruct the relevant tree. Include package/tools/tests, project/dependency files, workflows and selected docs/configs. Exclude <code>.git</code>, environments, datasets, weights/checkpoints, generated output and unrelated personal configuration. Record inclusion/exclusion rules and unresolved LFS/submodule references. Do not place raw clinical-identity documents in a public-ready source snapshot.</p>
+<p>Inventory fields: repository-relative POSIX path, tracked/untracked status, bytes, SHA-256, capture status. Recheck status/hashes after capture; retry once or fail if source changes. Define <code>source_snapshot_sha256</code> over sorted path/hash pairs plus capture policy, excluding root paths/timestamps. The snapshot MUST NOT recursively include itself.</p>
+<h3 id="m0-spec-52-environment-and-current-baseline-checks">5.2 Environment and current baseline checks</h3>
+<p>Capture Python/interpreter/venv, dependency/build versions, pip consistency, OS/CPU/threads, and available GPU/CUDA/runtime/driver identifiers. Missing optional utilities produce <code>unknown</code>, not guessed versions. Reuse the existing actual synthetic tensor/VGG check where applicable.</p>
+<p>Each <code>checks.json</code> item: check ID, argv/cwd, device, status/return code, elapsed time, log paths and hashes. Run current regressions and import/CLI-help checks; historical counts cannot substitute for this run. CPU checks MUST run without CUDA. A failed/unavailable GPU is an explicit GPU-readiness restriction; CPU-only M1 unit development may still proceed.</p>
+<h3 id="m0-spec-53-complete-image-accounting-and-grouping">5.3 Complete image accounting and grouping</h3>
+<p>Every discovered supported image, including failures, appears in <code>inventory.jsonl</code>:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>schema_version, image_id, source, relative_path, discovered_bytes,
+status(included|excluded), exclusion_reason_code, exclusion_detail,
+raw_sha256, decoded_pixel_sha256, width, height,
+class_label, subtype, magnification, filename_group_id,
+verified_patient_id, identity_evidence_ref, duplicate_component_id,
+representative_image_id</code></pre></div>
+<p>Unavailable parse/decode fields are null with reasons. Hash raw bytes even when decoding fails if the bytes are readable. Count/list ignored non-image files separately. Reject image paths escaping the source.</p>
+<p><code>image_id</code> derives from source plus normalized relative path; content hashes remain separate. Pixel hashing follows existing RGB dimension/content semantics. Component IDs derive deterministically from canonical membership/linkage; record grouping/hash-policy versions.</p>
+<p>Link exact duplicates before partition analysis. Preserve all raw inventory rows, select representatives deterministically for within-source duplicate exclusions, and record every representative/reason. Conflicting labels in duplicate-linked/identity components block scientific readiness; never fix them by arbitrary ordering.</p>
+<p>Preserve full filename suffixes and cross-magnification identity. Do not merge groups to force a published count. <code>verified_patient_id</code> requires authoritative evidence; otherwise use filename/slide terminology.</p>
+<p><code>group_summary.json</code>: discovered/included/excluded counts by class/subtype/magnification/group; group-size distribution; dimension distributions; duplicate/component sizes; per-group magnification support; missing/corrupt files; historical reconciliation and open discrepancies. Historical 7,909/7,784/125/81 values are references to investigate, not expected constants to force.</p>
+<p>If reused preparation produces a 70/15/15 manifest, label it <code>legacy_pilot_assignment</code> and validate exact group/hash separation. It is NOT the research outer-fold design. M1 consumes frozen inventory/components to create research folds. A new split seed never makes exposed groups untouched.</p>
+<h3 id="m0-spec-54-source-lineage-and-near-duplicate-review">5.4 Source lineage and near-duplicate review</h3>
+<p><code>lineage.json</code>: source/release identifier, acquisition date/archive hash if known, original URL/citation/usage terms and review date, derivative parent, transformation parameters/code/history, backup location if supplied, linkage confidence, evidence references, reviewer and open questions.</p>
+<p>Every material fact has status <code>verified</code>, <code>self_reported</code>, <code>unknown</code> or <code>disputed</code>. Unknown dates/transforms remain null and generate open decisions. A directory name is not evidence of an official release. Restored originals require a separate lineage/audit and are not independent samples to concatenate.</p>
+<p><code>near_duplicate_review.json</code> distinguishes exact-hash checks from perceptual similarity. Version 1 MAY use bounded deterministic nonlearned screening or explicitly record incomplete screening. Record algorithm/threshold, candidate pair IDs, review/evidence, approved linkage/exclusion and unresolved pairs. Never automatically remove similar but potentially distinct tissue fields. Unreviewed suspicious cross-group pairs restrict confirmatory design; incomplete screening is not proof of no near-duplicates.</p>
+<h3 id="m0-spec-55-historical-test-exposure-register">5.5 Historical test-exposure register</h3>
+<p>Inspect only metadata/configuration/log material necessary to establish access. Do not rerun old test inference, recompute test metrics or inspect error/probability values to decide which groups count as exposed.</p>
+<p>Each entry:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>exposure_id, artifact_ref, artifact_sha256, occurred_at_or_unknown,
+evidence_source(config|log|manifest|operator_attestation),
+manifest_ref_and_hash, source, selected_partition, magnification_filter,
+access_type(train|selection|threshold|test_metric_inspection|
+            test_prediction_inspection|synthetic_check|unknown),
+image_ids, filename_group_ids, duplicate_component_ids,
+coverage(exact|conservative_superset|unresolved), confidence,
+restriction(development_only|synthetic_not_real|unresolved), reviewer_note</code></pre></div>
+<p>For real-image evaluate/compare smoke history, resolve exact historical manifests and selected test rows. Without per-image access logs, conservatively include the whole selected partition/filter as potentially inspected. Propagate restrictions across duplicate-linked components and all magnifications. A small filtered run need not expose unrelated groups; absent evidence cannot prove they were untouched.</p>
+<p>Synthetic checks have separate source identity and MUST NOT quarantine real groups merely because generated filenames resemble BreaKHis. Operator recollections are self-reported, not automatically exact coverage.</p>
+<p>Component eligibility: known exposed/development-only; exposure unknown/requires adjudication; or candidate untouched within a stated reviewed coverage boundary. No-log evidence alone cannot mean verified unexposed. Require a reviewed history-coverage declaration before confirmatory eligibility. Missing manifests, unresolved references and contradictions remain open blockers.</p>
+<p>M0 records eligibility, not folds. It cannot select held-out groups using past metric quality. Confirmed equivalent identities/content across derivative copies carry the same exposure restrictions.</p>
+<h3 id="m0-spec-56-initial-protocol-and-decision-register">5.6 Initial protocol and decision register</h3>
+<p>Protocol lifecycle: <code>draft</code>, <code>pilot_ready</code>, <code>initial_design_reviewed</code>. M0 MUST NOT emit <code>confirmatory_frozen</code>; final method/outer evaluation freeze belongs to M6.</p>
+<p>For each topic store value/null, status <code>agreed|proposed|deferred|blocked</code>, rationale/evidence, owner and freeze-by milestone. Mandatory topics:</p>
+<ul>
+<li>Task, derivative/source, magnifications, grouping/component policy, identity terminology and exposure restrictions.</li>
+<li>Proposed primary magnification-balanced pooling, secondary image-weighted pooling, available-only missing-magnification handling and no imputation.</li>
+<li>GPU training; CPU batch-one primary timing; GPU secondary timing; provisional CPU threads 2 pending timing pilot.</li>
+<li>Eight-convolution custom VGG, proposed MobileNetV3-small comparator and ResNet18 role subject to cost; no implied VGG16/broad channel surgery.</li>
+<li>Outer/inner roles, calibration/selection compromises, independent split/training/pruning/search seed namespaces.</li>
+<li>Separate epoch/candidate selection, threshold calibration, specificity safeguards, numerical margins and absolute-performance reporting.</li>
+<li>Dense/adaptation/search/recovery budgets, latency regions, matched comparison rules and Day-3 compute gate.</li>
+<li>O1/O2/O3 hypotheses; A/B/C/D/E comparisons; random/scratch/compact controls; negative-result path.</li>
+<li>Group-paired uncertainty, fold/seed reporting, primary/secondary endpoints and timing/session scope.</li>
+<li>Limits on clinical, noninferiority, novelty and generalization claims.</li>
+</ul>
+<p>Unknown numerical thresholds, margins, trial counts and identity facts remain proposed/unresolved. No default silently becomes an agreed clinical/scientific decision. M2/M5 choices may remain open for M1 interface development if owners/freeze deadlines are explicit.</p>
+<p><code>decisions.json</code> preserves revision history: stable decision ID, revision, topic/status, rationale/evidence, owner role, deadline milestone, affected claims and supersedes reference. Roles such as <code>research_owner</code> are allowed when no person is assigned; critical unassigned reviews must be surfaced.</p>
+<h3 id="m0-spec-57-focused-literature-matrix">5.7 Focused literature matrix</h3>
+<p>Required columns: literature ID; exact title/authors/year/venue/publication status; DOI/URL; access/review date; access level <code>full_methods|abstract_only|code_only|unavailable</code>; task/dataset; grouping; ranking/allocation; class/sample balancing; selection/threshold rule; search/adaptation/recovery budgets; runtime target; code/license; comparator role; exact distinction/unresolved overlap; reviewer and open questions.</p>
+<p>Cover the guide&#x27;s closest hardware-aware, class-aware and medical sample-vulnerability methods as review targets. Abstract/code access cannot be marked full-method review. A released repository does not establish faithful reproduction. Central overlaps require full methods or explicit unresolved limits before final novelty claims. Novelty is not an automated boolean.</p>
+<p>Blocked access may remain in M0 with named restrictions/owners. It need not block infrastructure development, but MUST block claims that the closest-method review is complete. Cite the version actually read and distinguish preprint from published status.</p>
+</section>
+<section class="doc-section" id="m0-spec-6-integrity-and-reproducibility-contract" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>6. Integrity and reproducibility contract</h2>
+<p><code>evidence_index.json</code> lists relative artifact path, type/schema, bytes, SHA-256, producing operation and status. File hashes cover actual bytes. Semantic source/inventory hashes use separately documented canonical serialization. Relocation/timestamps may change file hashes without changing semantic content; these digests are not interchangeable.</p>
+<p>Verify references/hashes before gating. Avoid circular hashing: index stable input/evidence artifacts first, excluding the index itself; gate references index digest; human report references gate/index. An optional final receipt can hash completed gate/report afterward. Missing/failed artifacts cannot appear as empty successful evidence.</p>
+<p>Detect changed/unreadable files during capture and source/file-set changes at audit boundaries. Hashes describe bytes actually read; stable timestamps alone do not prove immutability. M1 must reverify image identity or retain existing per-read hash checks. Original manifests/checkpoints stay intact; new run identity binds inventory, exclusions, grouping/hash policy and governance versions.</p>
+</section>
+<section class="doc-section" id="m0-spec-7-proposed-runner-interface" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>7. Proposed runner interface</h2>
+<p>Design target only; these commands MUST NOT be represented as currently runnable:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt;unique-id&gt;
+python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt;existing-id&gt; --verify-only</code></pre></div>
+<p>Normal flow: validate inputs; create new run; capture source/environment/current tests; audit selected images; ingest reviewed governance records; index evidence; evaluate G0; write human report. Verification-only validates existing evidence/gate consistency without rerunning tests/inference, modifying statuses or rewriting artifacts. It returns nonzero for tampered/missing evidence.</p>
+<p>Configuration includes: schema/spec version; repo/data/output paths; selected sources (initially exactly <code>cancer_binary</code>); audit workers/seed; requested devices; baseline check identities; lineage/exposure/protocol/literature input record paths; requested mode and operation timeouts. Resolve relative config paths against the configuration file directory and record absolute resolutions. Existing CLI cwd semantics remain compatible.</p>
+<p>Reject unknown config keys, unsupported versions, invalid IDs/numeric ranges and unsafe paths before side effects. Use an allowlisted implementation for checks; config MUST NOT execute arbitrary shell strings. Runner flags are <code>--config</code>, <code>--run-id</code>, <code>--verify-only</code> and standard help. Configuration validation errors exit 2; execution/integrity failures or blocked requested-mode gates exit 1; exit 0 requires complete engineering evidence and eligibility for the requested mode. Restricted pilot mode may exit 0 only with restrictions prominent. <code>confirmatory_design</code> checks preparation eligibility; it never launches/freezes the confirmatory study.</p>
+</section>
+<section class="doc-section" id="m0-spec-8-gate-g0-contract" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>8. Gate G0 contract</h2>
+<p>Gate output contains requested mode, overall status, engineering readiness, exploratory-pilot readiness, confirmatory-design readiness, GPU readiness, novelty-review state, blocker IDs, evidence references, restrictions and M1 handoff eligibility. Each readiness dimension is <code>ready|restricted|blocked</code> with reason codes. Automated checks, reviewer attestations and unresolved facts must be distinguishable.</p>
+<p><code>overall_status</code> is <code>ready|restricted|blocked</code> for the requested mode. A blocker record contains stable ID, affected dimension, reason code, evidence references, owner and resolution condition. Suggested reason codes include <code>SOURCE_INCONSISTENT</code>, <code>BASELINE_FAILED</code>, <code>DATA_LABEL_CONFLICT</code>, <code>LINEAGE_UNKNOWN</code>, <code>EXPOSURE_UNRESOLVED</code>, <code>FOLD_SUPPORT_UNREVIEWED</code>, <code>LITERATURE_INCOMPLETE</code>, <code>GPU_UNAVAILABLE</code> and <code>EVIDENCE_INVALID</code>. Requested-mode hard failures take precedence over restrictions. Do not infer review completion from a missing blocker or empty reviewer field.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Condition</th><th scope="col">M1 engineering</th><th scope="col">Exploratory pilot</th><th scope="col">Confirmatory design / claims</th></tr></thead><tbody>
+<tr><td>Inconsistent source, failed baseline regressions, missing/tampered evidence</td><td>Blocked</td><td>Blocked</td><td>Blocked</td></tr>
+<tr><td>Missing/empty data, unresolved label conflicts, path/hash inconsistency</td><td>Data-dependent work blocked; unrelated unit work may be separate</td><td>Blocked</td><td>Blocked</td></tr>
+<tr><td>Valid derivative, unknown original transform lineage</td><td>Allowed with limitation</td><td>Restricted derivative-only</td><td>Strong lineage/generalization claims blocked until reviewed; explicit scope decision required</td></tr>
+<tr><td>Clinical identities unverified but filename grouping consistent</td><td>Filename-group terminology</td><td>Filename-group scope</td><td>Filename-group design may proceed; verified-patient claims blocked</td></tr>
+<tr><td>Historical exposures resolved</td><td>Ready with restrictions handed off</td><td>Declared development groups only</td><td>Untouched support and history coverage must be reviewed</td></tr>
+<tr><td>Exposure coverage unresolved</td><td>Synthetic/interface development allowed</td><td>Documented development-only scope</td><td>Blocked pending adjudication; reseeding is not a remedy</td></tr>
+<tr><td>Too few eligible groups for planned folds</td><td>Interfaces can be implemented</td><td>Reduced pilot with support disclosed</td><td>Proposed design blocked until revised before test inspection</td></tr>
+<tr><td>Central literature not fully reviewed</td><td>Infrastructure allowed</td><td>Novelty limitation explicit</td><td>Closest-method novelty/comparator freeze blocked</td></tr>
+<tr><td>CPU passes, GPU unavailable/fails</td><td>CPU development allowed</td><td>GPU fits blocked pending repair/scope revision</td><td>Hardware plan requires explicit revision</td></tr>
+<tr><td>Later numerical decisions proposed with owners/deadlines</td><td>Interfaces allowed</td><td>Comparisons wait for necessary decisions</td><td>Full protocol required before confirmatory freeze</td></tr>
+</tbody></table></div>
+<p>Pilot lineage exceptions require a recorded decision and stated claims, not an automatic downgrade that hides missing evidence. Candidate untouched groups are never automatically approved just because they are absent from the register. A ready engineering gate proves neither safety nor novelty. M1 engineering entry and M2 real-data scientific entry are distinct gates.</p>
+</section>
+<section class="doc-section" id="m0-spec-9-implementation-work-packages" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>9. Implementation work packages</h2>
+<p>Execution is organized into six short checklists in the <a href="#m0-tracker">M0 package tracker</a>. They map WP0-WP9 below into M0.1-M0.6 and track <code>Not started</code>, <code>In progress</code>, <code>Tests passed</code>, and <code>Reviewed</code>. This master specification remains the authority for schemas, semantics and acceptance; checklist review does not resolve unknown scientific facts automatically.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Order / ID</th><th scope="col">Work</th><th scope="col">Completion evidence</th></tr></thead><tbody>
+<tr><td>WP0</td><td>Versioned records, canonical hashes, path checks and atomic IO</td><td>Unit schema/path/hash fixtures</td></tr>
+<tr><td>WP1</td><td>Git/source snapshot and consistency checks</td><td>Reconstructed tracked/untracked source matches captured hashes</td></tr>
+<tr><td>WP2</td><td>Environment/test capture with timeouts</td><td>Real CPU check; logged failure/device-unavailable fixtures</td></tr>
+<tr><td>WP3</td><td>Audit adapters, complete inventory and components</td><td>Duplicate/conflict fixtures; every discovery/exclusion reconciled</td></tr>
+<tr><td>WP4</td><td>Lineage/near-duplicate review ingestion</td><td>Unknown/reviewed facts preserved without invention</td></tr>
+<tr><td>WP5</td><td>Exposure resolution and component restrictions</td><td>Exact/superset/unresolved/synthetic scenarios</td></tr>
+<tr><td>WP6</td><td>Protocol, decisions and literature validation</td><td>Mandatory topics; proposed/approved/reviewed distinctions</td></tr>
+<tr><td>WP7</td><td>Evidence index, G0 evaluator and report</td><td>Gate matrix and missing/tampered-evidence failures</td></tr>
+<tr><td>WP8</td><td>Runner, docs and isolated integration</td><td>Synthetic end-to-end/verify-only and existing regressions pass</td></tr>
+<tr><td>WP9</td><td>Real local M0 run after implementation authorization</td><td>Fresh evidence, actual baseline outcomes, G0 report and handoff</td></tr>
+</tbody></table></div>
+<p>Develop and review these in order. Code review MUST trace requirements to evidence rather than merely verify output filenames. Do not implement training/search as hidden M0 work.</p>
+</section>
+<section class="doc-section" id="m0-spec-10-acceptance-test-matrix" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>10. Acceptance-test matrix</h2>
+<p>Coverage mapping: sections 4/5.1 map to T01-T05; 5.2 to T19-T20; 5.3 to T06-T10; 5.4 to T15; 5.5 to T11-T14; 5.6 to T16-T17; 5.7 to T18; section 6 to T21-T22; sections 7-8 to T23-T24/T26; compatibility to T25. Tests must assert gate consequences as well as record contents. An integration report lists requirement section, test ID, pass/fail/skip and evidence path; skipped required acceptance checks cannot yield an unrestricted ready gate.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Test ID</th><th scope="col">Fixture / action</th><th scope="col">Required result</th></tr></thead><tbody>
+<tr><td>M0-T01</td><td>Clean temporary Git repo</td><td>HEAD/source identity reproducible; copies match hashes</td></tr>
+<tr><td>M0-T02</td><td>Staged, unstaged and relevant untracked files</td><td>All included; commit alone never describes dirty run</td></tr>
+<tr><td>M0-T03</td><td>Nearby data/weights/environments/generated outputs</td><td>Excluded by recorded snapshot policy; no recursion</td></tr>
+<tr><td>M0-T04</td><td>Source changes during capture</td><td>Retry/fail; never a falsely coherent snapshot</td></tr>
+<tr><td>M0-T05</td><td>Existing nonempty output, traversal or escaping symlink</td><td>Refusal; no historical/data overwrite</td></tr>
+<tr><td>M0-T06</td><td>Synthetic binary source across magnifications</td><td>Stable IDs and correct class/subtype/group/count summaries</td></tr>
+<tr><td>M0-T07</td><td>Same decoded pixels under alternate encoding/name/group</td><td>Pixel linkage; raw hashes distinguished; stable representatives</td></tr>
+<tr><td>M0-T08</td><td>Conflicting label in duplicate/identity component</td><td>Data gate blocked with evidence; no arbitrary correction</td></tr>
+<tr><td>M0-T09</td><td>Corrupt image, malformed name, folder mismatch, unreadable file</td><td>All discoveries accounted with reasons and available raw hashes</td></tr>
+<tr><td>M0-T10</td><td>Missing/empty source; absent magnification</td><td>Source blocks; missing magnification reported without imputation</td></tr>
+<tr><td>M0-T11</td><td>Old real test report plus exact manifest/filter</td><td>Selected components exposed; linked magnifications restricted</td></tr>
+<tr><td>M0-T12</td><td>Known partition but no per-image access log</td><td>Conservative selected-partition superset, explicitly labeled</td></tr>
+<tr><td>M0-T13</td><td>Missing manifest or contradictory exposure evidence</td><td>Unknown coverage blocks confirmatory eligibility</td></tr>
+<tr><td>M0-T14</td><td>Synthetic smoke with realistic filename IDs</td><td>No false quarantine of real data</td></tr>
+<tr><td>M0-T15</td><td>Unknown derivative transform/clinical identity</td><td>Null/open decision; truthful terminology and restrictions</td></tr>
+<tr><td>M0-T16</td><td>Proposed pooling/margins in protocol</td><td>Remain proposed; no silent agreement or premature freeze</td></tr>
+<tr><td>M0-T17</td><td>Missing critical protocol topic/owner/deadline</td><td>Validation issue and affected restriction</td></tr>
+<tr><td>M0-T18</td><td>Abstract-only/code-only literature access</td><td>Cannot count as full methods or established novelty</td></tr>
+<tr><td>M0-T19</td><td>CPU passes, GPU absent/fails</td><td>Per-device results; GPU launch restricted</td></tr>
+<tr><td>M0-T20</td><td>Failed/timed-out baseline command</td><td>Logs/return code retained; engineering-ready false</td></tr>
+<tr><td>M0-T21</td><td>Deleted/tampered artifact or unknown schema</td><td>Verification fails; no concealed recomputation</td></tr>
+<tr><td>M0-T22</td><td>Relocation/timestamp change versus content change</td><td>Documented distinct file/semantic hash behavior</td></tr>
+<tr><td>M0-T23</td><td>Valid isolated synthetic M0 run</td><td>Complete evidence/gate/report; no training/test evaluation</td></tr>
+<tr><td>M0-T24</td><td>Repeat verify-only on valid and invalid runs</td><td>Read-only deterministic outcome; invalid returns nonzero</td></tr>
+<tr><td>M0-T25</td><td>Existing CLI/checkpoint/CPU regressions</td><td>Compatibility intact; original manifests/images unchanged</td></tr>
+<tr><td>M0-T26</td><td>Real local execution after authorization</td><td>Fresh research-only evidence, measured outcomes and M1 handoff</td></tr>
+</tbody></table></div>
+<p>Unit/integration tests MUST use temporary repositories/data where possible and need no network/GPU except explicitly optional integrations. Literature/provenance facts require curated review; automated tests validate record semantics, not scientific truth. Test restricted/blocked gates as thoroughly as ready gates.</p>
+</section>
+<section class="doc-section" id="m0-spec-11-definition-of-done-and-handoff" data-guide="M0 implementation specification">
+<p class="eyebrow">M0 implementation specification</p><h2>11. Definition of done and handoff</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Normative requirements implemented or covered by a justified versioned spec revision.</li>
+<li class="check-item"><span class="check pending">Pending</span>Verifiable source/environment snapshot and current baseline check logs.</li>
+<li class="check-item"><span class="check pending">Pending</span>Discovered/included/excluded counts and duplicate representatives reconcile.</li>
+<li class="check-item"><span class="check pending">Pending</span>Lineage, identity, similarity and exposure limitations explicitly reviewed or unresolved.</li>
+<li class="check-item"><span class="check pending">Pending</span>Proposed scientific decisions have owners/freeze deadlines; no premature confirmatory freeze.</li>
+<li class="check-item"><span class="check pending">Pending</span>Literature matrix covers closest mechanisms with truthful access/review status.</li>
+<li class="check-item"><span class="check pending">Pending</span>G0 dimensions, blockers and restrictions agree with indexed evidence.</li>
+<li class="check-item"><span class="check pending">Pending</span>Synthetic acceptance and existing regressions pass; fixtures distinguished from real evidence.</li>
+<li class="check-item"><span class="check pending">Pending</span>Human report lists operations, measured counts, restrictions and open questions without invented results.</li>
+<li class="check-item"><span class="check pending">Pending</span>M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.</li>
+</ul>
+<p>M1 then implements folds, seeds, development predictions and aggregation against these contracts. Real scientific fits and confirmatory evaluation remain gated by unresolved decisions and later milestones. Creating this specification alone satisfies none of the execution checklist.</p>
+</section>
+<section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
+<p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
+<p>Prepared: 7 November 2026. Scope: implementation planning only.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. Code implementation has not started.</p>
+<p>All M0-specific documents live together in this folder:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
+  README.md                         # Tracker and starting point
+  M0_SPEC.md                        # Master source of truth
+  M0_1_RECORDS_INTEGRITY.md
+  M0_2_BASELINE_PRESERVATION.md
+  M0_3_DATA_READINESS.md
+  M0_4_EXPOSURE_GOVERNANCE.md
+  M0_5_PROTOCOL_LITERATURE.md
+  M0_6_RUNNER_GATE.md</code></pre></div>
+</section>
+<section class="doc-section" id="m0-tracker-work-packages-and-progress" data-guide="M0 package tracker">
+<p class="eyebrow">M0 package tracker</p><h2>Work packages and progress</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master work packages</th><th scope="col">Depends on</th><th scope="col">Status</th><th scope="col">Completion evidence</th></tr></thead><tbody>
+<tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-5">M0.5 Protocol and literature</a></td><td>WP6</td><td>M0.1-M0.4 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-6">M0.6 Runner and Gate G0</a></td><td>WP7-WP9</td><td>M0.1-M0.5 reviewed</td><td>Not started</td><td>Pending</td></tr>
+</tbody></table></div>
+<p>The default path is M0.1 through M0.6. Literature collection and locating lineage evidence may begin earlier, but dependency acceptance is required before marking a package reviewed. A dependency&#x27;s reviewed unknowns may be carried forward as restrictions; review does not assert that every scientific question is resolved.</p>
+</section>
+<section class="doc-section" id="m0-tracker-status-rules" data-guide="M0 package tracker">
+<p class="eyebrow">M0 package tracker</p><h2>Status rules</h2>
+<p>Use <code>Not started -&gt; In progress -&gt; Tests passed -&gt; Reviewed</code>.</p>
+<ul>
+<li><strong>In progress:</strong> implementation exists or active development is recorded.</li>
+<li><strong>Tests passed:</strong> required package tests have actual logs/results; planned tests or unexplained required skips do not qualify.</li>
+<li><strong>Reviewed:</strong> acceptance evidence was checked against the master contract; reviewer, source identity and unresolved restrictions are recorded.</li>
+<li>A blocker is recorded separately with owner, reason and resolution condition. Do not substitute blocked scientific readiness with an engineering pass.</li>
+<li>Reopen a package when later changes invalidate its acceptance evidence. Update this tracker and its checklist together.</li>
+<li>Package review is an engineering gate, not a new blanket permission/approval request. Scientific attestations and real-run authorization follow the master spec and current user instructions.</li>
+</ul>
+<p>For every package retain: source commit plus dirty snapshot identity; test command/log/result; output/schema references; review date/reviewer; open decisions and affected later packages. Generated evidence belongs under the ignored research run directory; never fabricate evidence paths in this tracker.</p>
+</section>
+<section class="doc-section" id="m0-tracker-acceptance-test-ownership" data-guide="M0 package tracker">
+<p class="eyebrow">M0 package tracker</p><h2>Acceptance-test ownership</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master acceptance tests</th></tr></thead><tbody>
+<tr><td>M0.1</td><td>M0-T05, M0-T21, M0-T22 (record/hash/path foundation; full integration repeated in M0.6)</td></tr>
+<tr><td>M0.2</td><td>M0-T01, M0-T02, M0-T03, M0-T04, M0-T19, M0-T20</td></tr>
+<tr><td>M0.3</td><td>M0-T06, M0-T07, M0-T08, M0-T09, M0-T10, M0-T15</td></tr>
+<tr><td>M0.4</td><td>M0-T11, M0-T12, M0-T13, M0-T14</td></tr>
+<tr><td>M0.5</td><td>M0-T16, M0-T17, M0-T18</td></tr>
+<tr><td>M0.6</td><td>M0-T23, M0-T24, M0-T25, M0-T26; integrates all earlier cases including M0-T21/M0-T22</td></tr>
+</tbody></table></div>
+<p>All M0-T01 through M0-T26 must have final traceability. Test IDs refer to the master acceptance matrix, not tests already implemented. M0.6 cannot declare full completion using package-level unit tests alone.</p>
+</section>
+<section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
+<p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
+<p>Start with <a href="#m0-1">M0.1</a>. The current deliverable is this checklist set; runtime records, new runner commands and scientific experiments remain implementation work.</p>
+</section>
+<section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
+<p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
+<p>Status: Not started. Depends on: none. Master mapping: WP0; sections 3-6, 7 input validation, 10. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-1-build-checklist" data-guide="M0.1 Records &amp; integrity">
+<p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Add <code>breakhis/research/records.py</code> and package initialization with no experiment side effects on import.</li>
+<li class="check-item"><span class="check pending">Pending</span>Define versioned generated-record envelopes and separate pre-run input validation; enforce required fields, supported versions, finite values and explicit unknowns.</li>
+<li class="check-item"><span class="check pending">Pending</span>Define exact-byte hashes and separate canonical semantic hashes; stable path/order conventions must not depend on timestamps or absolute roots.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement UTF-8 atomic JSON writes and referenced-artifact verification; reject missing/tampered evidence rather than regenerating it silently.</li>
+<li class="check-item"><span class="check pending">Pending</span>Validate IDs, config keys/types/ranges and config-directory-relative paths; reject traversal, source/output overlap and escaping symlinks/reparse points.</li>
+<li class="check-item"><span class="check pending">Pending</span>Refuse existing nonempty run destinations; prevent self-capture and historical/data overwrite.</li>
+<li class="check-item"><span class="check pending">Pending</span>Define the evidence-index interface needed later by M0.6 without implementing the full gate/runner here.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-1-tests-and-completion-gate" data-guide="M0.1 Records &amp; integrity">
+<p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement foundation coverage for M0-T05, M0-T21, M0-T22: unsafe paths/nonempty output, unsupported schema, deleted/tampered records, and semantic versus file hash behavior.</li>
+<li class="check-item"><span class="check pending">Pending</span>Include ordering/relocation fixtures, interrupted-write behavior and read-only verification checks.</li>
+<li class="check-item"><span class="check pending">Pending</span>Preserve existing CLI/checkpoint behavior; run relevant regressions for changed shared code.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review confirms correct hash meanings, explicit unknowns and no data mutation. Full evidence-index/gate integration remains M0.6.</li>
+</ul>
+<p>Deliverables: records helper/API, schema contract references, <code>tests/test_research_records.py</code>, and actual test/review evidence. Do not create dataset audits or fit models in this package.</p>
+</section>
+<section class="doc-section" id="m0-1-progress-evidence" data-guide="M0.1 Records &amp; integrity">
+<p class="eyebrow">M0.1 Records &amp; integrity</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.2 dependency released.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-2" data-guide="M0.2 Baseline preservation">
+<p class="eyebrow">M0.2 Baseline preservation</p><h1>M0.2 — Baseline preservation</h1>
+<p>Status: Not started. Depends on: M0.1 reviewed. Master mapping: WP1-WP2; sections 5.1-5.2, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-2-build-checklist" data-guide="M0.2 Baseline preservation">
+<p class="eyebrow">M0.2 Baseline preservation</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement capture in <code>breakhis/research/m0.py</code> using the M0.1 record/hash/path helpers.</li>
+<li class="check-item"><span class="check pending">Pending</span>Record HEAD/ref and staged/unstaged/untracked state; capture relevant dirty and untracked source as well as a binary-capable tracked diff.</li>
+<li class="check-item"><span class="check pending">Pending</span>Store source inventory and reconstructible snapshots with explicit inclusion/exclusion policy; exclude datasets, environments, weights and generated output.</li>
+<li class="check-item"><span class="check pending">Pending</span>Recheck source status/hashes after capture; retry once or fail on inconsistency. Never identify a dirty run by commit alone.</li>
+<li class="check-item"><span class="check pending">Pending</span>Record CPU/Python/dependency/venv/pip state and available GPU/runtime/driver metadata; preserve unknown/unavailable fields honestly.</li>
+<li class="check-item"><span class="check pending">Pending</span>Capture actual current import/help/environment/regression outcomes with allowlisted argv, cwd, duration, timeout, return code and stdout/stderr logs.</li>
+<li class="check-item"><span class="check pending">Pending</span>Keep CPU-only checks functional; distinguish GPU failure from eligibility for CPU engineering.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-2-tests-and-completion-gate" data-guide="M0.2 Baseline preservation">
+<p class="eyebrow">M0.2 Baseline preservation</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T01 through M0-T04 using temporary Git repositories, staged/unstaged/untracked files and concurrent-source-change fixtures.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T19 and M0-T20: CPU pass/GPU unavailable, failed check and timed-out command with retained evidence.</li>
+<li class="check-item"><span class="check pending">Pending</span>Demonstrate that included source can be reconstructed and hashes checked; no recursive capture or unrelated generated payloads.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review verifies that evidence is current and actual. Historical test counts cannot satisfy baseline acceptance; failure fixtures must fail readiness.</li>
+</ul>
+<p>Deliverables: source/environment/check capture functions; <code>baseline/</code> record contracts and relevant <code>tests/test_m0.py</code> coverage. No scientific training or historical test inference.</p>
+</section>
+<section class="doc-section" id="m0-2-progress-evidence" data-guide="M0.2 Baseline preservation">
+<p class="eyebrow">M0.2 Baseline preservation</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.3 dependency released.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-3" data-guide="M0.3 Data readiness">
+<p class="eyebrow">M0.3 Data readiness</p><h1>M0.3 — Data readiness</h1>
+<p>Status: Not started. Depends on: M0.1-M0.2 reviewed. Master mapping: WP3-WP4; sections 5.3-5.4, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-3-build-checklist" data-guide="M0.3 Data readiness">
+<p class="eyebrow">M0.3 Data readiness</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Adapt existing inventory/parser/duplicate logic for <code>cancer_binary</code>; preserve CLI/manifest compatibility and use a new research-only output.</li>
+<li class="check-item"><span class="check pending">Pending</span>Account for every supported image, including failures, with available raw hashes, decoded-pixel hashes, parse/decode status and exclusion reasons.</li>
+<li class="check-item"><span class="check pending">Pending</span>Preserve filename suffixes/all-magnification grouping; create stable image/component IDs and deterministic duplicate representatives.</li>
+<li class="check-item"><span class="check pending">Pending</span>Detect mixed-label duplicates/components as blockers; never silently fix labels or merge groups to match published counts.</li>
+<li class="check-item"><span class="check pending">Pending</span>Produce class/subtype/magnification/group, size, dimension, exclusion and historical-discrepancy summaries; record absent magnifications without imputation.</li>
+<li class="check-item"><span class="check pending">Pending</span>Ingest lineage evidence with verified/self-reported/unknown/disputed states and owners for missing derivative/original facts.</li>
+<li class="check-item"><span class="check pending">Pending</span>Record bounded near-duplicate screening/review or its incompleteness; no automatic exclusion of merely similar tissue.</li>
+<li class="check-item"><span class="check pending">Pending</span>Validate boundaries if reusing a legacy pilot manifest; label it as legacy pilot assignment, not research outer folds. Recheck content/file-set consistency.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-3-tests-and-completion-gate" data-guide="M0.3 Data readiness">
+<p class="eyebrow">M0.3 Data readiness</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T06 through M0-T10: synthetic magnifications, alternate encodings/duplicate names, label conflicts, corrupt/misplaced/unreadable images, missing/empty sources and absent magnifications.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T15: unknown lineage/clinical identity stays unknown and yields truthful restrictions.</li>
+<li class="check-item"><span class="check pending">Pending</span>Assert discovered/included/excluded accounting reconciles and original inputs are not modified.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review verifies evidence quality, not just output existence. Valid unresolved lineage may permit restricted exploratory work; label conflicts must still block affected readiness.</li>
+</ul>
+<p>Deliverables: audit adapters, complete inventory/component/summary records, lineage/review records and tests. Real local audit execution is coordinated in M0.6; no fold generation or model fitting here.</p>
+</section>
+<section class="doc-section" id="m0-3-progress-evidence" data-guide="M0.3 Data readiness">
+<p class="eyebrow">M0.3 Data readiness</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.4 dependency released.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-4" data-guide="M0.4 Exposure governance">
+<p class="eyebrow">M0.4 Exposure governance</p><h1>M0.4 — Exposure governance</h1>
+<p>Status: Not started. Depends on: M0.1-M0.3 reviewed. Master mapping: WP5; section 5.5 and G0 exposure rules. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-4-build-checklist" data-guide="M0.4 Exposure governance">
+<p class="eyebrow">M0.4 Exposure governance</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement exposure-record validation and resolution against historical manifests plus current inventory/component identity.</li>
+<li class="check-item"><span class="check pending">Pending</span>Resolve prior real evaluate/compare access using metadata, partition and magnification filters; preserve evidence references and confidence.</li>
+<li class="check-item"><span class="check pending">Pending</span>Without per-image access logs, mark the selected partition/filter as a conservative superset; unresolved manifests/contradictions remain unresolved.</li>
+<li class="check-item"><span class="check pending">Pending</span>Propagate restrictions to duplicate-linked components and all associated magnifications, including confirmed equivalent derivative identities.</li>
+<li class="check-item"><span class="check pending">Pending</span>Keep synthetic evidence under separate source identity; realistic filenames must not quarantine real groups accidentally.</li>
+<li class="check-item"><span class="check pending">Pending</span>Produce known-exposed/development-only, unresolved and candidate-untouched-with-reviewed-coverage records; no-log evidence cannot prove untouched status.</li>
+<li class="check-item"><span class="check pending">Pending</span>Require a history-coverage declaration and reviewer evidence before confirmatory eligibility. Record missing coverage as a blocker.</li>
+<li class="check-item"><span class="check pending">Pending</span>Inspect only metadata needed for governance; do not rerun old models or inspect probability/error values to decide exposure.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-4-tests-and-completion-gate" data-guide="M0.4 Exposure governance">
+<p class="eyebrow">M0.4 Exposure governance</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T11 through M0-T14: exact historical filters, conservative coverage, missing/contradictory history and synthetic-real separation.</li>
+<li class="check-item"><span class="check pending">Pending</span>Assert component-wide propagation, no accidental unrelated-group exposure and no test inference during resolution.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review confirms that reseeding or rebuilding splits cannot erase exposure; eligibility is not chosen using historical metric quality.</li>
+<li class="check-item"><span class="check pending">Pending</span>Carry unresolvable history forward with explicit owners/restrictions; engineering review cannot silently approve independent confirmation.</li>
+</ul>
+<p>Deliverables: exposure resolver/register and component eligibility record, tests and reviewed coverage limitations. No held-out split selection or prediction collection.</p>
+</section>
+<section class="doc-section" id="m0-4-progress-evidence" data-guide="M0.4 Exposure governance">
+<p class="eyebrow">M0.4 Exposure governance</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.5 dependency released.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-5" data-guide="M0.5 Protocol &amp; literature">
+<p class="eyebrow">M0.5 Protocol &amp; literature</p><h1>M0.5 — Protocol and literature</h1>
+<p>Status: Not started. Depends on: M0.1-M0.4 reviewed. Master mapping: WP6; sections 5.6-5.7 and related G0 restrictions. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-5-build-checklist" data-guide="M0.5 Protocol &amp; literature">
+<p class="eyebrow">M0.5 Protocol &amp; literature</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Add initial protocol/config templates and <code>docs/research/RESEARCH_PROTOCOL.md</code>; validate all mandatory master-spec topics without copying schema definitions into this checklist.</li>
+<li class="check-item"><span class="check pending">Pending</span>Mark decisions agreed/proposed/deferred/blocked with rationale, evidence, owner and freeze-by milestone; preserve revision/supersedes history.</li>
+<li class="check-item"><span class="check pending">Pending</span>Record source/group/exposure boundaries, proposed primary/secondary aggregation, missing-magnification policy, CPU/GPU roles and provisional architecture/control scope.</li>
+<li class="check-item"><span class="check pending">Pending</span>Declare seed namespaces, role/fold intent, distinct epoch/candidate/threshold selection, safeguards, costs/budgets, A/B/C/D/E comparisons and negative-result route.</li>
+<li class="check-item"><span class="check pending">Pending</span>Keep unresolved numerical margins/thresholds/trial counts explicit; prevent draft values from becoming approved clinical or confirmatory policy.</li>
+<li class="check-item"><span class="check pending">Pending</span>Build the nearest-literature matrix with actual access/review status, method/selection/recovery/runtime details, code/license and precise unresolved overlaps.</li>
+<li class="check-item"><span class="check pending">Pending</span>Distinguish full-method reading from abstracts/code access; assign owners to central inaccessible/unreviewed methods. No automated novelty-established claim.</li>
+<li class="check-item"><span class="check pending">Pending</span>Bind protocol/decisions/review inputs to source/audit/exposure versions; M0 cannot emit a confirmatory-frozen protocol.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-5-tests-and-completion-gate" data-guide="M0.5 Protocol &amp; literature">
+<p class="eyebrow">M0.5 Protocol &amp; literature</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T16 through M0-T18: proposed choices remain proposed, missing critical topic/owner/deadline is detected, and abstract/code-only access cannot count as full methods.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review verifies all required topics, evidence references and lifecycle transitions. Tests check semantics, not whether literature/provenance assertions are scientifically true.</li>
+<li class="check-item"><span class="check pending">Pending</span>Unresolved later-stage decisions may pass engineering review only with owners and freeze milestones; central novelty gaps remain explicit restrictions.</li>
+</ul>
+<p>Deliverables: protocol/decision/literature validators, versioned templates, human protocol, curated input records and tests. Do not fit thresholds, train models or claim novelty here.</p>
+</section>
+<section class="doc-section" id="m0-5-progress-evidence" data-guide="M0.5 Protocol &amp; literature">
+<p class="eyebrow">M0.5 Protocol &amp; literature</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.6 dependency released.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-6" data-guide="M0.6 Runner &amp; Gate G0">
+<p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h1>M0.6 — Runner and Gate G0</h1>
+<p>Status: Not started. Depends on: M0.1-M0.5 reviewed. Master mapping: WP7-WP9; sections 4, 6-11. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+</section>
+<section class="doc-section" id="m0-6-build-checklist" data-guide="M0.6 Runner &amp; Gate G0">
+<p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Build checklist</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Integrate package outputs into a complete evidence index without circular hashing; verify referenced bytes before evaluating readiness.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement G0&#x27;s engineering, exploratory, confirmatory-design, GPU and novelty dimensions, reason codes, blockers, owners and restrictions.</li>
+<li class="check-item"><span class="check pending">Pending</span>Test hard-failure precedence and requested-mode eligibility; a successful process cannot imply scientific readiness.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement <code>tools/run_m0.py</code> with validated <code>--config</code>, <code>--run-id</code>, <code>--verify-only</code>, help and documented exit codes. These remain proposed until implemented/tested.</li>
+<li class="check-item"><span class="check pending">Pending</span>Keep config-directory-relative path resolution, allowlisted command execution, explicit timeouts, logs and partial-run failure records.</li>
+<li class="check-item"><span class="check pending">Pending</span>Implement verify-only as read-only validation, without silently recomputing/replacing invalid evidence.</li>
+<li class="check-item"><span class="check pending">Pending</span>Produce a human M0 report and M1 handoff binding source, inventory/components, exposure eligibility, decisions and allowed claims.</li>
+<li class="check-item"><span class="check pending">Pending</span>Integrate docs/CI and all package tests; then execute real local M0 only within current user authorization and a fresh research destination.</li>
+</ul>
+</section>
+<section class="doc-section" id="m0-6-tests-and-completion-gate" data-guide="M0.6 Runner &amp; Gate G0">
+<p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Tests and completion gate</h2>
+<ul>
+<li class="check-item"><span class="check pending">Pending</span>Implement M0-T23/M0-T24 for isolated synthetic orchestration and read-only verification, and rerun integrated M0-T21/M0-T22 integrity cases.</li>
+<li class="check-item"><span class="check pending">Pending</span>Satisfy M0-T25 through existing CLI/checkpoint/CPU regressions and input-preservation checks.</li>
+<li class="check-item"><span class="check pending">Pending</span>Exercise the full G0 matrix, including restricted/blocked cases, missing evidence, unavailable GPU and unresolved exposure/lineage/literature.</li>
+<li class="check-item"><span class="check pending">Pending</span>Satisfy M0-T26 with actual local evidence when execution is authorized; synthetic evidence alone cannot satisfy this item.</li>
+<li class="check-item"><span class="check pending">Pending</span>Verify all M0-T01 through M0-T26 have pass/fail/skip evidence and requirement traceability; skipped required checks cannot yield unrestricted readiness.</li>
+<li class="check-item"><span class="check pending">Pending</span>Review the master definition of done and report unresolved issues. Release M1 only for the allowed engineering/research scope.</li>
+</ul>
+<p>Deliverables: runner/verifier, evidence index, G0 evaluator/report, synthetic integration, regressions and real-run handoff. No M1 code or scientific training/search is included in M0.6.</p>
+</section>
+<section class="doc-section" id="m0-6-progress-evidence" data-guide="M0.6 Runner &amp; Gate G0">
+<p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Progress evidence</h2>
+<ul>
+<li>Source identity: Pending.</li>
+<li>Test commands/results/logs: Pending.</li>
+<li>Real local run and gate/report paths: Pending.</li>
+<li>Reviewer/date: Pending.</li>
+<li>Open issues/restrictions: Not assessed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
+<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and master M0 completion checklist reconciled.</li>
+</ul>
+</section>
+<section class="doc-section" id="archive-index" data-guide="Archive index">
+<p class="eyebrow">Archive index</p><h1>Historical documentation archive</h1>
+<p><a href="#documentation-map">Documentation map</a></p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Record</th><th scope="col">How to use it</th></tr></thead><tbody>
+<tr><td><a href="#roadmap">CODEBASE_FIX_ROADMAP.md</a></td><td>Original nine engineering repair stages, their historical evidence and limitations</td></tr>
+<tr><td><a href="../docs/archive/CODE_CITATIONS.md">Collected code citations</a></td><td>Preserved historical references/snippets, including repetition and conversational text; not an operating guide</td></tr>
+</tbody></table></div>
+<p>Current research work follows the <a href="#research-roadmap">research roadmap</a> and <a href="#m0-tracker">M0 tracker</a>. Outstanding full-data acceptance is maintained in the <a href="#testing-full-data-acceptance-checklist">active testing guide</a>. The archive is retained for traceability rather than active implementation status.</p>
+</section>
+<section class="doc-section" id="roadmap" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h1>Codebase repair roadmap</h1>
+<p>&gt; Historical engineering record. For current research implementation use the <a href="#research-roadmap">research roadmap</a> and <a href="#m0-tracker">M0 package tracker</a>. Active full-data acceptance is tracked in <a href="#testing">testing and operations</a>. Past verification statements remain historical.</p>
 <p>Updated: 11 October 2026</p>
 </section>
-<section class="doc-section" id="roadmap-objective" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Objective</h2>
+<section class="doc-section" id="roadmap-objective" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Objective</h2>
 <p>Build a reproducible BreaKHis workflow that loads the intended dataset, trains a classifier, saves and reloads it, applies pruning, fine-tunes the pruned model, and measures accuracy and efficiency using independent evaluation data.</p>
 <p>Complete the stages in order. Each stage&#x27;s target is the condition for proceeding to the next stage. Use small smoke runs before committing to full training. Eight-class classification is a future extension, not part of the initial binary baseline.</p>
 </section>
-<section class="doc-section" id="roadmap-current-state" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Current state</h2>
+<section class="doc-section" id="roadmap-current-state" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Current state</h2>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Area</th><th scope="col">Status</th></tr></thead><tbody>
 <tr><td>Separate BreaKHis and CIFAR workflows</td><td>Stage 1 complete; real BreaKHis batch and forward-pass checks passed</td></tr>
 <tr><td>Explicit primary dataset selection and label-derived class count</td><td>Implemented locally</td></tr>
@@ -1005,8 +1636,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <tr><td>Full baseline training and pruning</td><td>Tiny real-data train/prune/fine-tune/test smoke passed; full baseline quality remains unverified</td></tr>
 </tbody></table></div>
 </section>
-<section class="doc-section" id="roadmap-stage-1--separate-dataset-workflows" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 1 — Separate dataset workflows</h2>
+<section class="doc-section" id="roadmap-stage-1--separate-dataset-workflows" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 1 — Separate dataset workflows</h2>
 <p><strong>Status:</strong> Complete; runtime acceptance verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Mixed BreaKHis/CIFAR experiments and incorrect classifier class counts.</p>
 <h3 id="roadmap-steps">Steps</h3>
@@ -1033,8 +1664,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>The primary command loads BreaKHis images and produces two logits per image. Selecting CIFAR through the primary command fails clearly. Legacy experiment files remain preserved, and primary training does not depend on them.</p>
 <p><strong>Files:</strong> <code>Train.py</code>, <code>Main.py</code>, <code>DataPreprocessing.py</code>, <code>DataProcess/DataPreprocessing.py</code>, <code>VGG.py</code>, <code>experiments/cifar10/</code>, <code>README.md</code>.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-2--establish-a-reproducible-environment" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 2 — Establish a reproducible environment</h2>
+<section class="doc-section" id="roadmap-stage-2--establish-a-reproducible-environment" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 2 — Establish a reproducible environment</h2>
 <p><strong>Status:</strong> Complete; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Missing dependencies, machine-specific CUDA nightly pins, and missing declared imports.</p>
 <h3 id="roadmap-steps-1">Steps</h3>
@@ -1063,8 +1694,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>A fresh environment can install the documented dependencies and run the primary imports without errors. Record the tested Python, PyTorch, torchvision, CUDA runtime, and driver versions. Confirm GPU execution with a tensor computation.</p>
 <p><strong>Files:</strong> <code>requirements.txt</code>, <code>constraints.txt</code>, <code>requirements-torch-cpu.txt</code>, <code>requirements-torch-cu128.txt</code>, compatibility <code>requirement.txt</code>, <code>.gitignore</code>, <code>docs/ENVIRONMENT.md</code>, <code>tools/check_environment.py</code>, <code>README.md</code>, cleaned primary imports.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-3--repair-package-imports-and-command-structure" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 3 — Repair package imports and command structure</h2>
+<section class="doc-section" id="roadmap-stage-3--repair-package-imports-and-command-structure" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 3 — Repair package imports and command structure</h2>
 <p><strong>Status:</strong> Complete for the supported command surface; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Missing <code>PruningNAS</code> package references, duplicate modules, import side effects, and inconsistent launch locations.</p>
 <h3 id="roadmap-steps-2">Steps</h3>
@@ -1092,8 +1723,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Supported modules import without starting training, loading checkpoints, opening plots, or downloading data. Every documented command launches from its documented working directory without <code>ModuleNotFoundError</code>.</p>
 <p><strong>Files:</strong> <code>breakhis/</code>, <code>pyproject.toml</code>, primary compatibility scripts, <code>Models/</code>, <code>Utills/</code>, <code>Testing/</code>, <code>docs/COMMANDS.md</code>, import/command regression tests.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 4 — Audit datasets and create patient-separated splits</h2>
+<section class="doc-section" id="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 4 — Audit datasets and create patient-separated splits</h2>
 <p><strong>Status:</strong> Complete for the local filename-based patient/slide grouping policy; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Possible patient leakage, class imbalance, uncertain duplicate content, and confusion between the two local dataset copies.</p>
 <h3 id="roadmap-steps-3">Steps</h3>
@@ -1130,8 +1761,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Both binary dataset roots have 40X, 100X, 200X, and 400X folders.</p>
 <p><strong>Files:</strong> <code>breakhis/manifest.py</code>, <code>breakhis/data.py</code>, <code>breakhis/cli.py</code>, <code>docs/DATASETS.md</code>, generated <code>artifacts/data/manifest.json</code> and <code>audit.json</code>, tests.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 5 — Standardize preprocessing and baseline training</h2>
+<section class="doc-section" id="roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 5 — Standardize preprocessing and baseline training</h2>
 <p><strong>Status:</strong> Complete for the supported binary workflow; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Inconsistent image dimensions, test-set model selection, fragile best-model tracking, and device handling.</p>
 <h3 id="roadmap-steps-4">Steps</h3>
@@ -1161,8 +1792,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>This establishes baseline execution correctness, not full-dataset clinical or classification quality. Full experiments and comparative reporting remain work for later stages. V1-only rebuilding was subsequently added in Stage 9.</p>
 <p><strong>Files:</strong> <code>breakhis/data.py</code>, <code>breakhis/training.py</code>, <code>breakhis/cli.py</code>, <code>tests/test_training.py</code>, <code>tests/test_manifest_loading.py</code>, existing preprocessing tests.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-6--standardize-configuration-and-checkpoints" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 6 — Standardize configuration and checkpoints</h2>
+<section class="doc-section" id="roadmap-stage-6--standardize-configuration-and-checkpoints" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 6 — Standardize configuration and checkpoints</h2>
 <p><strong>Status:</strong> Complete for supported dense and unstructured binary models; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Hardcoded paths, missing output directories, incompatible checkpoint formats, and insufficient experiment metadata.</p>
 <h3 id="roadmap-steps-5">Steps</h3>
@@ -1190,8 +1821,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Exact resume uses completed epochs, workers zero, the original planned schedule, configuration, runtime and device. Partial epochs are replayed; their interrupted weights files cannot resume exactly. Background worker/prefetch state is not saved. Full-dataset quality and structured channel architecture reconstruction are outside this stage. V1-only rebuilding was subsequently added in Stage 9.</p>
 <p><strong>Files:</strong> <code>breakhis/cli.py</code>, <code>breakhis/checkpoints.py</code>, <code>breakhis/paths.py</code>, checkpoint/resume tests, README and <code>docs/CHECKPOINTS.md</code>.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-7--repair-pruning-and-fine-tuning" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 7 — Repair pruning and fine-tuning</h2>
+<section class="doc-section" id="roadmap-stage-7--repair-pruning-and-fine-tuning" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 7 — Repair pruning and fine-tuning</h2>
 <p><strong>Status:</strong> Complete for supported unstructured VGG/ResNet18 and sequential VGG channel pruning; verified on 11 October 2026.</p>
 <p><strong>Issues addressed:</strong> Unused pruning callbacks, incorrect scheduler argument, undefined pruning variables, and unverified structural pruning.</p>
 <h3 id="roadmap-steps-6">Steps</h3>
@@ -1221,8 +1852,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Residual/depthwise structured pruning, mixed channel/mask models, and historical architecture-specific channel helpers remain unsupported and fail on the supported command surface. Automatic ratio search and measured efficiency are not implemented. These checks do not establish full-dataset accuracy or a latency benefit.</p>
 <p><strong>Files:</strong> <code>breakhis/pruning.py</code>, <code>breakhis/training.py</code>, <code>breakhis/models/vgg.py</code>, <code>breakhis/checkpoints.py</code>, <code>breakhis/cli.py</code>, compatibility helpers, tests and <code>docs/PRUNING.md</code>.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 8 — Correct evaluation and efficiency reporting</h2>
+<section class="doc-section" id="roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 8 — Correct evaluation and efficiency reporting</h2>
 <p><strong>Status:</strong> Complete for the supported binary workflow; verified on 31 October 2026.</p>
 <p><strong>Issues addressed:</strong> CIFAR-sized profiling inputs, misleading sparse-size estimates, and inconsistent latency comparisons.</p>
 <h3 id="roadmap-steps-7">Steps</h3>
@@ -1252,8 +1883,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Filename slide IDs are not independently verified clinical patient identities. MAC counts explicitly exclude BN, pooling, activations, residual adds and mask ops. Latency excludes loading/preprocessing/transfers; results depend on hardware, software, load and protocol. Small smoke comparisons establish execution, not full-dataset quality, statistically significant speedup or end-to-end latency. CPU CI configuration was subsequently added in Stage 9; full-data experiments remain final acceptance work.</p>
 <p><strong>Files:</strong> <code>breakhis/reporting.py</code>, <code>breakhis/comparison.py</code>, <code>breakhis/cli.py</code>, mask-aware metric/latency compatibility helpers, reporting tests and <code>docs/EVALUATION.md</code>.</p>
 </section>
-<section class="doc-section" id="roadmap-stage-9--add-regression-checks-and-operational-documentation" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Stage 9 — Add regression checks and operational documentation</h2>
+<section class="doc-section" id="roadmap-stage-9--add-regression-checks-and-operational-documentation" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Stage 9 — Add regression checks and operational documentation</h2>
 <p><strong>Status:</strong> Implementation complete; 49 local CPU regressions passed on 31 October 2026. First hosted CI execution remains pending.</p>
 <p><strong>Issues addressed:</strong> Manual-only demonstrations, weak setup documentation, and lack of checks against recurring correctness failures.</p>
 <h3 id="roadmap-steps-8">Steps</h3>
@@ -1280,8 +1911,8 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>The synthetic run verifies engineering correctness, not full-dataset model quality, clinical validity or measured performance significance. The full-data final acceptance checklist below is intentionally separate and remains outstanding.</p>
 <p><strong>Files:</strong> <code>tests/</code>, <code>.github/workflows/cpu-tests.yml</code>, <code>tools/smoke_workflow.py</code>, source-discovery code, README and <code>docs/TESTING.md</code>.</p>
 </section>
-<section class="doc-section" id="roadmap-final-acceptance-run" data-guide="Repair roadmap">
-<p class="eyebrow">Repair roadmap</p><h2>Final acceptance run</h2>
+<section class="doc-section" id="roadmap-final-acceptance-run" data-guide="Historical repair roadmap">
+<p class="eyebrow">Historical repair roadmap</p><h2>Final acceptance run</h2>
 <ul>
 <li class="check-item"><span class="check pending">Pending</span>Install dependencies into a fresh virtual environment.</li>
 <li class="check-item"><span class="check pending">Pending</span>Validate the chosen dataset and saved patient splits.</li>
@@ -1295,7 +1926,7 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 </ul>
 <p>Do not mark the codebase complete on syntax checks or a single successful import. Completion requires this reproducible end-to-end run and the relevant regression checks.</p>
 </section>
-<footer class="page-footer">Edit README.md or docs/*.md, then run <code>python tools/build_docs.py</code> to refresh this guide. No network resources are used.</footer></main></div>
+<footer class="page-footer">Edit README.md or docs/**/*.md, then run <code>python tools/build_docs.py</code> to refresh this guide. No network resources are used.</footer></main></div>
 <script>(() => {
   const search = document.querySelector('#search');
   const sections = [...document.querySelectorAll('.doc-section')];

@@ -139,7 +139,7 @@ checkpoint outputs are rejected. Evaluation writes a report by default.
 Train/fine-tune accept `--resume` with saved effective defaults; completed epochs,
 optimizer, scheduler and RNG state are restored. Exact resume requires workers zero
 and the original schedule/runtime. See [CHECKPOINTS.md](CHECKPOINTS.md) and the
-[README parameter tables](../README.md).
+[README parameter tables](../../README.md).
 
 ## Stage 8 evaluation and comparison
 

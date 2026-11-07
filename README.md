@@ -4,6 +4,9 @@ This project trains PyTorch models to classify breast histology images as **beni
 
 ## Start here
 
+See the [documentation map](docs/README.md) for guides, research plans, milestone
+specifications and historical archives.
+
 Read this guide from setup through training before running an experiment. An
 [offline HTML guide](docs/index.html) presents this README and the detailed
 documentation with navigation, search, and copy buttons. Open `docs/index.html`
@@ -15,16 +18,18 @@ in a browser; no web server, installation, or internet connection is required.
 | Train, prune, and evaluate | [Complete binary workflow](#complete-binary-workflow) |
 | Understand an argument | [Shared parameters](#shared-parameters) and the command-specific tables below |
 | Stop and continue a run | [Resume training and fine-tuning](#resume-training-and-fine-tuning) |
-| Find or interpret saved files | [Checkpoint paths](#checkpoint-paths-and-loading-rules), [format details](docs/CHECKPOINTS.md) |
+| Find or interpret saved files | [Checkpoint paths](#checkpoint-paths-and-loading-rules), [format details](docs/guides/CHECKPOINTS.md) |
 | Modify the implementation | [Working on the codebase](#working-on-the-codebase) |
 | Diagnose an error | [Troubleshooting](#troubleshooting-and-remaining-work) |
-| Plan the research experiments | [7-9 day research implementation roadmap](docs/RESEARCH_IMPLEMENTATION_ROADMAP.md) |
+| Plan the research experiments | [7-9 day research implementation roadmap](docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md) |
+| Implement and test the first research milestone | [M0 specification](docs/specs/m0/M0_SPEC.md) |
+| Track M0 implementation package by package | [M0 checklist tracker](docs/specs/m0/README.md) |
 
 ## First-run checklist
 
 1. Open PowerShell in `D:\Sutanu_WorkSpace\BreakHis\BreakHisClassification`.
 2. Activate `.venv313` or use its Python executable directly. If starting from a
-   fresh checkout, follow [environment creation](docs/ENVIRONMENT.md) first.
+   fresh checkout, follow [environment creation](docs/guides/ENVIRONMENT.md) first.
 3. Check the interpreter, dependencies, binary images, and saved manifest:
 
 ```powershell
@@ -94,7 +99,7 @@ The local `BreaKHis_v2` dataset has been removed. The default model-command sour
 
 ## Environment setup
 
-The tested baseline is Windows x64 with Python 3.13. See [environment setup](docs/ENVIRONMENT.md) for environment creation, pinned dependencies, CPU installation, and the verified Python executable.
+The tested baseline is Windows x64 with Python 3.13. See [environment setup](docs/guides/ENVIRONMENT.md) for environment creation, pinned dependencies, CPU installation, and the verified Python executable.
 
 Activate the existing environment in PowerShell:
 
@@ -189,7 +194,7 @@ This custom filename saves to `../checkpoint/binary/resnet18-baseline.pth`.
 | `--checkpoint` | **Required**; file path | Supported checkpoint to prune. Architecture is reconstructed automatically. |
 | `--sparsity` | `0.5`; number from `0` to `1` inclusive | Fraction selected for L1 unstructured pruning in each convolution and linear layer. `0.5` requests 50%; `0` requests none; `1` selects all. This does not remove channels or guarantee faster inference. |
 | `--method` | `unstructured`; `unstructured`, `channel` | Weight masks for VGG/ResNet18, or physical VGG channel removal. Channel ratios must be below 1; residual/depthwise channel models are unsupported. |
-| `--layer-sparsities` | None; JSON file path | Complete layer-name-to-ratio map. Replaces the uniform ratio; missing/unknown names fail. See [pruning details](docs/PRUNING.md) for names and a template. |
+| `--layer-sparsities` | None; JSON file path | Complete layer-name-to-ratio map. Replaces the uniform ratio; missing/unknown names fail. See [pruning details](docs/guides/PRUNING.md) for names and a template. |
 
 Masks are stored in the checkpoint and reconstructed on loading. Dense tensor shapes remain unchanged.
 
@@ -208,7 +213,7 @@ ratios using validation results, then reserve test evaluation for the selected
 model. Unstructured masks, original masked weights, and matching optimizer buffers
 remain zero through fine-tuning. Re-pruning targets total mask sparsity;
 decreasing existing sparsity is rejected. Magnitude ties are resolved
-deterministically. See [PRUNING.md](docs/PRUNING.md) for full rules.
+deterministically. See [PRUNING.md](docs/guides/PRUNING.md) for full rules.
 
 ## Fine-tune parameters
 
@@ -237,7 +242,7 @@ estimates, and measured forward latency. Class labels, averaging conventions,
 metric units, checkpoint hashes, and hardware/runtime details are explicit.
 Accuracy is 0-100%; precision, recall, F1, sensitivity and specificity are 0-1.
 Patient/slide results average image probabilities by filename ID, not verified
-clinical identity. See [evaluation definitions](docs/EVALUATION.md).
+clinical identity. See [evaluation definitions](docs/guides/EVALUATION.md).
 
 ## Compare dense, pruned, and fine-tuned models
 
@@ -280,7 +285,7 @@ Latency uses resident copies of a real preprocessed image and GPU synchronizatio
 around each forward. Disk IO, preprocessing, transfers and metrics are excluded.
 Median speedup below 1 means slower; the report retains slowdowns and larger files.
 Use the same hardware, shapes, dtype, threads, and warm-up/repeats when comparing.
-Full definitions and limitations are in [EVALUATION.md](docs/EVALUATION.md).
+Full definitions and limitations are in [EVALUATION.md](docs/guides/EVALUATION.md).
 
 ## Checkpoint paths and loading rules
 
@@ -311,13 +316,13 @@ python -m breakhis finetune --dataset breakhis --resume ../checkpoint/binary/40X
 
 Omitted options inherit saved settings. `--epochs` is the original **total planned epochs**, not additional epochs on resume. Changing the planned total changes the cosine schedule and is rejected. Batch size, learning rate, worker count, deterministic mode, device, output, runtime versions, experiment ID, and dataset provenance must match. A fully completed run cannot be resumed for extra epochs; start `finetune --checkpoint ...` instead.
 
-Exact epoch-boundary resume requires `--num-workers 0`. Background-worker RNG/prefetch states are not stored. The full original experiment directory, including its best checkpoint, must remain available. Reproducibility across different software/hardware or nondeterministic GPU operations is not guaranteed. Version-1 weights remain loadable for evaluation/pruning/fine-tuning, but do not contain exact resume state. See [checkpoint format and resume](docs/CHECKPOINTS.md).
+Exact epoch-boundary resume requires `--num-workers 0`. Background-worker RNG/prefetch states are not stored. The full original experiment directory, including its best checkpoint, must remain available. Reproducibility across different software/hardware or nondeterministic GPU operations is not guaranteed. Version-1 weights remain loadable for evaluation/pruning/fine-tuning, but do not contain exact resume state. See [checkpoint format and resume](docs/guides/CHECKPOINTS.md).
 
 Supported checkpoints contain architecture, binary labels, state dictionaries, epoch, and dataset metadata. Loading requires matching manifest hash, source, magnification, and preprocessing. Regenerating a manifest may invalidate checkpoint metadata. Old whole-model pickle files require explicit migration and are not automatically loaded.
 
 ## Prepare-data parameters
 
-`prepare-data` decodes and hashes images, checks folder/filename labels, links duplicate content, and saves approximately 70%/15%/15% patient-group splits for train/validation/test. Group fractions do not guarantee identical image fractions. See [dataset details](docs/DATASETS.md) for the grouping policy.
+`prepare-data` decodes and hashes images, checks folder/filename labels, links duplicate content, and saves approximately 70%/15%/15% patient-group splits for train/validation/test. Group fractions do not guarantee identical image fractions. See [dataset details](docs/guides/DATASETS.md) for the grouping policy.
 
 | Parameter | Default / allowed values | Purpose |
 | --- | --- | --- |
@@ -398,8 +403,8 @@ Stages 1-9 are implemented for the documented binary workflow, including v1-only
 audits, CPU CI configuration, and generated-image end-to-end tests. Full-dataset
 experimental acceptance, the first remote CI run, multiclass training and
 residual/depthwise channel pruning remain separate work. See the
-[fix roadmap](docs/CODEBASE_FIX_ROADMAP.md), [testing guide](docs/TESTING.md), and
-[command reference](docs/COMMANDS.md).
+[fix roadmap](docs/archive/CODEBASE_FIX_ROADMAP.md), [testing guide](docs/guides/TESTING.md), and
+[command reference](docs/guides/COMMANDS.md).
 
 CIFAR-10 experiments and mixed tutorials live under `experiments/cifar10/` as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
 
@@ -460,7 +465,7 @@ The regression suite includes this integration workflow with temporary data and
 checkpoints. The Windows CPU GitHub Actions workflow installs pinned dependencies,
 checks the environment, runs tests, checks HTML freshness and retains synthetic
 evidence. Its first remote result requires pushing the workflow; local tests do
-not establish a green hosted CI run. See [TESTING.md](docs/TESTING.md) for commands,
+not establish a green hosted CI run. See [TESTING.md](docs/guides/TESTING.md) for commands,
 artifacts, limitations and full-data acceptance requirements.
 
 ## Documentation maintenance

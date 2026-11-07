@@ -40,7 +40,7 @@ relative to the dense baseline; it never trains or iterates training/validation.
 
 ## Arguments
 
-Both commands accept shared data options from the [README](../README.md).
+Both commands accept shared data options from the [README](../../README.md).
 
 | Argument | Commands | Default and meaning |
 | --- | --- | --- |

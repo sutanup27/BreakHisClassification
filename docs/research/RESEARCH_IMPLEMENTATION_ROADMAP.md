@@ -4,7 +4,7 @@ Prepared: 7 November 2026.
 Status: proposed implementation and experiment schedule; no new scientific results claimed.
 Planning window: 7-9 elapsed days from the agreed start, subject to measured compute costs. This is a scoped sprint, not a publication or successful-novelty guarantee.
 
-This is the time-bounded implementation companion to the [end-to-end research guide](Breast_Histopathology_Pruning_End_to_End_Research_Guide.md) and [operational experiment plan](RESEARCH_PAPER_PLAN.md). The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older [codebase repair roadmap](CODEBASE_FIX_ROADMAP.md) concerns engineering reliability; its nine stages do not establish research completion.
+This is the time-bounded implementation companion to the [end-to-end research guide](Breast_Histopathology_Pruning_End_to_End_Research_Guide.md) and [operational experiment plan](RESEARCH_PAPER_PLAN.md). The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older [codebase repair roadmap](../archive/CODEBASE_FIX_ROADMAP.md) concerns engineering reliability; its nine stages do not establish research completion.
 
 ## 1. Agreed scope and decisions to freeze
 
@@ -38,7 +38,7 @@ Existing supported foundation: canonical package, audited hashes and duplicate l
 
 | Gap | Intended implementation location | Dependency |
 | --- | --- | --- |
-| Explicit scientific protocol and run ledger | Proposed `configs/research/`, `docs/RESEARCH_PROTOCOL.md`, `artifacts/research/` | M0 |
+| Explicit scientific protocol and run ledger | Proposed `configs/research/`, `docs/research/RESEARCH_PROTOCOL.md`, `artifacts/research/` | M0 |
 | Outer folds and inner roles | Proposed `breakhis/research/splits.py`; existing `manifest.py`, `data.py` | Audited inventory |
 | Public independent seeds and epoch history | `cli.py`, `data.py`, `training.py`, `checkpoints.py` | Protocol/run schema |
 | Development-only prediction exports | `reporting.py`; proposed research reporting interface | Partition permissions |
@@ -67,6 +67,8 @@ Module/config names above are design targets, not existing supported APIs. Keep 
 This sequence can overlap implementation, literature review and queued training, but dependent gates cannot be skipped. If limited to seven days, finish through a well-audited pilot and bounded mechanism analysis rather than claiming an unfinished five-fold study. Days 8-9 prioritize replication across folds, uncertainty and verification, not adding new methods after tests.
 
 ## 4. M0: preserve, audit and freeze the initial protocol
+
+Implementation and acceptance contract: [M0 specification](../specs/m0/M0_SPEC.md).
 
 Implementation and records:
 

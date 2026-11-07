@@ -124,7 +124,7 @@ other OS environments need separate verification.
 Experimental/unsupported: multiclass training, residual/depthwise channel surgery,
 mixed channel/mask models, historical architecture-specific helpers and CIFAR
 demonstrations. See [pruning limits](PRUNING.md) and
-[legacy experiments](../experiments/cifar10/README.md).
+[legacy experiments](../../experiments/cifar10/README.md).
 
 Filename IDs are slide/patient surrogates, not independently verified clinical
 identities. No full-dataset accuracy, clinical validity, end-to-end latency benefit
@@ -137,5 +137,21 @@ the chosen real source and saved splits, train a full baseline, select on valida
 reload in a fresh process, prune and verify invariants, fine-tune with validation,
 then evaluate the selected baseline/pruned models once on reserved test data.
 Save configurations, checkpoint hashes, original manifests, logs and fixed-protocol
-accuracy/size/MAC/latency comparisons. The roadmap's final acceptance checklist
-tracks this separately from implementation and synthetic regression acceptance.
+accuracy/size/MAC/latency comparisons. The active checklist below tracks this
+separately from implementation and synthetic regression acceptance.
+
+## Full-data acceptance checklist
+
+Status: outstanding. Historical repair evidence remains in the
+[archived engineering roadmap](../archive/CODEBASE_FIX_ROADMAP.md).
+Check items only when evidence for the actual declared experiment is recorded.
+
+- [ ] Install dependencies into a fresh virtual environment.
+- [ ] Validate the chosen real dataset and saved patient/slide splits.
+- [ ] Train a full binary baseline and select its checkpoint using validation.
+- [ ] Reload the baseline in a fresh process.
+- [ ] Prune and verify structural or mask invariants.
+- [ ] Fine-tune using validation selection, then save/reload the result.
+- [ ] Evaluate selected baseline and pruned models on reserved test data.
+- [ ] Generate the accuracy, size, compute and latency comparison report.
+- [ ] Preserve configurations, split references, checkpoint hashes and logs.

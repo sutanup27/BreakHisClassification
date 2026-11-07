@@ -554,11 +554,11 @@ Use this title only if the proposed method is implemented and supported by exper
 
 What the project currently establishes
 Component	Evidence inspected	Research implication
-Dataset audit	breakhis/manifest.py, docs/DATASETS.md, historical artifacts/data/audit.json	Filename metadata, raw/pixel hashes, duplicate exclusion and group isolation are implemented.
+Dataset audit	breakhis/manifest.py, docs/guides/DATASETS.md, historical artifacts/data/audit.json	Filename metadata, raw/pixel hashes, duplicate exclusion and group isolation are implemented.
 Training	breakhis/cli.py, breakhis/data.py, breakhis/training.py	Binary VGG and torchvision ResNet18 workflows, validation selection and resumable checkpoints exist.
 Weight pruning	breakhis/pruning.py	Layerwise L1 masks with deterministic ties and mask enforcement during optimization.
 Structural pruning	breakhis/pruning.py, breakhis/models/vgg.py	Physical output-channel removal for the custom eight-convolution VGG, including BN and classifier reconstruction. This model is not standard VGG16.
-Evaluation	docs/EVALUATION.md, reporting/metrics/comparison modules	Image and filename-group classification, size accounting, Conv/Linear MAC estimates and resident forward latency.
+Evaluation	docs/guides/EVALUATION.md, reporting/metrics/comparison modules	Image and filename-group classification, size accounting, Conv/Linear MAC estimates and resident forward latency.
 Evidence maturity	Stage 6–8 smoke artifacts and artifacts/stage9-acceptance/summary.json	Execution evidence exists; Stage 9 explicitly uses 12 synthetic images, one epoch and one timing repeat. These are not scientific performance results.
 The canonical package is breakhis/. Legacy scripts, CIFAR tutorials and other architecture files must not be represented as equally supported experimental methods. Eight-subtype training is not implemented in the canonical workflow. This review inspected source and stored artifacts; it did not rerun the test suite or train new models.
 
