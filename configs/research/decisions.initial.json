@@ -1,0 +1,410 @@
+[
+  {
+    "topic": "task_source",
+    "value": {
+      "task": "binary benign/malignant",
+      "source": "cancer_binary",
+      "data_root": "../../../Dataset/dataset_cancer_v1/classificacao_binaria",
+      "dataset_scope": "BreaKHis only; multiclass arrangement is not independent data",
+      "input_resolution": "Working 224x224 derivative; measure actual dimensions in audit",
+      "provenance_boundary": "Unknown original transform/backup lineage remains an explicit restriction"
+    },
+    "status": "proposed",
+    "rationale": "Bound the sprint to the available binary derivative; its label arrangements are not independent replication.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_task_source",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "grouping",
+    "value": {
+      "rule": "Full YEAR-SLIDE_ID with suffix; cross-magnification components",
+      "clinical_identity": "Unverified; use filename/slide terminology",
+      "exact_duplicates": "Link raw/RGB hashes before partitions; retain deterministic representatives",
+      "exposure": "Exposed components development-only; unknown history not untouched"
+    },
+    "status": "proposed",
+    "rationale": "Avoid identity/content leakage while preserving suffixes and honest filename-group terminology.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_grouping",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "aggregation",
+    "value": {
+      "primary": "Mean malignant probability within magnification, then equal mean over available magnifications",
+      "secondary": "Mean over all group images",
+      "missing_magnifications": "Available-only mean; no imputation; report support and denominators"
+    },
+    "status": "proposed",
+    "rationale": "Avoid implicit magnification weights from unequal image counts; test image-weighted pooling secondarily.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_aggregation",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "hardware",
+    "value": {
+      "training": "RTX 5070 Ti; CPU correctness checks supported",
+      "primary_timing": "CPU batch-one median resident forward latency",
+      "secondary_timing": "RTX 5070 Ti; synchronized independent timing protocol",
+      "cpu_threads": 2
+    },
+    "status": "proposed",
+    "rationale": "Optimize the stated CPU deployment objective; use GPU training and separately measured GPU inference.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M2",
+    "decision_id": "decision_hardware",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "architectures",
+    "value": {
+      "primary": "Custom eight-convolution VGG; not VGG16",
+      "compact": "Proposed MobileNetV3-small dense comparator; not implemented yet",
+      "standard": "ResNet18 subject to compute gate",
+      "surgery": "VGG channel surgery first; dependency-aware ResNet/MobileNet surgery out of minimum scope"
+    },
+    "status": "proposed",
+    "rationale": "Use the implemented VGG surgery first and control for compact dense alternatives within measured compute.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M2",
+    "decision_id": "decision_architectures",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "evaluation",
+    "value": {
+      "outer_folds": 5,
+      "inner_roles": "Group-separated training and development selection within each outer fold",
+      "calibration_role": "Distinct development calibration role; exact support compromise pending",
+      "exposure_constraints": "Only reviewed candidate components may enter untouched design; no outer-test feedback"
+    },
+    "status": "proposed",
+    "rationale": "Separate development choices from held-out evaluation; actual independent-group support governs fold feasibility.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_evaluation",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "seeds",
+    "value": {
+      "namespaces": [
+        "split",
+        "training",
+        "initialization",
+        "loader",
+        "augmentation",
+        "pruning",
+        "search",
+        "bootstrap",
+        "timing"
+      ],
+      "values": null
+    },
+    "status": "proposed",
+    "rationale": "Keep partition, fitting, pruning and search randomness attributable rather than relying on one implicit global seed.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_seeds",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "selection",
+    "value": {
+      "epoch": "Development-only checkpoint criterion; exact rule pending",
+      "candidate": "Same sensitivity/specificity constraints for B/C/D/E; no outer-test selection",
+      "threshold": "Argmax/0.5 reference plus separate development-calibrated operating point",
+      "calibration_data": "Development labels only; never outer test"
+    },
+    "status": "proposed",
+    "rationale": "Separate checkpoint/candidate choice from threshold calibration and give competing methods equal development access.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_selection",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "safeguards",
+    "value": {
+      "sensitivity_margin": null,
+      "specificity_margin": null,
+      "absolute_performance": "Report absolute sensitivity/specificity with support and uncertainty",
+      "clinical_noninferiority": "No clinical/noninferiority claim without justified margins and power"
+    },
+    "status": "proposed",
+    "rationale": "A sensitivity gain may trade away specificity; numerical tolerances require justification before scientific use.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_safeguards",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "budgets",
+    "value": {
+      "dense_epochs": null,
+      "adaptation_epochs": null,
+      "recovery_epochs": null,
+      "candidates": null,
+      "latency_budgets": null,
+      "matched_costs": "Equal data, threshold opportunity and adaptation/recovery/search accounting across methods"
+    },
+    "status": "proposed",
+    "rationale": "Unmatched search or recovery can explain an apparent method advantage; measure and equalize costs.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M2",
+    "decision_id": "decision_budgets",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "compute_gate",
+    "value": {
+      "day": 3,
+      "cost_estimation": "Measure epoch/search/recovery and timing-session costs before scaling",
+      "stop_rule": "Reduce folds/seeds/architectures or retain a disclosed pilot if remaining compute cannot fit 7-9 days"
+    },
+    "status": "proposed",
+    "rationale": "The 7-9 day scope requires measured compute estimates and an honest reduced-pilot route.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M2",
+    "decision_id": "decision_compute_gate",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "hypotheses",
+    "value": {
+      "O1": "Test whether malignant filename groups show concentrated reproducible pruning damage",
+      "O2": "Test incremental group-vulnerability benefit beyond constrained selection and malignant weighting",
+      "O3": "Test architecture/device robustness within BreaKHis; independent-data generalization deferred"
+    },
+    "status": "proposed",
+    "rationale": "Test concentrated damage and incremental benefit as falsifiable hypotheses without assuming novelty.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M5",
+    "decision_id": "decision_hypotheses",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "comparisons",
+    "value": {
+      "A": "Conventional magnitude channel pruning; ordinary development selection",
+      "B": "Same pruning as A; sensitivity/specificity-constrained selection",
+      "C": "Malignant weighting with the same selection constraints as B",
+      "D": "Proposed group-balanced vulnerable-case mechanism with B constraints",
+      "E": "Strongest feasible established adaptive/class-aware method with B constraints",
+      "controls": [
+        "uniform",
+        "random channels",
+        "same-width scratch",
+        "compact dense"
+      ],
+      "negative_route": "If D does not repeatably exceed B/C/E, revise mechanism or report empirical/negative findings"
+    },
+    "status": "proposed",
+    "rationale": "Separate ranking/allocation gains from constrained selection, class weighting and standard compact-model effects.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M5",
+    "decision_id": "decision_comparisons",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "statistics",
+    "value": {
+      "unit": "One filename group; propagate exact-duplicate components in resampling/design",
+      "uncertainty": "Paired group uncertainty; exact bootstrap support policy pending",
+      "fold_seed_reporting": "Report folds/seeds separately; repeated fits do not create independent groups",
+      "multiplicity": "Small prespecified primary comparison set; wider subgroup work exploratory"
+    },
+    "status": "proposed",
+    "rationale": "Groups are sampling units; repeated seeds/folds do not manufacture independent clinical evidence.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_statistics",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "endpoints",
+    "value": {
+      "primary": "Group malignant sensitivity with specificity safeguard and CPU batch-one median forward latency",
+      "secondary": "Specificity, balanced accuracy, image-weighted aggregation, size/MACs, GPU timing",
+      "missing_support": "Report class/magnification/subtype denominators and unsupported estimates",
+      "timing_sessions": "Separate repeated sessions; resident forward and end-to-end timing regions declared separately"
+    },
+    "status": "proposed",
+    "rationale": "Jointly report detection and efficiency with specificity, support and timing-region definitions.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M1",
+    "decision_id": "decision_endpoints",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "claims",
+    "value": {
+      "clinical": "No clinical safety or verified-patient claim",
+      "novelty": "Unverified; closest-method overlap must be adjudicated",
+      "generalization": "BreaKHis derivative scope; no independent-dataset generalization claim",
+      "confirmatory_freeze": "M6 only, after held-out protocol/code/selection/threshold freeze"
+    },
+    "status": "proposed",
+    "rationale": "Keep claims within completed evidence and defer confirmatory freeze and independent-data generalization.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M5",
+    "decision_id": "decision_claims",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  },
+  {
+    "topic": "pretraining",
+    "value": {
+      "recipe": null,
+      "weights": null,
+      "normalization": "Record training-only fitted transforms and version",
+      "augmentation": "Training only; no test augmentation or test-informed recipe tuning"
+    },
+    "status": "proposed",
+    "rationale": "Initialization and fitted transforms affect fairness and leakage; the exact shared recipe must be attributable.",
+    "evidence_refs": [
+      "docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md#1-agreed-scope-and-decisions-to-freeze"
+    ],
+    "owner": "research_owner",
+    "freeze_by": "M2",
+    "decision_id": "decision_pretraining",
+    "revision": 1,
+    "supersedes": null,
+    "affected_claims": [
+      "engineering interfaces",
+      "scientific design before fits"
+    ]
+  }
+]

@@ -78,6 +78,7 @@ governance/
   protocol.initial.json
   decisions.json
   literature_matrix.json
+  protocol_review.json
 logs/
 acceptance/
   evidence_index.json
@@ -204,6 +205,10 @@ For each topic store value/null, status `agreed|proposed|deferred|blocked`, rati
 Unknown numerical thresholds, margins, trial counts and identity facts remain proposed/unresolved. No default silently becomes an agreed clinical/scientific decision. M2/M5 choices may remain open for M1 interface development if owners/freeze deadlines are explicit.
 
 `decisions.json` preserves revision history: stable decision ID, revision, topic/status, rationale/evidence, owner role, deadline milestone, affected claims and supersedes reference. Roles such as `research_owner` are allowed when no person is assigned; critical unassigned reviews must be surfaced.
+
+M0.5 schema binding: the additive `protocol_review/data` record preserves binding,
+decision and literature validation restrictions. See the [protocol API](M0_5_PROTOCOL_API.md)
+for exact input topic/subpolicy fields, revision chains and non-promoting lifecycle rules.
 
 ### 5.7 Focused literature matrix
 

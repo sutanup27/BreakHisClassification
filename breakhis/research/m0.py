@@ -50,6 +50,12 @@ def resolve_exposure(*args, **kwargs):
     return resolve(*args, **kwargs)
 
 
+def write_protocol_records(*args, **kwargs):
+    """Lazy M0.5 protocol, decision and literature binding adapter."""
+    from .protocol import write_protocol_records as write
+    return write(*args, **kwargs)
+
+
 def _git(repo, *args):
     return subprocess.run(['git', '-C', str(repo), *args], check=True,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60).stdout
