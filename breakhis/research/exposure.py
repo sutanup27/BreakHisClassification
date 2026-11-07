@@ -25,12 +25,12 @@ def _digest(value):
         raise r.RecordError('Expected SHA-256')
 
 
-def _reference(ref, history_root, run):
+def _reference(ref, history_root, run, *, allow_archive=False):
     if not isinstance(ref,dict) or set(ref)!={'path','sha256'}:
         raise r.RecordError('Metadata reference requires path and sha256')
     _digest(ref['sha256'])
     path=r.safe_child(history_root,ref['path'],must_exist=True)
-    if path.is_relative_to(run) or path.suffix.lower() not in {'.json','.jsonl','.log','.txt','.md','.yaml','.yml'}:
+    if (path.is_relative_to(run) and not allow_archive) or path.suffix.lower() not in {'.json','.jsonl','.log','.txt','.md','.yaml','.yml'}:
         raise r.RecordError('Reference must be historical metadata, outside the current run')
     if r.file_sha256(path)!=ref['sha256']:
         raise r.IntegrityError('Historical evidence hash mismatch: '+ref['path'])
@@ -133,7 +133,7 @@ def inventory_scope(run_dir, run_id):
 
 
 def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, events,
-                     history_coverage=None, equivalences=None):
+                     history_coverage=None, equivalences=None, _publish=True, _archive=False):
     """Resolve explicit metadata declarations against the current M0.3 audit.
 
     Opaque artifact logs are hashed, never parsed for scores/errors/probabilities.
@@ -148,6 +148,10 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
         raise r.RecordError('Duplicate exposure event ID')
     run,history=Path(run_dir).resolve(),Path(history_root).resolve()
     if not history.is_dir(): raise r.RecordError('Historical metadata root missing')
+    if _archive and history != run/'inputs/history':
+        raise r.RecordError('Archive verification requires the fixed indexed history directory')
+    def reference(ref):
+        return _reference(ref,history,run,allow_archive=_archive)
     rows,components,audit,inventory_hash=_inventory(run,run_id)
     component_ids={component['component_id'] for component in components}
     # Explicit reviewed equivalences supplement exact hash matches across instances.
@@ -161,7 +165,7 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
         for field in fields-{'evidence_refs'}: _text(item[field],field)
         if item['current_component_id'] not in component_ids: raise r.RecordError('Unknown equivalent component')
         if not isinstance(item['evidence_refs'],list) or not item['evidence_refs']: raise r.RecordError('Equivalence needs evidence')
-        for ref in item['evidence_refs']: _reference(ref,history,run)
+        for ref in item['evidence_refs']: reference(ref)
         bridges[(item['source_instance_id'],item['filename_group_id'])].add(item['current_component_id'])
         equivalence_records.append(item)
     by_group,by_raw,by_pixel=defaultdict(set),defaultdict(set),defaultdict(set)
@@ -184,14 +188,14 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
             issues=[],owner='research_owner',freeze_by='M1',resolution='Review attributable historical metadata and coverage')
         matched=set()
         try:
-            _reference(event['artifact'],history,run)
+            reference(event['artifact'])
             result['artifact_sha256']=event['artifact']['sha256']
             if event['source_kind']=='synthetic':
                 if event['source_instance_id']==source_instance_id:
                     raise r.RecordError('Synthetic and real instances must differ')
                 result.update(coverage='exact',confidence='documented',restriction='synthetic_not_real')
             else:
-                manifest_path=_reference(event['manifest'],history,run)
+                manifest_path=reference(event['manifest'])
                 selected=_manifest_rows(manifest_path,event)
                 paths=event['accessed_paths']
                 exact=paths is not None and event['evidence_source']=='log'
@@ -234,15 +238,15 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
     # moving historical file cannot be represented by its earlier hash alone.
     for event in events:
         try:
-            _reference(event['artifact'],history,run)
-            if event['source_kind']=='real': _reference(event['manifest'],history,run)
+            reference(event['artifact'])
+            if event['source_kind']=='real': reference(event['manifest'])
         except (OSError,r.RecordError):
             if event['event_id'] not in unresolved: unresolved.append(event['event_id'])
             next(item for item in register if item['exposure_id']==event['event_id'])['issues'].append('HISTORICAL_REFERENCE_UNAVAILABLE_OR_CHANGED')
             next(item for item in register if item['exposure_id']==event['event_id']).update(coverage='unresolved',restriction='unresolved',confidence='unresolved')
     for bridge in equivalence_records:
         try:
-            for ref in bridge['evidence_refs']: _reference(ref,history,run)
+            for ref in bridge['evidence_refs']: reference(ref)
         except (OSError,r.RecordError):
             for event in events:
                 if event['source_kind']=='real' and event['source_instance_id']==bridge['source_instance_id']:
@@ -272,7 +276,7 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
                 raise r.RecordError('Invalid coverage components')
             refs=history_coverage['evidence_refs']
             if not isinstance(refs,list) or not refs: raise r.RecordError('Coverage requires evidence references')
-            for ref in refs: _reference(ref,history,run)
+            for ref in refs: reference(ref)
             covered=set(ids)
         except (OSError,r.RecordError) as error:
             coverage_issues.append(str(error))
@@ -302,6 +306,8 @@ def resolve_exposure(run_dir, run_id, *, history_root, source_instance_id, event
             'Reseeding never erases exposure','No fold selection or model/test inference performed',
             'Final Gate G0, lineage, protocol and fold support remain downstream'])
     destinations=['governance/exposure_register.json','governance/component_eligibility.json','governance/exposure_summary.json']
+    if not _publish:
+        return dict(summary=summary,register=register,eligibility=eligibility)
     for relative in destinations:
         if r.safe_child(run,relative).exists(): raise FileExistsError(relative)
     for relative,kind,payload in zip(destinations,['exposure_register','component_eligibility','exposure_summary'],[register,eligibility,summary]):

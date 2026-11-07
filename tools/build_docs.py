@@ -35,6 +35,7 @@ SOURCES = [('readme', ROOT / 'README.md', 'User guide'),
            ('m0-5', ROOT / 'docs/specs/m0/M0_5_PROTOCOL_LITERATURE.md', 'M0.5 Protocol & literature'),
            ('m0-5-api', ROOT / 'docs/specs/m0/M0_5_PROTOCOL_API.md', 'M0.5 Protocol API'),
            ('m0-6', ROOT / 'docs/specs/m0/M0_6_RUNNER_GATE.md', 'M0.6 Runner & Gate G0'),
+           ('m0-6-api', ROOT / 'docs/specs/m0/M0_6_RUNNER_API.md', 'M0.6 Runner API'),
            ('archive-index', ROOT / 'docs/archive/README.md', 'Archive index'),
            ('roadmap', ROOT / 'docs/archive/CODEBASE_FIX_ROADMAP.md', 'Historical repair roadmap')]
 SOURCE_IDS = {path.resolve(): key for key, path, _ in SOURCES}

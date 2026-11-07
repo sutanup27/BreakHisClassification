@@ -2,7 +2,7 @@
 
 Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.
 
-[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.5 are implemented and self-reviewed; M0.6 has not started.
+[M0_SPEC.md](M0_SPEC.md) is the authoritative contract for schemas, semantics and Gate G0. All six M0 packages are implemented and reviewed at engineering scope. A real local run and full reverification are complete. G0 allows M1 engineering; scientific fits remain blocked by explicit unresolved reviews and policy decisions.
 
 All M0-specific documents live together in this folder:
 
@@ -21,6 +21,7 @@ docs/specs/m0/
   M0_5_PROTOCOL_LITERATURE.md
   M0_5_PROTOCOL_API.md              # Draft protocol, decisions and literature
   M0_6_RUNNER_GATE.md
+  M0_6_RUNNER_API.md                # CLI, verifier, evidence graph and G0
 ```
 
 ## Work packages and progress
@@ -32,7 +33,7 @@ docs/specs/m0/
 | [M0.3 Data readiness](M0_3_DATA_READINESS.md) | WP3-WP4 | M0.1-M0.2 reviewed | Reviewed | 19 data tests; 105 total CPU tests passed, no skips; [synthetic audit evidence](M0_3_DATA_READINESS.md#progress-evidence) |
 | [M0.4 Exposure governance](M0_4_EXPOSURE_GOVERNANCE.md) | WP5 | M0.1-M0.3 reviewed | Reviewed | 23 exposure tests; 128 total CPU tests passed, no skips; [synthetic history evidence](M0_4_EXPOSURE_GOVERNANCE.md#progress-evidence) |
 | [M0.5 Protocol and literature](M0_5_PROTOCOL_LITERATURE.md) | WP6 | M0.1-M0.4 reviewed | Reviewed | 19 protocol tests; 147 total CPU tests passed, no skips; [bound draft/curated matrix evidence](M0_5_PROTOCOL_LITERATURE.md#progress-evidence) |
-| [M0.6 Runner and Gate G0](M0_6_RUNNER_GATE.md) | WP7-WP9 | M0.1-M0.5 reviewed | Not started | Pending |
+| [M0.6 Runner and Gate G0](M0_6_RUNNER_GATE.md) | WP7-WP9 | M0.1-M0.5 reviewed | Reviewed | 167 tests passed in each environment; all 26 M0 cases; [real-run evidence and restrictions](M0_6_RUNNER_GATE.md#progress-evidence) |
 
 The default path is M0.1 through M0.6. Literature collection and locating lineage evidence may begin earlier, but dependency acceptance is required before marking a package reviewed. A dependency's reviewed unknowns may be carried forward as restrictions; review does not assert that every scientific question is resolved.
 
@@ -64,4 +65,9 @@ All M0-T01 through M0-T26 must have final traceability. Test IDs refer to the ma
 
 ## Starting point
 
-M0.1-M0.5 are complete at package scope; use the [records API](M0_1_RECORDS_API.md), [baseline API](M0_2_BASELINE_API.md), [data API](M0_3_DATA_API.md), [exposure API](M0_4_EXPOSURE_API.md) and [protocol API](M0_5_PROTOCOL_API.md) for subsequent work. [M0.6 runner and Gate G0](M0_6_RUNNER_GATE.md) is next and remains not started. No full M0/G0 execution or scientific experiment is implied by package completion.
+M0 implementation and real evidence-generation acceptance are complete. Use the
+[runner reference](M0_6_RUNNER_API.md) to produce a fresh run or verify archived
+evidence, and [M0.6 acceptance](M0_6_RUNNER_GATE.md#progress-evidence) for the actual
+G0 outcome. The next code milestone is **M1 scientific data/reporting interfaces**;
+only the engineering scope in the handoff is released. No real fitting, untouched
+fold selection or confirmatory freeze is authorized by this completion status.

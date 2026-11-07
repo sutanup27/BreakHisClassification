@@ -19,6 +19,27 @@ class ReportingTests(unittest.TestCase):
         torch.set_num_threads(2)
         self.addCleanup(torch.set_num_threads, threads)
 
+    def test_cpu_runtime_never_initializes_cudnn_with_hidden_cuda(self):
+        from breakhis.reporting import runtime_report
+        with patch.object(self.t.backends.cudnn,'version',side_effect=ValueError('no visible CUDA devices')):
+            result=runtime_report(self.t.device('cpu'))
+        self.assertIsNone(result['cudnn'])
+        self.assertEqual(result['cudnn_reason'],'Not queried for CPU execution')
+
+    def test_cpu_environment_probe_avoids_gpu_metadata_when_availability_is_true(self):
+        import tools.check_environment as check
+        with patch.object(check.sys,'argv',['check_environment.py','--device','cpu']), \
+             patch.object(self.t.cuda,'is_available',return_value=True), \
+             patch.object(self.t.cuda,'get_device_name',side_effect=AssertionError('CPU probe queried GPU name')), \
+             patch.object(self.t.backends.cudnn,'version',side_effect=ValueError('No visible CUDA devices')), \
+             patch.object(check.subprocess,'run'):
+            stream=io.StringIO()
+            with contextlib.redirect_stdout(stream): check.main()
+        result=json.loads(stream.getvalue())
+        self.assertIsNone(result['cuda_available'])
+        self.assertIsNone(result['gpu'])
+        self.assertIn('Not queried',result['gpu_reason'])
+
     def test_confusion_precision_recall_f1_and_absent_class(self):
         from breakhis.reporting import classification_metrics
         result = classification_metrics([0, 0, 1, 1], [0, 1, 1, 1], ['benign', 'malignant'])

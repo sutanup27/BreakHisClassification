@@ -2,6 +2,10 @@
 
 Prepared: 7 November 2026.
 Status: proposed implementation and experiment schedule; no new scientific results claimed.
+Progress update, 7 November 2026: M0 engineering implementation and real local
+evidence generation are complete; [acceptance and G0 restrictions](../specs/m0/M0_6_RUNNER_GATE.md#progress-evidence).
+M1 interface development is eligible. Real fits and confirmation remain blocked
+pending the reported lineage/history/policy/review decisions; M1-M7 are not completed.
 Planning window: 7-9 elapsed days from the agreed start, subject to measured compute costs. This is a scoped sprint, not a publication or successful-novelty guarantee.
 
 This is the time-bounded implementation companion to the [end-to-end research guide](Breast_Histopathology_Pruning_End_to_End_Research_Guide.md) and [operational experiment plan](RESEARCH_PAPER_PLAN.md). The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older [codebase repair roadmap](../archive/CODEBASE_FIX_ROADMAP.md) concerns engineering reliability; its nine stages do not establish research completion.

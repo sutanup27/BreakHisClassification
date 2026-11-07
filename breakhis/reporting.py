@@ -174,7 +174,9 @@ def convolution_linear_macs(model, inputs):
 
 def runtime_report(device):
     result = dict(python=platform.python_version(), pytorch=str(torch.__version__),
-                  cuda_runtime=torch.version.cuda, cudnn=torch.backends.cudnn.version(),
+                  cuda_runtime=torch.version.cuda,
+                  cudnn=torch.backends.cudnn.version() if device.type == 'cuda' else None,
+                  cudnn_reason=None if device.type == 'cuda' else 'Not queried for CPU execution',
                   device=str(device), cpu=platform.processor(), platform=platform.platform(),
                   logical_cpu_count=os.cpu_count(), torch_cpu_threads=torch.get_num_threads(),
                   torch_interop_threads=torch.get_num_interop_threads(),

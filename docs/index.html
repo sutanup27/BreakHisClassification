@@ -36,7 +36,8 @@
 <details open><summary>M0.4 Exposure API</summary><a href="#m0-4-api" data-section="m0-4-api">M0.4 exposure governance API</a><a href="#m0-4-api-calling-the-resolver" data-section="m0-4-api-calling-the-resolver">Calling the resolver</a><a href="#m0-4-api-event-schema" data-section="m0-4-api-event-schema">Event schema</a><a href="#m0-4-api-derivative-equivalence" data-section="m0-4-api-derivative-equivalence">Derivative equivalence</a><a href="#m0-4-api-reviewed-history-boundary" data-section="m0-4-api-reviewed-history-boundary">Reviewed history boundary</a><a href="#m0-4-api-outputs-and-readiness-limits" data-section="m0-4-api-outputs-and-readiness-limits">Outputs and readiness limits</a><a href="#m0-4-api-tests" data-section="m0-4-api-tests">Tests</a></details>
 <details open><summary>M0.5 Protocol &amp; literature</summary><a href="#m0-5" data-section="m0-5">M0.5 — Protocol and literature</a><a href="#m0-5-build-checklist" data-section="m0-5-build-checklist">Build checklist</a><a href="#m0-5-tests-and-completion-gate" data-section="m0-5-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-5-progress-evidence" data-section="m0-5-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.5 Protocol API</summary><a href="#m0-5-api" data-section="m0-5-api">M0.5 protocol, decisions and literature API</a><a href="#m0-5-api-templates" data-section="m0-5-api-templates">Templates</a><a href="#m0-5-api-validate-and-bind" data-section="m0-5-api-validate-and-bind">Validate and bind</a><a href="#m0-5-api-input-schemas" data-section="m0-5-api-input-schemas">Input schemas</a><a href="#m0-5-api-binding-and-outputs" data-section="m0-5-api-binding-and-outputs">Binding and outputs</a><a href="#m0-5-api-developer-checks" data-section="m0-5-api-developer-checks">Developer checks</a></details>
-<details open><summary>M0.6 Runner &amp; Gate G0</summary><a href="#m0-6" data-section="m0-6">M0.6 — Runner and Gate G0</a><a href="#m0-6-build-checklist" data-section="m0-6-build-checklist">Build checklist</a><a href="#m0-6-tests-and-completion-gate" data-section="m0-6-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-6-progress-evidence" data-section="m0-6-progress-evidence">Progress evidence</a></details></details>
+<details open><summary>M0.6 Runner &amp; Gate G0</summary><a href="#m0-6" data-section="m0-6">M0.6 — Runner and Gate G0</a><a href="#m0-6-build-checklist" data-section="m0-6-build-checklist">Build checklist</a><a href="#m0-6-tests-and-completion-gate" data-section="m0-6-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-6-progress-evidence" data-section="m0-6-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.6 Runner API</summary><a href="#m0-6-api" data-section="m0-6-api">M0 runner, verification and Gate G0</a><a href="#m0-6-api-run-and-verify" data-section="m0-6-api-run-and-verify">Run and verify</a><a href="#m0-6-api-configuration" data-section="m0-6-api-configuration">Configuration</a><a href="#m0-6-api-explicit-exploratory-scope" data-section="m0-6-api-explicit-exploratory-scope">Explicit exploratory scope</a><a href="#m0-6-api-evidence-graph-and-verification" data-section="m0-6-api-evidence-graph-and-verification">Evidence graph and verification</a><a href="#m0-6-api-g0-and-m1-handoff" data-section="m0-6-api-g0-and-m1-handoff">G0 and M1 handoff</a></details></details>
 <details class="documentation-group"><summary>Historical archive</summary><details open><summary>Archive index</summary><a href="#archive-index" data-section="archive-index">Historical documentation archive</a></details>
 <details open><summary>Historical repair roadmap</summary><a href="#roadmap" data-section="roadmap">Codebase repair roadmap</a><a href="#roadmap-objective" data-section="roadmap-objective">Objective</a><a href="#roadmap-current-state" data-section="roadmap-current-state">Current state</a><a href="#roadmap-stage-1--separate-dataset-workflows" data-section="roadmap-stage-1--separate-dataset-workflows">Stage 1 — Separate dataset workflows</a><a href="#roadmap-stage-2--establish-a-reproducible-environment" data-section="roadmap-stage-2--establish-a-reproducible-environment">Stage 2 — Establish a reproducible environment</a><a href="#roadmap-stage-3--repair-package-imports-and-command-structure" data-section="roadmap-stage-3--repair-package-imports-and-command-structure">Stage 3 — Repair package imports and command structure</a><a href="#roadmap-stage-4--audit-datasets-and-create-patient-separated-splits" data-section="roadmap-stage-4--audit-datasets-and-create-patient-separated-splits">Stage 4 — Audit datasets and create patient-separated splits</a><a href="#roadmap-stage-5--standardize-preprocessing-and-baseline-training" data-section="roadmap-stage-5--standardize-preprocessing-and-baseline-training">Stage 5 — Standardize preprocessing and baseline training</a><a href="#roadmap-stage-6--standardize-configuration-and-checkpoints" data-section="roadmap-stage-6--standardize-configuration-and-checkpoints">Stage 6 — Standardize configuration and checkpoints</a><a href="#roadmap-stage-7--repair-pruning-and-fine-tuning" data-section="roadmap-stage-7--repair-pruning-and-fine-tuning">Stage 7 — Repair pruning and fine-tuning</a><a href="#roadmap-stage-8--correct-evaluation-and-efficiency-reporting" data-section="roadmap-stage-8--correct-evaluation-and-efficiency-reporting">Stage 8 — Correct evaluation and efficiency reporting</a><a href="#roadmap-stage-9--add-regression-checks-and-operational-documentation" data-section="roadmap-stage-9--add-regression-checks-and-operational-documentation">Stage 9 — Add regression checks and operational documentation</a><a href="#roadmap-final-acceptance-run" data-section="roadmap-final-acceptance-run">Final acceptance run</a></details></details></nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
@@ -63,6 +64,7 @@
 <tr><td>Plan the research experiments</td><td><a href="#research-roadmap">7-9 day research implementation roadmap</a></td></tr>
 <tr><td>Implement and test the first research milestone</td><td><a href="#m0-spec">M0 specification</a></td></tr>
 <tr><td>Track M0 implementation package by package</td><td><a href="#m0-tracker">M0 checklist tracker</a></td></tr>
+<tr><td>Generate or verify M0 evidence and read Gate G0</td><td><a href="#m0-6-api">M0 runner reference</a></td></tr>
 </tbody></table></div>
 </section>
 <section class="doc-section" id="readme-first-run-checklist" data-guide="User guide">
@@ -912,7 +914,7 @@ python -m breakhis train --dataset breakhis --source cancer_binary --manifest ar
 </section>
 <section class="doc-section" id="research-roadmap" data-guide="Research implementation roadmap">
 <p class="eyebrow">Research implementation roadmap</p><h1>Research implementation roadmap: BreaKHis pruning</h1>
-<p>Prepared: 7 November 2026. Status: proposed implementation and experiment schedule; no new scientific results claimed. Planning window: 7-9 elapsed days from the agreed start, subject to measured compute costs. This is a scoped sprint, not a publication or successful-novelty guarantee.</p>
+<p>Prepared: 7 November 2026. Status: proposed implementation and experiment schedule; no new scientific results claimed. Progress update, 7 November 2026: M0 engineering implementation and real local evidence generation are complete; <a href="#m0-6-progress-evidence">acceptance and G0 restrictions</a>. M1 interface development is eligible. Real fits and confirmation remain blocked pending the reported lineage/history/policy/review decisions; M1-M7 are not completed. Planning window: 7-9 elapsed days from the agreed start, subject to measured compute costs. This is a scoped sprint, not a publication or successful-novelty guarantee.</p>
 <p>This is the time-bounded implementation companion to the <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">end-to-end research guide</a> and <a href="../docs/research/RESEARCH_PAPER_PLAN.md">operational experiment plan</a>. The guide defines scientific intent; the operational plan supplies P0/P1/P2 and E01-E14 identifiers. This roadmap adds dependencies, concrete implementation deliverables, acceptance checks, compute limits and scope cuts. The older <a href="#roadmap">codebase repair roadmap</a> concerns engineering reliability; its nine stages do not establish research completion.</p>
 </section>
 <section class="doc-section" id="research-roadmap-1-agreed-scope-and-decisions-to-freeze" data-guide="Research implementation roadmap">
@@ -1145,7 +1147,7 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 </section>
 <section class="doc-section" id="m0-spec" data-guide="M0 implementation specification">
 <p class="eyebrow">M0 implementation specification</p><h1>M0 specification: preservation, protocol and data readiness</h1>
-<p>Specification: M0-SPEC-001, version 1.0. Prepared: 7 November 2026. Status: specification for implementation; creating this document does not execute M0.</p>
+<p>Specification: M0-SPEC-001, version 1.0. Prepared: 7 November 2026. Status: engineering implementation and real-run evidence acceptance completed 7 November 2026. All 26 M0 acceptance IDs have actual evidence; see the tracker. G0 allows M1 engineering but blocks scientific fitting/confirmation pending named unresolved reviews and policy agreements.</p>
 <p>Parent: <a href="#research-roadmap">research implementation roadmap</a>, M0/G0. Scientific intent: <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">research guide</a>. Experiment mapping: <a href="../docs/research/RESEARCH_PAPER_PLAN.md">operational plan</a>, P0/E01. Existing behavior: <a href="#datasets">dataset audit</a> and <a href="#testing">testing</a>.</p>
 <p>MUST denotes an acceptance requirement; SHOULD permits a justified documented exception; MAY is optional. Proposed files, schemas and commands below are development targets, not existing capabilities. This document governs M0 coding, review and testing. M1 implementation and scientific experiments are outside its execution scope.</p>
 </section>
@@ -1189,6 +1191,7 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <p>Each unique run writes under ignored <code>artifacts/research/m0/&lt;run_id&gt;/</code>:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>run.json
 config.resolved.json
+inputs/                         # Frozen input/spec/history bytes and declarations
 baseline/
   git.json
   tracked.patch
@@ -1197,6 +1200,7 @@ baseline/
   environment.cpu.json
   environment.cuda.json
   checks.json
+  final_consistency.json
 audit/
   manifest.json
   audit.json
@@ -1215,10 +1219,14 @@ governance/
   literature_matrix.json
   protocol_review.json
 logs/
+  operations.json
 acceptance/
+  tests.json
   evidence_index.json
   gate_g0.json
-  M0_REPORT.md</code></pre></div>
+  M0_REPORT.md
+  m1_handoff.json
+  receipt.json</code></pre></div>
 <p>Requirements:</p>
 <ul>
 <li>Create a new run directory; refuse an existing nonempty destination. Resolve paths before IO. Reject traversal, dataset/output overlap, escaping symlinks/reparse points and recursively capturing outputs as source.</li>
@@ -1306,11 +1314,12 @@ restriction(development_only|synthetic_not_real|unresolved), reviewer_note</code
 </section>
 <section class="doc-section" id="m0-spec-7-proposed-runner-interface" data-guide="M0 implementation specification">
 <p class="eyebrow">M0 implementation specification</p><h2>7. Proposed runner interface</h2>
-<p>Design target only; these commands MUST NOT be represented as currently runnable:</p>
+<p>Implemented in M0.6; see the <a href="#m0-6-api">runner reference</a> for current behavior and restrictions:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt;unique-id&gt;
 python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt;existing-id&gt; --verify-only</code></pre></div>
 <p>Normal flow: validate inputs; create new run; capture source/environment/current tests; audit selected images; ingest reviewed governance records; index evidence; evaluate G0; write human report. Verification-only validates existing evidence/gate consistency without rerunning tests/inference, modifying statuses or rewriting artifacts. It returns nonzero for tampered/missing evidence.</p>
 <p>Configuration includes: schema/spec version; repo/data/output paths; selected sources (initially exactly <code>cancer_binary</code>); audit workers/seed; requested devices; baseline check identities; lineage/exposure/protocol/literature input record paths; requested mode and operation timeouts. Resolve relative config paths against the configuration file directory and record absolute resolutions. Existing CLI cwd semantics remain compatible.</p>
+<p>Additive optional v1 configuration keys: <code>decisions_path</code> (fallback is <code>decisions.initial.json</code> beside the protocol) and <code>run_kind</code> (<code>real</code> default, or <code>synthetic</code>). JSONL index entries additionally declare row type/version. <code>operations</code>, <code>acceptance_tests</code>, <code>m1_handoff</code>, <code>pilot_scope</code>, <code>exposure.input</code> and <code>failure</code> are additive common-envelope record types. Frozen historical copies are replayed read-only after index verification; original metadata need not remain present. A reviewed pilot scope is an explicit metadata declaration, not an automatic exception for lineage/history unknowns.</p>
 <p>Reject unknown config keys, unsupported versions, invalid IDs/numeric ranges and unsafe paths before side effects. Use an allowlisted implementation for checks; config MUST NOT execute arbitrary shell strings. Runner flags are <code>--config</code>, <code>--run-id</code>, <code>--verify-only</code> and standard help. Configuration validation errors exit 2; execution/integrity failures or blocked requested-mode gates exit 1; exit 0 requires complete engineering evidence and eligibility for the requested mode. Restricted pilot mode may exit 0 only with restrictions prominent. <code>confirmatory_design</code> checks preparation eligibility; it never launches/freezes the confirmatory study.</p>
 </section>
 <section class="doc-section" id="m0-spec-8-gate-g0-contract" data-guide="M0 implementation specification">
@@ -1384,23 +1393,23 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <section class="doc-section" id="m0-spec-11-definition-of-done-and-handoff" data-guide="M0 implementation specification">
 <p class="eyebrow">M0 implementation specification</p><h2>11. Definition of done and handoff</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Normative requirements implemented or covered by a justified versioned spec revision.</li>
-<li class="check-item"><span class="check pending">Pending</span>Verifiable source/environment snapshot and current baseline check logs.</li>
-<li class="check-item"><span class="check pending">Pending</span>Discovered/included/excluded counts and duplicate representatives reconcile.</li>
-<li class="check-item"><span class="check pending">Pending</span>Lineage, identity, similarity and exposure limitations explicitly reviewed or unresolved.</li>
-<li class="check-item"><span class="check pending">Pending</span>Proposed scientific decisions have owners/freeze deadlines; no premature confirmatory freeze.</li>
-<li class="check-item"><span class="check pending">Pending</span>Literature matrix covers closest mechanisms with truthful access/review status.</li>
-<li class="check-item"><span class="check pending">Pending</span>G0 dimensions, blockers and restrictions agree with indexed evidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Synthetic acceptance and existing regressions pass; fixtures distinguished from real evidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Human report lists operations, measured counts, restrictions and open questions without invented results.</li>
-<li class="check-item"><span class="check pending">Pending</span>M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.</li>
+<li class="check-item"><span class="check done">Done</span>Normative requirements implemented or covered by the documented additive v1 schema bindings above.</li>
+<li class="check-item"><span class="check done">Done</span>Verifiable source/environment snapshot and current baseline check logs.</li>
+<li class="check-item"><span class="check done">Done</span>Discovered/included/excluded counts and duplicate representatives reconcile.</li>
+<li class="check-item"><span class="check done">Done</span>Lineage, identity, similarity and exposure limitations explicitly reviewed or unresolved.</li>
+<li class="check-item"><span class="check done">Done</span>Proposed scientific decisions have owners/freeze deadlines; no premature confirmatory freeze.</li>
+<li class="check-item"><span class="check done">Done</span>Literature matrix covers closest mechanisms with truthful access/review status.</li>
+<li class="check-item"><span class="check done">Done</span>G0 dimensions, blockers and restrictions agree with indexed evidence.</li>
+<li class="check-item"><span class="check done">Done</span>Synthetic acceptance and existing regressions pass; fixtures distinguished from real evidence.</li>
+<li class="check-item"><span class="check done">Done</span>Human report lists operations, measured counts, restrictions and open questions without invented results.</li>
+<li class="check-item"><span class="check done">Done</span>M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.</li>
 </ul>
-<p>M1 then implements folds, seeds, development predictions and aggregation against these contracts. Real scientific fits and confirmatory evaluation remain gated by unresolved decisions and later milestones. Creating this specification alone satisfies none of the execution checklist.</p>
+<p>Acceptance evidence: <a href="#m0-6-progress-evidence">M0.6 real run and reverification</a>. This closes M0&#x27;s engineering/evidence contract, not its unresolved scientific facts. M1 then implements folds, seeds, development predictions and aggregation against these contracts. Real scientific fits and confirmatory evaluation remain gated by unresolved decisions and later milestones.</p>
 </section>
 <section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
 <p>Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.</p>
-<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.5 are implemented and self-reviewed; M0.6 has not started.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. All six M0 packages are implemented and reviewed at engineering scope. A real local run and full reverification are complete. G0 allows M1 engineering; scientific fits remain blocked by explicit unresolved reviews and policy decisions.</p>
 <p>All M0-specific documents live together in this folder:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
   README.md                         # Tracker and starting point
@@ -1415,7 +1424,8 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
   M0_4_EXPOSURE_API.md              # Historical access and coverage contracts
   M0_5_PROTOCOL_LITERATURE.md
   M0_5_PROTOCOL_API.md              # Draft protocol, decisions and literature
-  M0_6_RUNNER_GATE.md</code></pre></div>
+  M0_6_RUNNER_GATE.md
+  M0_6_RUNNER_API.md                # CLI, verifier, evidence graph and G0</code></pre></div>
 </section>
 <section class="doc-section" id="m0-tracker-work-packages-and-progress" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Work packages and progress</h2>
@@ -1425,7 +1435,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Reviewed</td><td>19 data tests; 105 total CPU tests passed, no skips; <a href="#m0-3-progress-evidence">synthetic audit evidence</a></td></tr>
 <tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Reviewed</td><td>23 exposure tests; 128 total CPU tests passed, no skips; <a href="#m0-4-progress-evidence">synthetic history evidence</a></td></tr>
 <tr><td><a href="#m0-5">M0.5 Protocol and literature</a></td><td>WP6</td><td>M0.1-M0.4 reviewed</td><td>Reviewed</td><td>19 protocol tests; 147 total CPU tests passed, no skips; <a href="#m0-5-progress-evidence">bound draft/curated matrix evidence</a></td></tr>
-<tr><td><a href="#m0-6">M0.6 Runner and Gate G0</a></td><td>WP7-WP9</td><td>M0.1-M0.5 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-6">M0.6 Runner and Gate G0</a></td><td>WP7-WP9</td><td>M0.1-M0.5 reviewed</td><td>Reviewed</td><td>167 tests passed in each environment; all 26 M0 cases; <a href="#m0-6-progress-evidence">real-run evidence and restrictions</a></td></tr>
 </tbody></table></div>
 <p>The default path is M0.1 through M0.6. Literature collection and locating lineage evidence may begin earlier, but dependency acceptance is required before marking a package reviewed. A dependency&#x27;s reviewed unknowns may be carried forward as restrictions; review does not assert that every scientific question is resolved.</p>
 </section>
@@ -1456,7 +1466,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>M0.1-M0.5 are complete at package scope; use the <a href="#m0-1-api">records API</a>, <a href="#m0-2-api">baseline API</a>, <a href="#m0-3-api">data API</a>, <a href="#m0-4-api">exposure API</a> and <a href="#m0-5-api">protocol API</a> for subsequent work. <a href="#m0-6">M0.6 runner and Gate G0</a> is next and remains not started. No full M0/G0 execution or scientific experiment is implied by package completion.</p>
+<p>M0 implementation and real evidence-generation acceptance are complete. Use the <a href="#m0-6-api">runner reference</a> to produce a fresh run or verify archived evidence, and <a href="#m0-6-progress-evidence">M0.6 acceptance</a> for the actual G0 outcome. The next code milestone is <strong>M1 scientific data/reporting interfaces</strong>; only the engineering scope in the handoff is released. No real fitting, untouched fold selection or confirmatory freeze is authorized by this completion status.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
@@ -1948,7 +1958,7 @@ python -m unittest discover -s tests -v</code></pre></div>
 <tr><td><code>exposure.initial.json</code></td><td>Unresolved history scaffold; null instance/root and no coverage declaration do not mean untouched data</td></tr>
 <tr><td><code>m0.example.json</code></td><td>M0.1-compatible pre-run configuration, relative paths based on its own directory; CPU checks default</td></tr>
 </tbody></table></div>
-<p>The example config is not a runnable M0 command: <code>tools/run_m0.py</code> remains M0.6. Its <code>protocol_path</code> identifies the protocol; decisions are supplied separately to this package API. M0.6 must define sidecar/config integration explicitly. Do not treat exposure scaffold nulls as a valid reviewed resolver input.</p>
+<p>The <a href="#m0-6-api">M0.6 runner</a> now consumes the example config. Its optional <code>decisions_path</code> selects the register, defaulting to <code>decisions.initial.json</code> beside <code>protocol_path</code> for compatibility. Decisions are supplied separately to this package&#x27;s library API. Do not treat exposure scaffold nulls as a valid reviewed resolver input.</p>
 <p>The <a href="#research-protocol">human protocol</a> explains policy values, comparisons, unresolved decisions and scientific restrictions.</p>
 </section>
 <section class="doc-section" id="m0-5-api-validate-and-bind" data-guide="M0.5 Protocol API">
@@ -1989,7 +1999,7 @@ print(validate_literature(literature))
 <li>Domain-separated canonical hashes of the decision and literature input lists.</li>
 </ul>
 <p>Supplied nonnull bindings must already match. Source/audit/exposure run IDs and exposure inventory scope must agree. The protocol input is separately hashed in the review record. This avoids circular hashes between protocol and its inputs.</p>
-<p>The writer creates new M0.1 v1 envelopes: <code>protocol.initial/data</code>, <code>decisions/items</code>, <code>literature_matrix/items</code>, and additive <code>protocol_review/data</code> under <code>governance/</code>. Existing destinations are refused. Outputs preserve decisions, unknown values, access levels and draft lifecycle. Full evidence graph/semantic gate verification is M0.6; this binding API alone cannot assert the validity of scientific evidence.</p>
+<p>The writer creates new M0.1 v1 envelopes: <code>protocol.initial/data</code>, <code>decisions/items</code>, <code>literature_matrix/items</code>, and additive <code>protocol_review/data</code> under <code>governance/</code>. Existing destinations are refused. Outputs preserve decisions, unknown values, access levels and draft lifecycle. Full evidence graph/semantic gate verification is provided by M0.6; this binding API alone cannot assert scientific validity.</p>
 </section>
 <section class="doc-section" id="m0-5-api-developer-checks" data-guide="M0.5 Protocol API">
 <p class="eyebrow">M0.5 Protocol API</p><h2>Developer checks</h2>
@@ -1999,44 +2009,110 @@ python -m unittest discover -s tests -v</code></pre></div>
 </section>
 <section class="doc-section" id="m0-6" data-guide="M0.6 Runner &amp; Gate G0">
 <p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h1>M0.6 — Runner and Gate G0</h1>
-<p>Status: Not started. Depends on: M0.1-M0.5 reviewed. Master mapping: WP7-WP9; sections 4, 6-11. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Status: Reviewed (engineering implementation/real-run acceptance, 7 November 2026). Depends on: M0.1-M0.5 reviewed. Master mapping: WP7-WP9; sections 4, 6-11. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Implemented CLI, schemas and readiness boundaries: <a href="#m0-6-api">runner reference</a>.</p>
 </section>
 <section class="doc-section" id="m0-6-build-checklist" data-guide="M0.6 Runner &amp; Gate G0">
 <p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Integrate package outputs into a complete evidence index without circular hashing; verify referenced bytes before evaluating readiness.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement G0&#x27;s engineering, exploratory, confirmatory-design, GPU and novelty dimensions, reason codes, blockers, owners and restrictions.</li>
-<li class="check-item"><span class="check pending">Pending</span>Test hard-failure precedence and requested-mode eligibility; a successful process cannot imply scientific readiness.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement <code>tools/run_m0.py</code> with validated <code>--config</code>, <code>--run-id</code>, <code>--verify-only</code>, help and documented exit codes. These remain proposed until implemented/tested.</li>
-<li class="check-item"><span class="check pending">Pending</span>Keep config-directory-relative path resolution, allowlisted command execution, explicit timeouts, logs and partial-run failure records.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement verify-only as read-only validation, without silently recomputing/replacing invalid evidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Produce a human M0 report and M1 handoff binding source, inventory/components, exposure eligibility, decisions and allowed claims.</li>
-<li class="check-item"><span class="check pending">Pending</span>Integrate docs/CI and all package tests; then execute real local M0 only within current user authorization and a fresh research destination.</li>
+<li class="check-item"><span class="check done">Done</span>Integrate package outputs into a complete evidence index without circular hashing; verify referenced bytes before evaluating readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Implement G0&#x27;s engineering, exploratory, confirmatory-design, GPU and novelty dimensions, reason codes, blockers, owners and restrictions.</li>
+<li class="check-item"><span class="check done">Done</span>Test hard-failure precedence and requested-mode eligibility; a successful process cannot imply scientific readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Implement <code>tools/run_m0.py</code> with validated <code>--config</code>, <code>--run-id</code>, <code>--verify-only</code>, help and documented exit codes.</li>
+<li class="check-item"><span class="check done">Done</span>Keep config-directory-relative path resolution, allowlisted command execution, explicit timeouts, logs and partial-run failure records.</li>
+<li class="check-item"><span class="check done">Done</span>Implement verify-only as read-only validation, without silently recomputing/replacing invalid evidence.</li>
+<li class="check-item"><span class="check done">Done</span>Produce a human M0 report and M1 handoff binding source, inventory/components, exposure eligibility, decisions and allowed claims.</li>
+<li class="check-item"><span class="check done">Done</span>Integrate docs/CI and all package tests; then execute real local M0 only within current user authorization and a fresh research destination.</li>
 </ul>
 </section>
 <section class="doc-section" id="m0-6-tests-and-completion-gate" data-guide="M0.6 Runner &amp; Gate G0">
 <p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Tests and completion gate</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T23/M0-T24 for isolated synthetic orchestration and read-only verification, and rerun integrated M0-T21/M0-T22 integrity cases.</li>
-<li class="check-item"><span class="check pending">Pending</span>Satisfy M0-T25 through existing CLI/checkpoint/CPU regressions and input-preservation checks.</li>
-<li class="check-item"><span class="check pending">Pending</span>Exercise the full G0 matrix, including restricted/blocked cases, missing evidence, unavailable GPU and unresolved exposure/lineage/literature.</li>
-<li class="check-item"><span class="check pending">Pending</span>Satisfy M0-T26 with actual local evidence when execution is authorized; synthetic evidence alone cannot satisfy this item.</li>
-<li class="check-item"><span class="check pending">Pending</span>Verify all M0-T01 through M0-T26 have pass/fail/skip evidence and requirement traceability; skipped required checks cannot yield unrestricted readiness.</li>
-<li class="check-item"><span class="check pending">Pending</span>Review the master definition of done and report unresolved issues. Release M1 only for the allowed engineering/research scope.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T23/M0-T24 for isolated synthetic orchestration and read-only verification, and rerun integrated M0-T21/M0-T22 integrity cases.</li>
+<li class="check-item"><span class="check done">Done</span>Satisfy M0-T25 through existing CLI/checkpoint/CPU regressions and input-preservation checks.</li>
+<li class="check-item"><span class="check done">Done</span>Exercise the full G0 matrix, including restricted/blocked cases, missing evidence, unavailable GPU and unresolved exposure/lineage/literature.</li>
+<li class="check-item"><span class="check done">Done</span>Satisfy M0-T26 with actual local evidence when execution is authorized; synthetic evidence alone cannot satisfy this item.</li>
+<li class="check-item"><span class="check done">Done</span>Verify all M0-T01 through M0-T26 have pass/fail/skip evidence and requirement traceability; skipped required checks cannot yield unrestricted readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Review the master definition of done and report unresolved issues. Release M1 only for the allowed engineering/research scope.</li>
 </ul>
 <p>Deliverables: runner/verifier, evidence index, G0 evaluator/report, synthetic integration, regressions and real-run handoff. No M1 code or scientific training/search is included in M0.6.</p>
 </section>
 <section class="doc-section" id="m0-6-progress-evidence" data-guide="M0.6 Runner &amp; Gate G0">
 <p class="eyebrow">M0.6 Runner &amp; Gate G0</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Test commands/results/logs: Pending.</li>
-<li>Real local run and gate/report paths: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Not assessed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and master M0 completion checklist reconciled.</li>
+<li>Source identity: HEAD <code>153e5bae0aa9dfccfb7a14dd44035f925b441433</code> plus dirty source snapshot <code>a9c1652d0920391306acde691b9718f002d480de595353717b3ccc5cd96ca43d</code>. Commit alone does not identify the tested implementation. The snapshot precedes these final acceptance-note edits; current non-document source identities were independently checked afterward.</li>
+<li>Full CPU-only command: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>; 167 tests passed, no skips, in 87.369 seconds. Evidence: <code>artifacts/research/m0_6_checks/cpu-20261107T130420Z/summary.json</code> and <code>logs/full-suite.stderr.log</code>. Source hashes remained unchanged during this run.</li>
+<li>Full CUDA-environment CPU regressions: the same suite passed all 167 tests, no skips, in 87.856 seconds during the real M0 run. Actual CPU and CUDA synthetic environment checks passed separately; GPU observed as NVIDIA GeForce RTX 5070 Ti, CUDA runtime 12.8. This is operational correctness evidence, not a deployment latency result.</li>
+<li>Real local command: <code>.venv313/Scripts/python.exe tools/run_m0.py --config artifacts/research/m0_6_checks/m0-real-20261107T130421Z/config.json --run-id m0-real-20261107T130421Z</code>. The locating config uses absolute resolved inputs and requests CPU plus CUDA. It is ignored local evidence, not a tracked machine-specific default.</li>
+<li>Real run: <code>artifacts/research/m0/m0-real-20261107T130421Z/</code>. See <code>acceptance/evidence_index.json</code>, <code>gate_g0.json</code>, <code>M0_REPORT.md</code>, <code>m1_handoff.json</code>, <code>receipt.json</code> and <code>tests.json</code>. All 26 acceptance IDs pass with current log/real-run traceability. 231 indexed artifacts verify; repeated verification preserves both hashes and mtimes. The run is completed/validated, with requested pilot exit 1 because scientific readiness is blocked, not because evidence generation failed.</li>
+<li>Observed audit: 7,909 supported images = 7,784 included + 125 exact decoded-pixel duplicate exclusions; 81 full filename groups. No audit label/path/hash blockers. All 7,909 original image hashes and the complete supported file set were independently checked again after execution; inputs were not modified. Counts are observations, not enforced published totals or verified-patient counts.</li>
+<li>Reverification evidence: <code>artifacts/research/m0_6_checks/m0-real-20261107T130421Z/reverification.json</code> records both full suites, all acceptance cases, original-image hash checks, 123 current non-document source files and read-only repeated verification. Developer verification outputs stay outside the immutable run graph.</li>
+<li>New coverage: 18 <code>tests/test_m0_runner.py</code> cases plus two CPU-report/environment regressions. Tests cover ready/restricted/blocked G0, hard-failure precedence, archive relocation, changed/missing/unindexed artifacts, schema declarations, forged ready gates, actual subprocess timeout, operator interruption before audit, immutable historical metadata and CLI error codes. Existing M0.1-M0.5 contracts and CLI/checkpoint regressions pass in both environments.</li>
+<li>Repairs found by reverification: CPU execution in the CUDA wheel could crash while querying cuDNN/GPU name with CUDA hidden. CPU runtime and environment reports now leave GPU-only fields explicitly unqueried; CUDA metadata is collected by the separate CUDA check. Earlier blocked runs are retained rather than overwritten.</li>
+<li>Reviewer/date: Codex implementation/self-review and real local acceptance, 7 November 2026. CI workflow includes the synthetic tests/archive upload; hosted CI has not been claimed as executed here.</li>
+<li>G0 outcome: engineering <strong>ready</strong>, GPU <strong>ready</strong>, exploratory <strong>blocked</strong>, confirmatory design <strong>blocked</strong>, novelty review <strong>restricted</strong>. M1 CPU/interface development and frozen-inventory diagnostics are allowed. Real scientific fits and untouched confirmation remain blocked pending attributable history, lineage scope, named reviewers, agreed policies, fold support and closest-method review. M0 completion does not approve those facts or claims.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and master M0 completion checklist reconciled.</li>
 </ul>
+</section>
+<section class="doc-section" id="m0-6-api" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h1>M0 runner, verification and Gate G0</h1>
+<p>The full M0 implementation integrates preservation, current checks, image audit, exposure governance and the draft protocol/literature records. It never launches scientific training, pruning search, threshold fitting or real-image test inference. The existing regression suite includes generated-image training fixtures only.</p>
+</section>
+<section class="doc-section" id="m0-6-api-run-and-verify" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h2>Run and verify</h2>
+<p>From the repository root with the intended virtual environment active:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-unique-id
+python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-unique-id --verify-only</code></pre></div>
+<p>Choose a fresh ID for every generation run. Existing nonempty destinations are refused; there is no resume/overwrite option. Output stays under repository <code>artifacts/research/m0/&lt;run-id&gt;/</code>, separately from datasets and parent checkpoints. Only the declared binary source is audited; original images, manifests and checkpoints are never rewritten. A subprocess bounds the audit timeout and retains partial evidence/logs if killed. CPU checks hide CUDA. Selecting both <code>cpu</code> and <code>cuda</code> records separate actual synthetic device outcomes; optional driver-query failure is not a CPU failure.</p>
+<p>CPU reports leave GPU name/cuDNN/availability metadata explicitly unqueried; the separate CUDA check supplies operational GPU evidence. Ctrl+C records a failed partial run and does not continue from interrupted baseline checks into the audit.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">CLI option</th><th scope="col">Meaning</th></tr></thead><tbody>
+<tr><td><code>--config PATH</code></td><td>Required JSON input; relative configured paths resolve against this file&#x27;s directory</td></tr>
+<tr><td><code>--run-id ID</code></td><td>Required unique 1-64 character M0.1 ID</td></tr>
+<tr><td><code>--verify-only</code></td><td>Validate preserved bytes, domain consistency, gate, report and handoff; no checks/audit/inference/repairs or writes</td></tr>
+<tr><td><code>--help</code></td><td>Describe supported arguments without executing M0</td></tr>
+</tbody></table></div>
+<p>Exit <strong>0</strong> means the evidence is valid and the requested mode is eligible (possibly restricted); <strong>1</strong> means execution/integrity failure or a blocked requested mode; <strong>2</strong> means invalid configuration/arguments. A valid blocked run therefore returns 1 even in verify-only mode, while reporting <code>validated: true</code>. <code>state: completed</code> means evidence/report generation completed, not scientific readiness. <code>state: failed</code> preserves partial files but cannot pass verification.</p>
+<p>The library <code>breakhis.research.runner.verify_run(path)</code> returns validated status and the frozen gate without requiring original metadata/images/environments to exist. It supports archive relocation using recorded command locations, not the current machine&#x27;s checkout path. The CLI additionally needs its locating config and valid configured roots. To verify a relocated archive directly:</p>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>from breakhis.research.runner import verify_run
+result = verify_run(&#x27;path/to/copied/run&#x27;)
+print(result[&#x27;validated&#x27;], result[&#x27;gate&#x27;][&#x27;overall_status&#x27;])</code></pre></div>
+<p>Verification checks saved evidence; it does not re-audit current external image bytes. The producing audit rechecks byte/file-set consistency, and M1 consumers must reverify input identity before use. Hashes detect changes relative to the recorded graph; this is not a cryptographic reviewer signature or proof that a human history declaration is true.</p>
+</section>
+<section class="doc-section" id="m0-6-api-configuration" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h2>Configuration</h2>
+<p>The example config lists the existing M0.1 fields. Two additive optional v1 keys are now supported: <code>decisions_path</code> (default <code>decisions.initial.json</code> beside <code>protocol_path</code>) and <code>run_kind</code> (<code>real</code> default, or explicitly <code>synthetic</code>). Other unknown keys and arbitrary shell commands remain forbidden. The explicit defaults preserve previous M0.1-M0.5 input compatibility.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Fields</th><th scope="col">Contract</th></tr></thead><tbody>
+<tr><td><code>schema_version</code>, <code>spec_id</code>, <code>spec_version</code></td><td><code>1</code>, <code>M0-SPEC-001</code>, <code>1.0</code></td></tr>
+<tr><td><code>repo_root</code>, <code>data_root</code>, <code>output_root</code></td><td>Git top level, existing binary root, confined research output root</td></tr>
+<tr><td><code>sources</code></td><td>Exactly <code>[&quot;cancer_binary&quot;]</code></td></tr>
+<tr><td><code>audit_workers</code>, <code>audit_seed</code></td><td>Positive worker count and uint32 recorded seed; no research split is generated</td></tr>
+<tr><td><code>check_devices</code></td><td>CPU required, CUDA optional</td></tr>
+<tr><td><code>baseline_checks</code></td><td>All of imports, CLI help, environment and regressions required</td></tr>
+<tr><td><code>lineage_path</code>, <code>exposure_path</code></td><td>M0.3 lineage and M0.4 history input files</td></tr>
+<tr><td><code>protocol_path</code>, <code>decisions_path</code>, <code>literature_path</code></td><td>Matching M0.5 declarations; decisions sidecar fallback documented above</td></tr>
+<tr><td><code>mode</code></td><td><code>pilot</code> or <code>confirmatory_design</code>; neither launches fits or freezes confirmation</td></tr>
+<tr><td><code>run_kind</code></td><td>Honest declaration of real versus synthetic input scope; synthetic acceptance cannot stand in for M0-T26</td></tr>
+<tr><td><code>timeouts</code></td><td>Positive <code>environment_seconds</code>, <code>regression_seconds</code>, <code>audit_seconds</code></td></tr>
+</tbody></table></div>
+<p>Default lineage facts and history remain unknown. Null history instance/root with empty assertions receives an explicitly unreviewed instance ID tied to the configured root; this is an operational identifier, not a verified release. An empty register never approves untouched groups. Nonempty historical assertions require explicit source identity and metadata root. Original input bytes, spec, declarations and available hash-matching historical metadata are frozen under <code>inputs/</code>; absent/broken references remain unresolved, never empty successes.</p>
+</section>
+<section class="doc-section" id="m0-6-api-explicit-exploratory-scope" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h2>Explicit exploratory scope</h2>
+<p>The optional <code>pilot_scope</code> in the exposure input is a reviewer declaration with exactly: <code>status</code>, <code>reviewer</code>, <code>component_ids</code>, <code>lineage_exception</code>, <code>claims</code>, <code>evidence_refs</code>, <code>rationale</code>, <code>training_device</code>. Reviewed status requires named reviewer, actual current component IDs, nonempty rationale/hash-backed metadata references, device <code>cpu|cuda</code>, and claims including <code>exploratory-only</code>, <code>filename-group-only</code>, <code>derivative-only</code>. Hardware policy and declared device must agree. Unreviewed is the default. Missing history may permit only an explicitly reviewed development-only scope; it never produces untouched confirmation.</p>
+<p>Known exposures and scope-designated development components are excluded from confirmatory candidate support. Data conflicts, failed checks, stale source, missing evidence and pending required scientific policies cannot be waived by scope text. Unknown clinical identities do not become verified patients; a filename-group design remains the only supported identity claim.</p>
+</section>
+<section class="doc-section" id="m0-6-api-evidence-graph-and-verification" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h2>Evidence graph and verification</h2>
+<p>Preserved artifacts include all earlier package outputs, frozen inputs and <code>logs/operations.json</code>. The audit worker records actual argv/cwd, timeout, duration, return code, logs and input hashes. Source is checked again after governance. <code>acceptance/tests.json</code> traces M0-T01-T25 to successful method lines in the current regression log and T26 to actual real local orchestration. Not-run cases prevent unrestricted readiness; historical counts are not reused.</p>
+<p><code>acceptance/evidence_index.json</code> covers every nonfinal file with bytes/type/hash, operation and status. JSONL entries additionally declare <code>row_schema_version</code> and <code>row_record_type</code>; unsupported row versions fail. Preserved failed source attempts are partial artifacts, distinct from an accepted coherent snapshot.</p>
+<p>The index excludes itself and the final gate/report/handoff/receipt. Gate and handoff reference the index digest. <code>receipt.json</code> hashes index, gate, handoff and report afterward, avoiding circular hashes. Verification requires complete graph coverage, expected schemas/run IDs, source reconstruction, actual command plan/log consistency, image/exclusion/component accounting, lineage, replayed metadata-only exposure decisions, protocol bindings and independently derived G0. It rejects extra files, omitted evidence and a manually edited ready gate even if its final receipt hash was updated. No invalid evidence is regenerated.</p>
+</section>
+<section class="doc-section" id="m0-6-api-g0-and-m1-handoff" data-guide="M0.6 Runner API">
+<p class="eyebrow">M0.6 Runner API</p><h2>G0 and M1 handoff</h2>
+<p>G0 independently reports engineering, exploratory, confirmatory-design, GPU and novelty-review dimensions. Hard failures override restrictions. Passing CPU checks may allow CPU engineering while GPU fits are blocked. Unknown lineage, history, review ownership, numerical policy or closest-method review remains named and owned. Novelty review completion never establishes novelty.</p>
+<p>The report lists observed image/group/test counts, operations, source identity, restrictions and handoff. <code>m1_handoff.json</code> binds inventory/components, exposure, protocol/decisions/literature versions and allowed work/claims. A blocked pilot does not prevent independently passing CPU interface development. No M1 code, outer folds or fits are generated by M0.</p>
+<p>The old package checklists retain their original acceptance snapshots. Their contracts are rechecked through the full current suite and this integrated graph. CI runs the same synthetic runner tests and retains their archives; real local data execution is separate and is not represented as hosted CI evidence.</p>
 </section>
 <section class="doc-section" id="archive-index" data-guide="Archive index">
 <p class="eyebrow">Archive index</p><h1>Historical documentation archive</h1>

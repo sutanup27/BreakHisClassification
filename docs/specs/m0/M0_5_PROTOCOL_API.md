@@ -15,9 +15,10 @@ literature downloads or inference occurs on import or validation.
 | `exposure.initial.json` | Unresolved history scaffold; null instance/root and no coverage declaration do not mean untouched data |
 | `m0.example.json` | M0.1-compatible pre-run configuration, relative paths based on its own directory; CPU checks default |
 
-The example config is not a runnable M0 command: `tools/run_m0.py` remains M0.6.
-Its `protocol_path` identifies the protocol; decisions are supplied separately
-to this package API. M0.6 must define sidecar/config integration explicitly.
+The [M0.6 runner](M0_6_RUNNER_API.md) now consumes the example config. Its optional
+`decisions_path` selects the register, defaulting to `decisions.initial.json`
+beside `protocol_path` for compatibility. Decisions are supplied separately to
+this package's library API.
 Do not treat exposure scaffold nulls as a valid reviewed resolver input.
 
 The [human protocol](../../research/RESEARCH_PROTOCOL.md) explains policy values,
@@ -101,7 +102,7 @@ The writer creates new M0.1 v1 envelopes: `protocol.initial/data`, `decisions/it
 `literature_matrix/items`, and additive `protocol_review/data` under `governance/`.
 Existing destinations are refused. Outputs preserve decisions, unknown values,
 access levels and draft lifecycle. Full evidence graph/semantic gate verification
-is M0.6; this binding API alone cannot assert the validity of scientific evidence.
+is provided by M0.6; this binding API alone cannot assert scientific validity.
 
 ## Developer checks
 

@@ -1,7 +1,7 @@
 # M0 specification: preservation, protocol and data readiness
 
 Specification: M0-SPEC-001, version 1.0. Prepared: 7 November 2026.
-Status: specification for implementation; creating this document does not execute M0.
+Status: engineering implementation and real-run evidence acceptance completed 7 November 2026. All 26 M0 acceptance IDs have actual evidence; see the tracker. G0 allows M1 engineering but blocks scientific fitting/confirmation pending named unresolved reviews and policy agreements.
 
 Parent: [research implementation roadmap](../../research/RESEARCH_IMPLEMENTATION_ROADMAP.md), M0/G0. Scientific intent: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md). Experiment mapping: [operational plan](../../research/RESEARCH_PAPER_PLAN.md), P0/E01. Existing behavior: [dataset audit](../../guides/DATASETS.md) and [testing](../../guides/TESTING.md).
 
@@ -54,6 +54,7 @@ Each unique run writes under ignored `artifacts/research/m0/<run_id>/`:
 ```text
 run.json
 config.resolved.json
+inputs/                         # Frozen input/spec/history bytes and declarations
 baseline/
   git.json
   tracked.patch
@@ -62,6 +63,7 @@ baseline/
   environment.cpu.json
   environment.cuda.json
   checks.json
+  final_consistency.json
 audit/
   manifest.json
   audit.json
@@ -80,10 +82,14 @@ governance/
   literature_matrix.json
   protocol_review.json
 logs/
+  operations.json
 acceptance/
+  tests.json
   evidence_index.json
   gate_g0.json
   M0_REPORT.md
+  m1_handoff.json
+  receipt.json
 ```
 
 Requirements:
@@ -228,7 +234,7 @@ Detect changed/unreadable files during capture and source/file-set changes at au
 
 ## 7. Proposed runner interface
 
-Design target only; these commands MUST NOT be represented as currently runnable:
+Implemented in M0.6; see the [runner reference](M0_6_RUNNER_API.md) for current behavior and restrictions:
 
 ```text
 python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-<unique-id>
@@ -238,6 +244,15 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-<ex
 Normal flow: validate inputs; create new run; capture source/environment/current tests; audit selected images; ingest reviewed governance records; index evidence; evaluate G0; write human report. Verification-only validates existing evidence/gate consistency without rerunning tests/inference, modifying statuses or rewriting artifacts. It returns nonzero for tampered/missing evidence.
 
 Configuration includes: schema/spec version; repo/data/output paths; selected sources (initially exactly `cancer_binary`); audit workers/seed; requested devices; baseline check identities; lineage/exposure/protocol/literature input record paths; requested mode and operation timeouts. Resolve relative config paths against the configuration file directory and record absolute resolutions. Existing CLI cwd semantics remain compatible.
+
+Additive optional v1 configuration keys: `decisions_path` (fallback is
+`decisions.initial.json` beside the protocol) and `run_kind` (`real` default,
+or `synthetic`). JSONL index entries additionally declare row type/version.
+`operations`, `acceptance_tests`, `m1_handoff`, `pilot_scope`, `exposure.input`
+and `failure` are additive common-envelope record types. Frozen historical
+copies are replayed read-only after index verification; original metadata need
+not remain present. A reviewed pilot scope is an explicit metadata declaration,
+not an automatic exception for lineage/history unknowns.
 
 Reject unknown config keys, unsupported versions, invalid IDs/numeric ranges and unsafe paths before side effects. Use an allowlisted implementation for checks; config MUST NOT execute arbitrary shell strings. Runner flags are `--config`, `--run-id`, `--verify-only` and standard help. Configuration validation errors exit 2; execution/integrity failures or blocked requested-mode gates exit 1; exit 0 requires complete engineering evidence and eligibility for the requested mode. Restricted pilot mode may exit 0 only with restrictions prominent. `confirmatory_design` checks preparation eligibility; it never launches/freezes the confirmatory study.
 
@@ -322,15 +337,19 @@ Unit/integration tests MUST use temporary repositories/data where possible and n
 
 ## 11. Definition of done and handoff
 
-- [ ] Normative requirements implemented or covered by a justified versioned spec revision.
-- [ ] Verifiable source/environment snapshot and current baseline check logs.
-- [ ] Discovered/included/excluded counts and duplicate representatives reconcile.
-- [ ] Lineage, identity, similarity and exposure limitations explicitly reviewed or unresolved.
-- [ ] Proposed scientific decisions have owners/freeze deadlines; no premature confirmatory freeze.
-- [ ] Literature matrix covers closest mechanisms with truthful access/review status.
-- [ ] G0 dimensions, blockers and restrictions agree with indexed evidence.
-- [ ] Synthetic acceptance and existing regressions pass; fixtures distinguished from real evidence.
-- [ ] Human report lists operations, measured counts, restrictions and open questions without invented results.
-- [ ] M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.
+- [x] Normative requirements implemented or covered by the documented additive v1 schema bindings above.
+- [x] Verifiable source/environment snapshot and current baseline check logs.
+- [x] Discovered/included/excluded counts and duplicate representatives reconcile.
+- [x] Lineage, identity, similarity and exposure limitations explicitly reviewed or unresolved.
+- [x] Proposed scientific decisions have owners/freeze deadlines; no premature confirmatory freeze.
+- [x] Literature matrix covers closest mechanisms with truthful access/review status.
+- [x] G0 dimensions, blockers and restrictions agree with indexed evidence.
+- [x] Synthetic acceptance and existing regressions pass; fixtures distinguished from real evidence.
+- [x] Human report lists operations, measured counts, restrictions and open questions without invented results.
+- [x] M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.
 
-M1 then implements folds, seeds, development predictions and aggregation against these contracts. Real scientific fits and confirmatory evaluation remain gated by unresolved decisions and later milestones. Creating this specification alone satisfies none of the execution checklist.
+Acceptance evidence: [M0.6 real run and reverification](M0_6_RUNNER_GATE.md#progress-evidence).
+This closes M0's engineering/evidence contract, not its unresolved scientific facts.
+M1 then implements folds, seeds, development predictions and aggregation against
+these contracts. Real scientific fits and confirmatory evaluation remain gated
+by unresolved decisions and later milestones.

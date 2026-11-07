@@ -26,6 +26,8 @@ RECORD_SHAPES = {
     'completion_receipt': 'data',
     'component_eligibility': 'items', 'exposure_summary': 'data',
     'protocol_review': 'data',
+    'exposure.input': 'data', 'operations': 'items', 'acceptance_tests': 'items',
+    'm1_handoff': 'data', 'pilot_scope': 'data', 'failure': 'data',
 }
 _ENVELOPE = {'schema_version', 'record_type', 'run_id', 'created_at_utc'}
 _ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}\Z')
@@ -342,11 +344,15 @@ def write_record(run_dir, relative, record, *, overwrite=False):
 
 
 _ARTIFACT_FIELDS = {'path', 'record_type', 'schema_version', 'sha256', 'bytes', 'operation_id', 'status'}
+_ROW_FIELDS = {'row_schema_version', 'row_record_type'}
 
 
 def validate_artifact_entry(entry):
-    if not isinstance(entry, dict) or set(entry) != _ARTIFACT_FIELDS:
+    if not isinstance(entry, dict) or set(entry) not in (_ARTIFACT_FIELDS, _ARTIFACT_FIELDS | _ROW_FIELDS):
         raise RecordError('Invalid artifact-entry fields')
+    if _ROW_FIELDS <= set(entry):
+        if type(entry['row_schema_version']) is not int or entry['row_schema_version'] != 1 or entry['row_record_type'] != 'image_inventory_row' or entry['schema_version'] is not None:
+            raise RecordError('Unsupported JSONL row schema')
     portable_relative_path(entry['path'])
     _token(entry['record_type'])
     _token(entry['operation_id'])
@@ -362,13 +368,15 @@ def validate_artifact_entry(entry):
     return entry
 
 
-def artifact_entry(run_dir, relative, *, record_type, operation_id, schema_version=None, status='complete'):
+def artifact_entry(run_dir, relative, *, record_type, operation_id, schema_version=None, status='complete', row_record_type=None):
     path = safe_child(run_dir, relative, must_exist=True)
     if not path.is_file():
         raise RecordError('Evidence artifact must be a regular file')
     result = dict(path=relative, record_type=record_type, schema_version=schema_version,
                   sha256=file_sha256(path), bytes=path.stat().st_size,
                   operation_id=operation_id, status=status)
+    if row_record_type is not None:
+        result.update(row_schema_version=1, row_record_type=row_record_type)
     return validate_artifact_entry(result)
 
 
@@ -387,7 +395,23 @@ def verify_artifact(run_dir, entry, *, run_id=None, require_complete=True):
         record = read_record(run_dir, entry['path'], expected_type=entry['record_type'])
         if run_id is not None and record['run_id'] != run_id:
             raise IntegrityError('Evidence belongs to a different run')
+    if 'row_schema_version' in entry:
+        read_jsonl(path, expected_type=entry['row_record_type'])
     return path
+
+
+def read_jsonl(path, *, expected_type='image_inventory_row'):
+    rows = []
+    try:
+        for line in Path(path).read_text(encoding='utf-8').splitlines():
+            row = json.loads(line, object_pairs_hook=_unique_object)
+            canonical_json_bytes(row)
+            if not isinstance(row, dict) or type(row.get('schema_version')) is not int or row['schema_version'] != 1 or row.get('record_type') != expected_type:
+                raise RecordError('Unsupported JSONL row schema/type')
+            rows.append(row)
+    except (ValueError, UnicodeError) as error:
+        raise RecordError(f'Invalid JSONL: {path}') from error
+    return rows
 
 
 def verify_evidence_index(run_dir, index, *, index_path='acceptance/evidence_index.json', require_complete=True):
@@ -439,7 +463,8 @@ def validate_m0_config(config, *, config_file):
     Governance paths are resolved but need not exist yet; the later runner must
     ingest and validate those records before granting requested-mode eligibility.
     """
-    if not isinstance(config, dict) or set(config) != _CONFIG_FIELDS:
+    optional = {'decisions_path', 'run_kind'}
+    if not isinstance(config, dict) or set(config) - optional != _CONFIG_FIELDS:
         raise RecordError('M0 config has missing or unknown fields')
     canonical_json_bytes(config)
     if type(config['schema_version']) is not int or config['schema_version'] != SCHEMA_VERSION:
@@ -467,9 +492,13 @@ def validate_m0_config(config, *, config_file):
     if any(type(value) is not int or value < 1 for value in timeouts.values()):
         raise RecordError('Timeouts must be positive integer seconds')
     resolved = json.loads(canonical_json_bytes(config))
+    if config.get('run_kind', 'real') not in ('real', 'synthetic'):
+        raise RecordError('run_kind must be real or synthetic')
+    resolved['run_kind'] = config.get('run_kind', 'real')
     for field in ('repo_root', 'data_root', 'output_root', 'lineage_path', 'exposure_path', 'protocol_path', 'literature_path'):
         kind = 'directory' if field in ('repo_root', 'data_root') else None
         resolved[field] = str(resolve_config_path(config[field], config_file, kind=kind))
+    resolved['decisions_path'] = str(resolve_config_path(config['decisions_path'], config_file)) if 'decisions_path' in config else str(Path(resolved['protocol_path']).with_name('decisions.initial.json'))
     repo = Path(resolved['repo_root'])
     output = Path(resolved['output_root'])
     # Keep the lexical anchor: resolving it too would conceal an escaping junction.
