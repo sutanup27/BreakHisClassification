@@ -1,21 +1,23 @@
 # M1 implementation checklist tracker
 
-Prepared: 7 November 2026. Scope: specification and delivery planning only.
+Prepared: 7 November 2026. Scope: implementation and package acceptance tracking.
 
 [M1_SPEC.md](M1_SPEC.md) is the source of truth for M1 schemas, permissions,
 semantics and Gate G1. These six checklists organize gradual implementation;
-they do not duplicate the master contract. **All M1 packages are Not started.**
+they do not duplicate the master contract. **M1.1 is implemented and reviewed;
+M1.2-M1.6 are Not started.**
 
 M0 engineering acceptance is complete. Its current G0 allows CPU/interface and
 frozen-inventory diagnostics, while real scientific fits and untouched design
-remain blocked. Creating these documents does not clear those restrictions or
-start M1 code/experiments.
+remain blocked. M1.1's engineering acceptance does not clear those restrictions
+or launch later packages/scientific experiments.
 
 ```text
 docs/specs/m1/
   README.md
   M1_SPEC.md
   M1_1_CONTRACTS_PERMISSIONS.md
+  M1_1_CONTRACTS_API.md
   M1_2_FOLDS_ROLES.md
   M1_3_SEEDS_RESUME.md
   M1_4_DEVELOPMENT_REPORTING.md
@@ -27,7 +29,7 @@ docs/specs/m1/
 
 | Package | Master work packages | Depends on | Status | Completion evidence |
 | --- | --- | --- | --- | --- |
-| [M1.1 Contracts and permissions](M1_1_CONTRACTS_PERMISSIONS.md) | WP0 | M0 engineering acceptance | Not started | Pending |
+| [M1.1 Contracts and permissions](M1_1_CONTRACTS_PERMISSIONS.md) | WP0 | M0 engineering acceptance | Reviewed | 20 new tests; 187 total CPU tests passed, no skips; [evidence](M1_1_CONTRACTS_PERMISSIONS.md#progress-evidence) |
 | [M1.2 Folds and roles](M1_2_FOLDS_ROLES.md) | WP1 | M1.1 reviewed | Not started | Pending |
 | [M1.3 Seeds, history and resume](M1_3_SEEDS_RESUME.md) | WP2-WP3 | M1.1-M1.2 reviewed | Not started | Pending |
 | [M1.4 Development reporting](M1_4_DEVELOPMENT_REPORTING.md) | WP4 | M1.1-M1.3 reviewed | Not started | Pending |
@@ -75,6 +77,7 @@ satisfy new M1 acceptance.
 
 ## Starting point
 
-Begin with [M1.1](M1_1_CONTRACTS_PERMISSIONS.md). Use the completed
-[M0 handoff/acceptance](../m0/M0_6_RUNNER_GATE.md#progress-evidence) as the entry
-boundary. No package is implemented or marked reviewed by this planning change.
+M1.1 is complete at package scope; use its [API](M1_1_CONTRACTS_API.md). Next is
+[M1.2 folds and roles](M1_2_FOLDS_ROLES.md), which remains not started. The verified
+[M0 handoff](../m0/M0_6_RUNNER_GATE.md#progress-evidence) and its scientific
+restrictions remain the entry boundary. Full M1/G1 completion is not claimed.

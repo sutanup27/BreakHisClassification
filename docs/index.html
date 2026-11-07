@@ -41,6 +41,7 @@
 <details open><summary>M1 implementation specification</summary><a href="#m1-spec" data-section="m1-spec">M1 specification: scientific data and reporting infrastructure</a><a href="#m1-spec-1-objective-and-completion-boundary" data-section="m1-spec-1-objective-and-completion-boundary">1. Objective and completion boundary</a><a href="#m1-spec-2-entry-conditions-inputs-and-scope" data-section="m1-spec-2-entry-conditions-inputs-and-scope">2. Entry conditions, inputs and scope</a><a href="#m1-spec-3-proposed-implementation-structure-and-reuse" data-section="m1-spec-3-proposed-implementation-structure-and-reuse">3. Proposed implementation structure and reuse</a><a href="#m1-spec-4-filesystem-lifecycle-and-evidence" data-section="m1-spec-4-filesystem-lifecycle-and-evidence">4. Filesystem, lifecycle and evidence</a><a href="#m1-spec-5-record-schemas-and-scientific-semantics" data-section="m1-spec-5-record-schemas-and-scientific-semantics">5. Record schemas and scientific semantics</a><a href="#m1-spec-6-runner-permissions-and-gate-g1" data-section="m1-spec-6-runner-permissions-and-gate-g1">6. Runner, permissions and Gate G1</a><a href="#m1-spec-7-work-packages-and-dependencies" data-section="m1-spec-7-work-packages-and-dependencies">7. Work packages and dependencies</a><a href="#m1-spec-8-acceptance-test-matrix" data-section="m1-spec-8-acceptance-test-matrix">8. Acceptance-test matrix</a><a href="#m1-spec-9-definition-of-done-and-handoff" data-section="m1-spec-9-definition-of-done-and-handoff">9. Definition of done and handoff</a></details>
 <details open><summary>M1 package tracker</summary><a href="#m1-tracker" data-section="m1-tracker">M1 implementation checklist tracker</a><a href="#m1-tracker-work-packages-and-progress" data-section="m1-tracker-work-packages-and-progress">Work packages and progress</a><a href="#m1-tracker-status-rules" data-section="m1-tracker-status-rules">Status rules</a><a href="#m1-tracker-acceptance-test-ownership" data-section="m1-tracker-acceptance-test-ownership">Acceptance-test ownership</a><a href="#m1-tracker-starting-point" data-section="m1-tracker-starting-point">Starting point</a></details>
 <details open><summary>M1.1 Contracts &amp; permissions</summary><a href="#m1-1" data-section="m1-1">M1.1 — Contracts and permissions</a><a href="#m1-1-build-checklist" data-section="m1-1-build-checklist">Build checklist</a><a href="#m1-1-target-and-completion-gate" data-section="m1-1-target-and-completion-gate">Target and completion gate</a><a href="#m1-1-progress-evidence" data-section="m1-1-progress-evidence">Progress evidence</a></details>
+<details open><summary>M1.1 Contracts API</summary><a href="#m1-1-api" data-section="m1-1-api">M1.1 contracts and permissions API</a><a href="#m1-1-api-verify-a-parent-and-prepare-an-engineering-config" data-section="m1-1-api-verify-a-parent-and-prepare-an-engineering-config">Verify a parent and prepare an engineering config</a><a href="#m1-1-api-configuration-binding" data-section="m1-1-api-configuration-binding">Configuration binding</a><a href="#m1-1-api-roleoperation-guard" data-section="m1-1-api-roleoperation-guard">Role/operation guard</a><a href="#m1-1-api-recordjsonl-and-identity-foundation" data-section="m1-1-api-recordjsonl-and-identity-foundation">Record/JSONL and identity foundation</a><a href="#m1-1-api-tests" data-section="m1-1-api-tests">Tests</a></details>
 <details open><summary>M1.2 Folds &amp; roles</summary><a href="#m1-2" data-section="m1-2">M1.2 — Component folds and inner roles</a><a href="#m1-2-build-checklist" data-section="m1-2-build-checklist">Build checklist</a><a href="#m1-2-target-and-completion-gate" data-section="m1-2-target-and-completion-gate">Target and completion gate</a><a href="#m1-2-progress-evidence" data-section="m1-2-progress-evidence">Progress evidence</a></details>
 <details open><summary>M1.3 Seeds &amp; resume</summary><a href="#m1-3" data-section="m1-3">M1.3 — Independent seeds, epoch history and resume</a><a href="#m1-3-build-checklist" data-section="m1-3-build-checklist">Build checklist</a><a href="#m1-3-target-and-completion-gate" data-section="m1-3-target-and-completion-gate">Target and completion gate</a><a href="#m1-3-progress-evidence" data-section="m1-3-progress-evidence">Progress evidence</a></details>
 <details open><summary>M1.4 Development reporting</summary><a href="#m1-4" data-section="m1-4">M1.4 — Development predictions and reporting boundaries</a><a href="#m1-4-build-checklist" data-section="m1-4-build-checklist">Build checklist</a><a href="#m1-4-target-and-completion-gate" data-section="m1-4-target-and-completion-gate">Target and completion gate</a><a href="#m1-4-progress-evidence" data-section="m1-4-progress-evidence">Progress evidence</a></details>
@@ -1156,7 +1157,7 @@ remaining GPU allowance &lt;= 70% of remaining wall-clock hours</code></pre></di
 <tr><td>M0: preservation, protocol and data readiness</td><td><a href="#m0-spec">M0_SPEC.md</a></td><td><a href="#m0-tracker">Tracker and six package checklists</a></td></tr>
 <tr><td>M1: scientific data and reporting infrastructure</td><td><a href="#m1-spec">M1_SPEC.md</a></td><td><a href="#m1-tracker">Tracker and six package checklists</a></td></tr>
 </tbody></table></div>
-<p>M0 engineering acceptance is complete. M1 now has a detailed specification and six staged checklists; implementation is not started. M2-M7 remain in the <a href="#research-roadmap">research roadmap</a>.</p>
+<p>M0 engineering acceptance is complete. M1 now has a detailed specification and six staged checklists; M1.1 is reviewed and M1.2-M1.6 are not started. M2-M7 remain in the <a href="#research-roadmap">research roadmap</a>.</p>
 </section>
 <section class="doc-section" id="m0-spec" data-guide="M0 implementation specification">
 <p class="eyebrow">M0 implementation specification</p><h1>M0 specification: preservation, protocol and data readiness</h1>
@@ -1479,7 +1480,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>M0 implementation and real evidence-generation acceptance are complete. Use the <a href="#m0-6-api">runner reference</a> to produce a fresh run or verify archived evidence, and <a href="#m0-6-progress-evidence">M0.6 acceptance</a> for the actual G0 outcome. The next code milestone is <strong>M1 scientific data/reporting interfaces</strong>; only the engineering scope in the handoff is released. See the <a href="#m1-tracker">M1 specification and staged tracker</a>; all M1 packages remain not started. No real fitting, untouched fold selection or confirmatory freeze is authorized by this completion status.</p>
+<p>M0 implementation and real evidence-generation acceptance are complete. Use the <a href="#m0-6-api">runner reference</a> to produce a fresh run or verify archived evidence, and <a href="#m0-6-progress-evidence">M0.6 acceptance</a> for the actual G0 outcome. The next code milestone is <strong>M1 scientific data/reporting interfaces</strong>; only the engineering scope in the handoff is released. See the <a href="#m1-tracker">M1 specification and staged tracker</a>; M1.1 is reviewed and M1.2-M1.6 remain not started. No real fitting, untouched fold selection or confirmatory freeze is authorized by this completion status.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
@@ -2129,7 +2130,7 @@ print(result[&#x27;validated&#x27;], result[&#x27;gate&#x27;][&#x27;overall_stat
 </section>
 <section class="doc-section" id="m1-spec" data-guide="M1 implementation specification">
 <p class="eyebrow">M1 implementation specification</p><h1>M1 specification: scientific data and reporting infrastructure</h1>
-<p>Specification: M1-SPEC-001, version 1.0. Prepared: 7 November 2026. Status: implementation contract only; M1 code and experiments have not started.</p>
+<p>Specification: M1-SPEC-001, version 1.0. Prepared: 7 November 2026. Status: implementation contract; M1.1 foundation is implemented/self-reviewed with actual CPU acceptance. M1.2-M1.6 and scientific experiments have not started.</p>
 <p>Parent: <a href="#research-roadmap">research roadmap</a>, M1/P1/G1. Scientific intent: <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">research guide</a>. Policies: <a href="#research-protocol">draft protocol</a>. Entry evidence: <a href="#m0-6-progress-evidence">M0 acceptance</a>. Delivery: <a href="#m1-tracker">tracker and package checklists</a>.</p>
 <p>MUST is an acceptance requirement; SHOULD allows a justified recorded exception; MAY is optional. Proposed names/commands below are development targets, not implemented capabilities. This specification governs M1 development and tests.</p>
 </section>
@@ -2216,6 +2217,7 @@ acceptance/
 <section class="doc-section" id="m1-spec-5-record-schemas-and-scientific-semantics" data-guide="M1 implementation specification">
 <p class="eyebrow">M1 implementation specification</p><h2>5. Record schemas and scientific semantics</h2>
 <p>Generated JSON uses v1 common envelopes with <code>schema_version</code>, <code>record_type</code>, <code>run_id</code>, <code>created_at_utc</code>, and exactly <code>data</code> or <code>items</code>. JSONL declares its row type/version in the index. M1 types use an explicit M1 namespace. Null means unavailable/unresolved with a reason. IDs derive from canonical content/identity, not row order or Python&#x27;s randomized <code>hash()</code>. File and semantic hashes differ.</p>
+<p>M1.1 implementation binding: its explicit namespaced registry and flat <code>m1.input_row</code> JSONL foundation are documented in the <a href="#m1-1-api">contracts API</a>. Later assignment/history/prediction row validators and full G1 remain their own packages; envelope validation is not scientific approval.</p>
 <h3 id="m1-spec-51-runconfig-and-lineage">5.1 Run/config and lineage</h3>
 <p>Config declares M1 spec identity/version, mode, repo/data/output roots, M0 archive and expected index/receipt digests, policy/decision hashes, source instance, selected component boundary, folds/inner-role policy, seed namespace values, loader/device/determinism settings, prediction and selection policies, operation timeouts and predecessor if any. Unknown keys/types/ranges fail before outputs. Paths resolve against the config directory. Commands are allowlisted, never arbitrary shell strings. Engineering templates carry explicit synthetic values; no fixture tolerance becomes an agreed scientific setting.</p>
 <p>Diagnostic/archive verification must not require original images or environments to remain present. Label its counts as frozen observations; current live image availability/integrity is established only when an authorized consumer rechecks it.</p>
@@ -2331,13 +2333,14 @@ class_names, logits, probabilities, threshold_id, prediction_scope</code></pre><
 </section>
 <section class="doc-section" id="m1-tracker" data-guide="M1 package tracker">
 <p class="eyebrow">M1 package tracker</p><h1>M1 implementation checklist tracker</h1>
-<p>Prepared: 7 November 2026. Scope: specification and delivery planning only.</p>
-<p><a href="#m1-spec">M1_SPEC.md</a> is the source of truth for M1 schemas, permissions, semantics and Gate G1. These six checklists organize gradual implementation; they do not duplicate the master contract. <strong>All M1 packages are Not started.</strong></p>
-<p>M0 engineering acceptance is complete. Its current G0 allows CPU/interface and frozen-inventory diagnostics, while real scientific fits and untouched design remain blocked. Creating these documents does not clear those restrictions or start M1 code/experiments.</p>
+<p>Prepared: 7 November 2026. Scope: implementation and package acceptance tracking.</p>
+<p><a href="#m1-spec">M1_SPEC.md</a> is the source of truth for M1 schemas, permissions, semantics and Gate G1. These six checklists organize gradual implementation; they do not duplicate the master contract. <strong>M1.1 is implemented and reviewed; M1.2-M1.6 are Not started.</strong></p>
+<p>M0 engineering acceptance is complete. Its current G0 allows CPU/interface and frozen-inventory diagnostics, while real scientific fits and untouched design remain blocked. M1.1&#x27;s engineering acceptance does not clear those restrictions or launch later packages/scientific experiments.</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m1/
   README.md
   M1_SPEC.md
   M1_1_CONTRACTS_PERMISSIONS.md
+  M1_1_CONTRACTS_API.md
   M1_2_FOLDS_ROLES.md
   M1_3_SEEDS_RESUME.md
   M1_4_DEVELOPMENT_REPORTING.md
@@ -2347,7 +2350,7 @@ class_names, logits, probabilities, threshold_id, prediction_scope</code></pre><
 <section class="doc-section" id="m1-tracker-work-packages-and-progress" data-guide="M1 package tracker">
 <p class="eyebrow">M1 package tracker</p><h2>Work packages and progress</h2>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master work packages</th><th scope="col">Depends on</th><th scope="col">Status</th><th scope="col">Completion evidence</th></tr></thead><tbody>
-<tr><td><a href="#m1-1">M1.1 Contracts and permissions</a></td><td>WP0</td><td>M0 engineering acceptance</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m1-1">M1.1 Contracts and permissions</a></td><td>WP0</td><td>M0 engineering acceptance</td><td>Reviewed</td><td>20 new tests; 187 total CPU tests passed, no skips; <a href="#m1-1-progress-evidence">evidence</a></td></tr>
 <tr><td><a href="#m1-2">M1.2 Folds and roles</a></td><td>WP1</td><td>M1.1 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m1-3">M1.3 Seeds, history and resume</a></td><td>WP2-WP3</td><td>M1.1-M1.2 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m1-4">M1.4 Development reporting</a></td><td>WP4</td><td>M1.1-M1.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
@@ -2383,45 +2386,131 @@ class_names, logits, probabilities, threshold_id, prediction_scope</code></pre><
 </section>
 <section class="doc-section" id="m1-tracker-starting-point" data-guide="M1 package tracker">
 <p class="eyebrow">M1 package tracker</p><h2>Starting point</h2>
-<p>Begin with <a href="#m1-1">M1.1</a>. Use the completed <a href="#m0-6-progress-evidence">M0 handoff/acceptance</a> as the entry boundary. No package is implemented or marked reviewed by this planning change.</p>
+<p>M1.1 is complete at package scope; use its <a href="#m1-1-api">API</a>. Next is <a href="#m1-2">M1.2 folds and roles</a>, which remains not started. The verified <a href="#m0-6-progress-evidence">M0 handoff</a> and its scientific restrictions remain the entry boundary. Full M1/G1 completion is not claimed.</p>
 </section>
 <section class="doc-section" id="m1-1" data-guide="M1.1 Contracts &amp; permissions">
 <p class="eyebrow">M1.1 Contracts &amp; permissions</p><h1>M1.1 — Contracts and permissions</h1>
-<p>Status: Not started. Depends on: M0 engineering acceptance. Master mapping: WP0; <a href="#m1-spec">M1 specification</a>, sections 2-5.1 and 6. Progress: <a href="#m1-tracker">tracker</a>.</p>
+<p>Status: Reviewed (implementation/self-review, 7 November 2026). Depends on: M0 engineering acceptance. Master mapping: WP0; <a href="#m1-spec">M1 specification</a>, sections 2-5.1 and 6. Progress: <a href="#m1-tracker">tracker</a>.</p>
+<p>Implemented usage/schema binding: <a href="#m1-1-api">M1.1 API</a>.</p>
 </section>
 <section class="doc-section" id="m1-1-build-checklist" data-guide="M1.1 Contracts &amp; permissions">
 <p class="eyebrow">M1.1 Contracts &amp; permissions</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Define strict M1 config/envelopes/JSONL types and content identities, distinct from M0 spec identity.</li>
-<li class="check-item"><span class="check pending">Pending</span>Verify M0 index/receipt/gate/handoff and bind frozen source/inventory/component/exposure/protocol versions.</li>
-<li class="check-item"><span class="check pending">Pending</span>Enforce engineering, diagnostic and real-design operation permissions; carry G0 blockers forward.</li>
-<li class="check-item"><span class="check pending">Pending</span>Define role-sealed data/reporting contracts; deny development access to outer-test construction, iteration and export.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement portable paths, new-run/no-overwrite rules, atomic finite writes and partial failure evidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Generalize shared helpers without weakening M0 validation or invalidating its archives; define legacy adapters explicitly.</li>
-<li class="check-item"><span class="check pending">Pending</span>Draft engineering-only config inputs with synthetic settings; retain unknown real scientific choices and owners.</li>
+<li class="check-item"><span class="check done">Done</span>Define strict M1 config/envelopes/JSONL types and content identities, distinct from M0 spec identity.</li>
+<li class="check-item"><span class="check done">Done</span>Verify M0 index/receipt/gate/handoff and bind frozen source/inventory/component/exposure/protocol versions.</li>
+<li class="check-item"><span class="check done">Done</span>Enforce engineering, diagnostic and real-design operation permissions; carry G0 blockers forward.</li>
+<li class="check-item"><span class="check done">Done</span>Define role-sealed data/reporting contracts; deny development access to outer-test construction, iteration and export.</li>
+<li class="check-item"><span class="check done">Done</span>Implement portable paths, new-run/no-overwrite rules, atomic finite writes and partial failure evidence.</li>
+<li class="check-item"><span class="check done">Done</span>Generalize shared helpers without weakening M0 validation or invalidating its archives; define legacy adapters explicitly.</li>
+<li class="check-item"><span class="check done">Done</span>Draft engineering-only config inputs with synthetic settings; retain unknown real scientific choices and owners.</li>
 </ul>
 </section>
 <section class="doc-section" id="m1-1-target-and-completion-gate" data-guide="M1.1 Contracts &amp; permissions">
 <p class="eyebrow">M1.1 Contracts &amp; permissions</p><h2>Target and completion gate</h2>
 <p>Deliverable: record/config/lineage and operation-permission APIs used by all later packages.</p>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>M1-T01: altered/missing M0 evidence cannot grant access.</li>
-<li class="check-item"><span class="check pending">Pending</span>M1-T02: unknown schemas/config/roles, unsafe paths and nonempty output refuse before mutation.</li>
-<li class="check-item"><span class="check pending">Pending</span>M1-T03: canonical identity survives ordering/relocation and changes with content/policy.</li>
-<li class="check-item"><span class="check pending">Pending</span>Confirm current G0 permits infrastructure work only; neither templates nor copied flags authorize real fits/design.</li>
-<li class="check-item"><span class="check pending">Pending</span>Existing M0 archive verification and applicable record/path regressions still pass.</li>
+<li class="check-item"><span class="check done">Done</span>M1-T01: altered/missing M0 evidence cannot grant access.</li>
+<li class="check-item"><span class="check done">Done</span>M1-T02: unknown schemas/config/roles, unsafe paths and nonempty output refuse before mutation.</li>
+<li class="check-item"><span class="check done">Done</span>M1-T03: canonical identity survives ordering/relocation and changes with content/policy.</li>
+<li class="check-item"><span class="check done">Done</span>Confirm current G0 permits infrastructure work only; neither templates nor copied flags authorize real fits/design.</li>
+<li class="check-item"><span class="check done">Done</span>Existing M0 archive verification and applicable record/path regressions still pass.</li>
 </ul>
 </section>
 <section class="doc-section" id="m1-1-progress-evidence" data-guide="M1.1 Contracts &amp; permissions">
 <p class="eyebrow">M1.1 Contracts &amp; permissions</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Commands/results/logs and acceptance references: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Current G0 scientific blockers inherited; no real operation released.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M1.2 dependency released.</li>
+<li>Source identity: HEAD <code>65cdc50c3eab0f7520e7820ac143abe15ad4e2bf</code> plus dirty snapshot <code>08b86d0fb975e5e87d5115d8d2d2064d63ba30ef04fc6db460afd152972ee43d</code>. Snapshot precedes final acceptance notes. The source-only preservation directory is <code>artifacts/research/m0/m1-1-source-20261107T135106Z/</code>; it uses the existing M0-specific source capture contract and is not another completed M0 or M1 run. M1 full source orchestration remains M1.6.</li>
+<li>Current local evidence: <code>artifacts/research/m1_1_acceptance/m1-1-acceptance-20261107T135106Z/summary.json</code>, <code>logs/full-suite.stdout.log</code> and <code>logs/full-suite.stderr.log</code> (ignored outputs, not committed). Summary records exact implementation/test/config hashes, source identity, parent pins, permissions and denials. <code>verification-summary.json</code> records independent reconstruction/log/parent/schema checks.</li>
+<li>Actual command: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>; 187 tests passed, no skips, in 88.248 seconds. Source entries remained unchanged during execution. The previous 167 tests passed alongside 20 new contract tests.</li>
+<li>Coverage: 20 <code>tests/test_m1_records.py</code> cases cover M1-T01-T03, namespaced registries, import safety, atomic/no-clobber/failure handling, output junctions, config/JSONL types, unknown pins, semantic identity, late parent tampering, copied flags, detached/immutable entry state, pre-callback outer-role denial, source/component collisions, strict development/calibration roles, diagnostic-only access and failed partial scaffolds.</li>
+<li>Actual parent reverification: <code>artifacts/research/m0/m0-real-20261107T130421Z/</code> verified successfully after shared IO/schema generalization. All parent file hashes and mtimes stayed unchanged. Real diagnostic metadata access succeeded; fit, real image iteration, real prediction export and active diagnostic fold planning were denied. Existing G0 restrictions are inherited, not cleared.</li>
+<li>Created scaffold: <code>artifacts/research/m1/m1-1-created-20261107T135106Z/</code> contains run/config/verified-entry records only, with state <code>created</code>, scientific authorization false and current M1 full capture pending. No folds, loaders, fitting, calibration or G1 were launched.</li>
+<li>Reviewer/date: Codex implementation/self-review, 7 November 2026; engineering package review, not independent scientific approval.</li>
+<li>Open restrictions: Current lineage/history/protocol/owner/literature/fold-support blockers remain. JSONL currently defines identity rows only; later packages validate full assignment/history/prediction semantics. Role guards require future adapters to use the boundary and are not an arbitrary-code sandbox. GPU/cross-environment acceptance is not claimed for this stdlib-only package; CPU suite and the actual M0 archive establish current compatibility.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and M1.2 dependency released.</li>
 </ul>
+</section>
+<section class="doc-section" id="m1-1-api" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h1>M1.1 contracts and permissions API</h1>
+<p>Implemented in <code>breakhis/research/m1_records.py</code>, using the standard library only. Importing it creates no files, imports no PyTorch and runs no experiment. This package implements contracts/entry/guards, not folds, loaders, fits, prediction export, selection, the M1 runner or Gate G1. Those remain M1.2-M1.6.</p>
+</section>
+<section class="doc-section" id="m1-1-api-verify-a-parent-and-prepare-an-engineering-config" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h2>Verify a parent and prepare an engineering config</h2>
+<p>The example <code>configs/research/m1.example.json</code> is an inactive engineering template. Its numbers are synthetic fixtures, not real scientific agreements. Pin fields are null with reasons; active entry/run creation refuses them until filled.</p>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>from pathlib import Path
+from breakhis.research import records as r
+from breakhis.research import m1_records as m1
+
+repo = Path.cwd().resolve()
+archive = repo / &#x27;artifacts/research/m0/CHOOSE_VERIFIED_RUN_ID&#x27;
+config_file = repo / &#x27;configs/research/m1.example.json&#x27;
+config = r.read_json(config_file)
+pins = m1.inspect_m0(archive)  # full read-only verification, not a Boolean check
+config[&#x27;m0_archive&#x27;] = str(archive)
+for field in (&#x27;m0_index_sha256&#x27;, &#x27;m0_receipt_sha256&#x27;,
+              &#x27;protocol_sha256&#x27;, &#x27;decisions_sha256&#x27;):
+    config[field] = pins[field]
+resolved = m1.validate_config(config, config_file=config_file, require_pins=True)
+entry = m1.open_entry(resolved)
+print(entry.bindings, entry.snapshot[&#x27;restrictions&#x27;])
+
+# Optional contract scaffold only; use a fresh ID, not an earlier nonempty run:
+# run, entry = m1.create_run(resolved, &#x27;m1-unique-engineering-id&#x27;)</code></pre></div>
+<p><code>inspect_m0</code> returns discovered version/hash information only after full M0 verification; the dictionary itself grants no permission. <code>VerifiedEntry</code> requires expected index/receipt hashes, verifies the complete archive/receipt/gate/handoff, and binds source, inventory, components, exposure/eligibility, protocol and decisions. A valid parent with scientific exit 1 can still permit engineering. Entry snapshots are detached copies; modifying them cannot alter stored authority. Operation boundaries reverify the archive, catching changes after construction. Never call the guard once per image/batch; guard constructors and operation entry.</p>
+</section>
+<section class="doc-section" id="m1-1-api-configuration-binding" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h2>Configuration binding</h2>
+<p>Config keys are exact: <code>schema_version</code>, <code>spec_id</code>, <code>spec_version</code>, <code>mode</code>, <code>repo_root</code>, <code>data_root</code>, <code>output_root</code>, <code>m0_archive</code>, four pin fields shown above, <code>source</code>, <code>component_ids</code>, <code>fold_policy</code>, <code>seeds</code>, <code>loader</code>, <code>device</code>, <code>deterministic</code>, <code>prediction_policy</code>, <code>selection_policy</code>, <code>timeouts</code>, <code>predecessor</code>, <code>unknown_reasons</code>. Unknown keys and M0 spec identities are rejected.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Group</th><th scope="col">Contract</th></tr></thead><tbody>
+<tr><td>Version</td><td>Schema 1, <code>M1-SPEC-001</code>, spec version <code>1.0</code></td></tr>
+<tr><td>Mode/source</td><td>Engineering requires <code>source.kind=synthetic</code>; diagnostic/real-design require real metadata identity</td></tr>
+<tr><td>Paths</td><td>Config-directory-relative; existing repo directory; outputs confined to <code>artifacts/research/m1</code>; no M0/data/checkpoint overlap or hidden output links</td></tr>
+<tr><td>Data root</td><td>May be null; metadata diagnostics do not require original images or environments</td></tr>
+<tr><td>Parent pins</td><td>Exact-byte index/receipt/protocol/decision SHA-256; absent pins need reasons and prohibit active entry</td></tr>
+<tr><td>Component scope</td><td>Distinct SHA-256 component IDs; real IDs must exist and design candidates must be reviewed/eligible</td></tr>
+<tr><td>Fold policy</td><td>Integer outer folds &gt;=2; explicit inner roles; boolean calibration reuse; synthetic/proposed/agreed status</td></tr>
+<tr><td>Seeds</td><td>Exactly split/training/initialization/loader/augmentation/pruning/search uint32 values</td></tr>
+<tr><td>Loader</td><td>Positive batch size, workers zero at this package scope</td></tr>
+<tr><td>Device</td><td>CPU or CUDA; deterministic flag is boolean; CUDA compute needs verified GPU capability</td></tr>
+<tr><td>Predictions</td><td>Class order benign/malignant, development scope and explicit policy status</td></tr>
+<tr><td>Selection</td><td>Floor/grid/tie tolerance are finite fractions or null with reasons; grids distinct/nonempty when supplied</td></tr>
+<tr><td>Timeout/predecessor</td><td>Positive integer operation timeout; optional valid predecessor ID</td></tr>
+</tbody></table></div>
+<p><code>validate_config</code> validates without writes or parent verification. <code>require_pins</code> distinguishes an editable template from an active entry. <code>create_run</code> requires a normalized config and validates it again, verifies pins, then writes only <code>run.json</code>, <code>config.resolved.json</code>, <code>inputs/m0.entry.json</code>. State is <strong>created</strong>, scientific authorization false, and current M1 source capture explicitly pending the later runner. A mid-publication failure retains a failed run/failure record where writes remain possible; nonempty destinations are never resumed.</p>
+<p>Current M0 source identifies the parent, not new M1 implementation. M1.6 must capture current M1 source/environment and create the full immutable graph/G1.</p>
+</section>
+<section class="doc-section" id="m1-1-api-roleoperation-guard" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h2>Role/operation guard</h2>
+<div class="code-block"><div class="code-toolbar"><span>python</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>result = m1.authorize(
+    entry, mode=&#x27;engineering&#x27;, source_kind=&#x27;synthetic&#x27;,
+    source_instance_id=&#x27;independent-m1-fixture&#x27;,
+    operation=&#x27;construct_dataset&#x27;, role=&#x27;development_selection&#x27;,
+)
+
+# Future adapters must check before construction/iteration/export:
+# dataset = m1.guarded_call(entry, factory=build_synthetic_dataset, ...)</code></pre></div>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Mode</th><th scope="col">Allowed operations at this boundary</th></tr></thead><tbody>
+<tr><td>Engineering</td><td>Synthetic metadata/planning, inner-role dataset/iteration, inner-train fits, development exports, calibration/selection, synthetic resident benchmarks and stored synthetic OOF validation</td></tr>
+<tr><td>Diagnostic</td><td>Frozen metadata reads/support diagnostics only; no image iteration, fitting, active fold planning or prediction export</td></tr>
+<tr><td>Real design</td><td>Metadata/planning only after verified real G0 design eligibility and a nonempty reviewed candidate boundary</td></tr>
+</tbody></table></div>
+<p>Outer-test dataset construction, image iteration and prediction export are denied in every mode, including synthetic development flows. The separate stored synthetic OOF validation operation does not permit inference. Excluded and generic development-only labels cannot silently become active loader roles. Calibration requires the calibration role; epoch selection requires development selection; training uses inner train. Development export rejects inner-training predictions.</p>
+<p>Synthetic instance/component IDs cannot collide with the bound M0 identity or known real components. Real instances must match the verified M0 source; updated fold choices must match the agreed parent count for real design. Diagnostic mode cannot be upgraded by changing a directory name or copied flag. Real image iteration/fitting remains forbidden throughout M1 even if a future parent permits it; later milestones consume the contracts under their own scope.</p>
+<p><code>guarded_call</code> invokes the supplied adapter only after permission succeeds. The checks prevent accidental pipeline misuse, not arbitrary Python from bypassing APIs or fabricating inputs. Later packages still must validate actual assignment, row, recipe, calibration, support and provenance semantics. A returned permission does not implement those operations or establish clinical/scientific truth.</p>
+</section>
+<section class="doc-section" id="m1-1-api-recordjsonl-and-identity-foundation" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h2>Record/JSONL and identity foundation</h2>
+<p>M1 currently registers <code>m1.run</code>, <code>m1.config</code>, <code>m1.entry</code>, <code>m1.permissions</code>, <code>m1.failure</code>, <code>m1.operations</code>, <code>m1.evidence_index</code>. V1 envelopes use the common <code>data</code>/<code>items</code> roots. These are envelope contracts, not a full future evidence index/G1 validator. No unprefixed M0 kind is accepted through M1 wrappers, and M0&#x27;s default registry does not accept M1 kinds.</p>
+<p>The initial flat JSONL type <code>m1.input_row</code> has exactly: schema/version/type, source instance, image ID, relative path, raw/decoded hashes, full filename group, component, class/subtype/magnification, included/excluded status and unavailable reasons (see <code>validate_input_row</code> for concrete field spelling). Included identities require hashes/group/class/magnification. Nulls require reasons. Later assignment, epoch-history and prediction schemas are deliberately not registered yet.</p>
+<p><code>identity_sha256(rows, policy)</code> covers complete sorted identities and the explicit policy, not output roots or row order. Duplicate image IDs and case-colliding paths fail. <code>write_input_rows</code> validates before atomic no-clobber JSONL publication; <code>read_input_rows</code> checks strict UTF-8/JSON, finite values, type/version and identity uniqueness. <code>config_identity</code> excludes only physical repo/data/output/archive locators; pin/policy/seed/content changes still change the semantic digest.</p>
+<p>Shared M0 helpers gained optional explicit registry arguments and <code>publish_bytes</code>. Legacy calls retain their default registry, JSON suffix checks, finite encoding, link-safe paths and no-clobber atomic behavior. Full source capture and other M0-only APIs are not treated as M1 APIs. Containment retains the static trusted-root model; adversarial concurrent filesystem replacement is not promised.</p>
+</section>
+<section class="doc-section" id="m1-1-api-tests" data-guide="M1.1 Contracts API">
+<p class="eyebrow">M1.1 Contracts API</p><h2>Tests</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m unittest discover -s tests -p test_m1_records.py -v
+python -m unittest discover -s tests -v</code></pre></div>
+<p>See <a href="#m1-1-progress-evidence">M1.1 acceptance evidence</a>.</p>
 </section>
 <section class="doc-section" id="m1-2" data-guide="M1.2 Folds &amp; roles">
 <p class="eyebrow">M1.2 Folds &amp; roles</p><h1>M1.2 — Component folds and inner roles</h1>

@@ -244,16 +244,19 @@ def _utc_timestamp(value):
         raise RecordError('Timestamp must be UTC with explicit timezone')
 
 
-def validate_record(record, *, expected_type=None):
+def validate_record(record, *, expected_type=None, registry=None):
     """Validate the exact v1 envelope, not later-package scientific payload fields."""
     if not isinstance(record, dict):
         raise RecordError('Record must be an object')
     if type(record.get('schema_version')) is not int or record['schema_version'] != SCHEMA_VERSION:
         raise RecordError('Unsupported record schema version')
+    shapes = RECORD_SHAPES if registry is None else registry
+    if not isinstance(shapes, dict) or any(value not in ('data', 'items') for value in shapes.values()):
+        raise RecordError('Invalid explicit record registry')
     kind = record.get('record_type')
-    if not isinstance(kind, str) or kind not in RECORD_SHAPES or (expected_type is not None and kind != expected_type):
+    if not isinstance(kind, str) or kind not in shapes or (expected_type is not None and kind != expected_type):
         raise RecordError('Unknown or unexpected record type')
-    field = RECORD_SHAPES[kind]
+    field = shapes[kind]
     if set(record) != _ENVELOPE | {field}:
         raise RecordError(f'Record envelope requires exactly {sorted(_ENVELOPE | {field})}')
     validate_id(record['run_id'])
@@ -266,13 +269,14 @@ def validate_record(record, *, expected_type=None):
     return record
 
 
-def new_record(record_type, run_id, payload, *, created_at_utc=None):
-    if not isinstance(record_type, str) or record_type not in RECORD_SHAPES:
+def new_record(record_type, run_id, payload, *, created_at_utc=None, registry=None):
+    shapes = RECORD_SHAPES if registry is None else registry
+    if not isinstance(record_type, str) or record_type not in shapes:
         raise RecordError('Unknown record type')
     result = dict(schema_version=SCHEMA_VERSION, record_type=record_type, run_id=run_id,
                   created_at_utc=created_at_utc if created_at_utc is not None else datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'))
-    result[RECORD_SHAPES[record_type]] = payload
-    validate_record(result)
+    result[shapes[record_type]] = payload
+    validate_record(result, registry=shapes)
     # Detach caller-owned mutable structures using the same strict JSON contract.
     return json.loads(canonical_json_bytes(result))
 
@@ -296,12 +300,12 @@ def read_json(path):
         raise RecordError(f'Invalid JSON file: {path}') from error
 
 
-def read_record(run_dir, relative, *, expected_type=None):
+def read_record(run_dir, relative, *, expected_type=None, registry=None):
     path = safe_child(run_dir, relative, must_exist=True)
-    return validate_record(read_json(path), expected_type=expected_type)
+    return validate_record(read_json(path), expected_type=expected_type, registry=registry)
 
 
-def write_record(run_dir, relative, record, *, overwrite=False):
+def write_record(run_dir, relative, record, *, overwrite=False, registry=None):
     """Atomic publication in a trusted run; no-clobber unless explicitly updating.
 
     Temp and destination share a filesystem. No-clobber uses an atomic hard-link
@@ -309,14 +313,25 @@ def write_record(run_dir, relative, record, *, overwrite=False):
     Callers must create/config-validate the run first. No arbitrary dataset root
     should be passed as a run directory.
     """
-    validate_record(record)
+    validate_record(record, registry=registry)
     encoded = (json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False) + '\n').encode('utf-8')
+    if Path(relative).suffix.lower() != '.json':
+        raise RecordError('Record destination must end in .json')
+    return publish_bytes(run_dir, relative, encoded, overwrite=overwrite)
+
+
+def publish_bytes(run_dir, relative, encoded, *, overwrite=False):
+    """Shared confined atomic publication; callers validate owned run and format.
+
+    Existing record callers retain JSON suffix/envelope validation. Raw/JSONL
+    callers supply exact bytes; no global schema registry is changed.
+    """
+    if not isinstance(encoded, bytes):
+        raise RecordError('Publication requires bytes')
     root = Path(run_dir)
     if not root.is_dir():
         raise RecordError('Create a validated run directory before writing records')
     path = safe_child(root, relative)
-    if path.suffix.lower() != '.json':
-        raise RecordError('Record destination must end in .json')
     if path.exists() and not overwrite:
         raise FileExistsError(path)
     # Validate each created parent, never traversing a link below the trusted root.

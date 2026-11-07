@@ -70,5 +70,5 @@ M0 implementation and real evidence-generation acceptance are complete. Use the
 evidence, and [M0.6 acceptance](M0_6_RUNNER_GATE.md#progress-evidence) for the actual
 G0 outcome. The next code milestone is **M1 scientific data/reporting interfaces**;
 only the engineering scope in the handoff is released. See the [M1 specification
-and staged tracker](../m1/README.md); all M1 packages remain not started. No real fitting, untouched
+and staged tracker](../m1/README.md); M1.1 is reviewed and M1.2-M1.6 remain not started. No real fitting, untouched
 fold selection or confirmatory freeze is authorized by this completion status.

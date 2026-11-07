@@ -1,7 +1,7 @@
 # M1 specification: scientific data and reporting infrastructure
 
 Specification: M1-SPEC-001, version 1.0. Prepared: 7 November 2026.
-Status: implementation contract only; M1 code and experiments have not started.
+Status: implementation contract; M1.1 foundation is implemented/self-reviewed with actual CPU acceptance. M1.2-M1.6 and scientific experiments have not started.
 
 Parent: [research roadmap](../../research/RESEARCH_IMPLEMENTATION_ROADMAP.md), M1/P1/G1.
 Scientific intent: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md).
@@ -154,6 +154,11 @@ Generated JSON uses v1 common envelopes with `schema_version`, `record_type`,
 type/version in the index. M1 types use an explicit M1 namespace. Null means
 unavailable/unresolved with a reason. IDs derive from canonical content/identity,
 not row order or Python's randomized `hash()`. File and semantic hashes differ.
+
+M1.1 implementation binding: its explicit namespaced registry and flat
+`m1.input_row` JSONL foundation are documented in the [contracts API](M1_1_CONTRACTS_API.md).
+Later assignment/history/prediction row validators and full G1 remain their
+own packages; envelope validation is not scientific approval.
 
 ### 5.1 Run/config and lineage
 
