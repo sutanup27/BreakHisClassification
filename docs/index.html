@@ -28,6 +28,7 @@
 <details open><summary>M0.1 Records &amp; integrity</summary><a href="#m0-1" data-section="m0-1">M0.1 — Records and integrity</a><a href="#m0-1-build-checklist" data-section="m0-1-build-checklist">Build checklist</a><a href="#m0-1-tests-and-completion-gate" data-section="m0-1-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-1-progress-evidence" data-section="m0-1-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.1 Records API</summary><a href="#m0-1-api" data-section="m0-1-api">M0.1 records API and schema binding</a><a href="#m0-1-api-record-envelope" data-section="m0-1-api-record-envelope">Record envelope</a><a href="#m0-1-api-content-identity" data-section="m0-1-api-content-identity">Content identity</a><a href="#m0-1-api-paths-and-atomic-writes" data-section="m0-1-api-paths-and-atomic-writes">Paths and atomic writes</a><a href="#m0-1-api-pre-run-configuration" data-section="m0-1-api-pre-run-configuration">Pre-run configuration</a><a href="#m0-1-api-evidence-index-interface-foundation" data-section="m0-1-api-evidence-index-interface-foundation">Evidence-index interface foundation</a><a href="#m0-1-api-test-coverage-and-review-limits" data-section="m0-1-api-test-coverage-and-review-limits">Test coverage and review limits</a></details>
 <details open><summary>M0.2 Baseline preservation</summary><a href="#m0-2" data-section="m0-2">M0.2 — Baseline preservation</a><a href="#m0-2-build-checklist" data-section="m0-2-build-checklist">Build checklist</a><a href="#m0-2-tests-and-completion-gate" data-section="m0-2-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-2-progress-evidence" data-section="m0-2-progress-evidence">Progress evidence</a></details>
+<details open><summary>M0.2 Baseline API</summary><a href="#m0-2-api" data-section="m0-2-api">M0.2 baseline preservation API</a><a href="#m0-2-api-run-a-baseline" data-section="m0-2-api-run-a-baseline">Run a baseline</a><a href="#m0-2-api-functions-and-outputs" data-section="m0-2-api-functions-and-outputs">Functions and outputs</a><a href="#m0-2-api-developer-tests" data-section="m0-2-api-developer-tests">Developer tests</a></details>
 <details open><summary>M0.3 Data readiness</summary><a href="#m0-3" data-section="m0-3">M0.3 — Data readiness</a><a href="#m0-3-build-checklist" data-section="m0-3-build-checklist">Build checklist</a><a href="#m0-3-tests-and-completion-gate" data-section="m0-3-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-3-progress-evidence" data-section="m0-3-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.4 Exposure governance</summary><a href="#m0-4" data-section="m0-4">M0.4 — Exposure governance</a><a href="#m0-4-build-checklist" data-section="m0-4-build-checklist">Build checklist</a><a href="#m0-4-tests-and-completion-gate" data-section="m0-4-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-4-progress-evidence" data-section="m0-4-progress-evidence">Progress evidence</a></details>
 <details open><summary>M0.5 Protocol &amp; literature</summary><a href="#m0-5" data-section="m0-5">M0.5 — Protocol and literature</a><a href="#m0-5-build-checklist" data-section="m0-5-build-checklist">Build checklist</a><a href="#m0-5-tests-and-completion-gate" data-section="m0-5-tests-and-completion-gate">Tests and completion gate</a><a href="#m0-5-progress-evidence" data-section="m0-5-progress-evidence">Progress evidence</a></details>
@@ -1325,8 +1326,8 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h1>M0 implementation checklist tracker</h1>
-<p>Prepared: 7 November 2026. Scope: implementation planning only.</p>
-<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1 is implemented and self-reviewed; M0.2-M0.6 have not started.</p>
+<p>Prepared: 7 November 2026. Scope: milestone implementation and package acceptance tracking.</p>
+<p><a href="#m0-spec">M0_SPEC.md</a> is the authoritative contract for schemas, semantics and Gate G0. These six checklists organize delivery; they do not replace or duplicate that specification. M0.1-M0.2 are implemented and self-reviewed; M0.3-M0.6 have not started.</p>
 <p>All M0-specific documents live together in this folder:</p>
 <div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>docs/specs/m0/
   README.md                         # Tracker and starting point
@@ -1334,6 +1335,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
   M0_1_RECORDS_INTEGRITY.md
   M0_1_RECORDS_API.md               # Implemented foundation API
   M0_2_BASELINE_PRESERVATION.md
+  M0_2_BASELINE_API.md              # Baseline usage and evidence contracts
   M0_3_DATA_READINESS.md
   M0_4_EXPOSURE_GOVERNANCE.md
   M0_5_PROTOCOL_LITERATURE.md
@@ -1343,7 +1345,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 <p class="eyebrow">M0 package tracker</p><h2>Work packages and progress</h2>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Package</th><th scope="col">Master work packages</th><th scope="col">Depends on</th><th scope="col">Status</th><th scope="col">Completion evidence</th></tr></thead><tbody>
 <tr><td><a href="#m0-1">M0.1 Records and integrity</a></td><td>WP0</td><td>None</td><td>Reviewed</td><td>21 foundation tests; 70 total CPU tests passed, no skips; <a href="#m0-1-progress-evidence">API/evidence</a></td></tr>
-<tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Not started</td><td>Pending</td></tr>
+<tr><td><a href="#m0-2">M0.2 Baseline preservation</a></td><td>WP1-WP2</td><td>M0.1 reviewed</td><td>Reviewed</td><td>16 baseline tests; 86 total CPU tests passed, no skips; <a href="#m0-2-progress-evidence">fresh source/check evidence</a></td></tr>
 <tr><td><a href="#m0-3">M0.3 Data readiness</a></td><td>WP3-WP4</td><td>M0.1-M0.2 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-4">M0.4 Exposure governance</a></td><td>WP5</td><td>M0.1-M0.3 reviewed</td><td>Not started</td><td>Pending</td></tr>
 <tr><td><a href="#m0-5">M0.5 Protocol and literature</a></td><td>WP6</td><td>M0.1-M0.4 reviewed</td><td>Not started</td><td>Pending</td></tr>
@@ -1378,7 +1380,7 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-tracker-starting-point" data-guide="M0 package tracker">
 <p class="eyebrow">M0 package tracker</p><h2>Starting point</h2>
-<p>M0.1 is complete at package scope; use its <a href="#m0-1-api">API contract</a> for subsequent work. <a href="#m0-2">M0.2</a> is the next package and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
+<p>M0.1-M0.2 are complete at package scope; use their <a href="#m0-1-api">records API</a> and <a href="#m0-2-api">baseline API</a> for subsequent work. <a href="#m0-3">M0.3 data readiness</a> is next and remains not started. No M0 runner/G0 execution or scientific experiment is implied by package completion.</p>
 </section>
 <section class="doc-section" id="m0-1" data-guide="M0.1 Records &amp; integrity">
 <p class="eyebrow">M0.1 Records &amp; integrity</p><h1>M0.1 — Records and integrity</h1>
@@ -1496,40 +1498,95 @@ python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-&lt
 </section>
 <section class="doc-section" id="m0-2" data-guide="M0.2 Baseline preservation">
 <p class="eyebrow">M0.2 Baseline preservation</p><h1>M0.2 — Baseline preservation</h1>
-<p>Status: Not started. Depends on: M0.1 reviewed. Master mapping: WP1-WP2; sections 5.1-5.2, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Status: Reviewed (implementation/self-review, 7 November 2026). Depends on: M0.1 reviewed. Master mapping: WP1-WP2; sections 5.1-5.2, 6. Contract: <a href="#m0-spec">M0 specification</a>. Progress: <a href="#m0-tracker">tracker</a>.</p>
+<p>Implemented usage and record details: <a href="#m0-2-api">baseline API</a>.</p>
 </section>
 <section class="doc-section" id="m0-2-build-checklist" data-guide="M0.2 Baseline preservation">
 <p class="eyebrow">M0.2 Baseline preservation</p><h2>Build checklist</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement capture in <code>breakhis/research/m0.py</code> using the M0.1 record/hash/path helpers.</li>
-<li class="check-item"><span class="check pending">Pending</span>Record HEAD/ref and staged/unstaged/untracked state; capture relevant dirty and untracked source as well as a binary-capable tracked diff.</li>
-<li class="check-item"><span class="check pending">Pending</span>Store source inventory and reconstructible snapshots with explicit inclusion/exclusion policy; exclude datasets, environments, weights and generated output.</li>
-<li class="check-item"><span class="check pending">Pending</span>Recheck source status/hashes after capture; retry once or fail on inconsistency. Never identify a dirty run by commit alone.</li>
-<li class="check-item"><span class="check pending">Pending</span>Record CPU/Python/dependency/venv/pip state and available GPU/runtime/driver metadata; preserve unknown/unavailable fields honestly.</li>
-<li class="check-item"><span class="check pending">Pending</span>Capture actual current import/help/environment/regression outcomes with allowlisted argv, cwd, duration, timeout, return code and stdout/stderr logs.</li>
-<li class="check-item"><span class="check pending">Pending</span>Keep CPU-only checks functional; distinguish GPU failure from eligibility for CPU engineering.</li>
+<li class="check-item"><span class="check done">Done</span>Implement capture in <code>breakhis/research/m0.py</code> using the M0.1 record/hash/path helpers.</li>
+<li class="check-item"><span class="check done">Done</span>Record HEAD/ref and staged/unstaged/untracked state; capture relevant dirty and untracked source as well as a binary-capable tracked diff.</li>
+<li class="check-item"><span class="check done">Done</span>Store source inventory and reconstructible snapshots with explicit inclusion/exclusion policy; exclude datasets, environments, weights and generated output.</li>
+<li class="check-item"><span class="check done">Done</span>Recheck source status/hashes after capture; retry once or fail on inconsistency. Never identify a dirty run by commit alone.</li>
+<li class="check-item"><span class="check done">Done</span>Record CPU/Python/dependency/venv/pip state and available GPU/runtime/driver metadata; preserve unknown/unavailable fields honestly.</li>
+<li class="check-item"><span class="check done">Done</span>Capture actual current import/help/environment/regression outcomes with allowlisted argv, cwd, duration, timeout, return code and stdout/stderr logs.</li>
+<li class="check-item"><span class="check done">Done</span>Keep CPU-only checks functional; distinguish GPU failure from eligibility for CPU engineering.</li>
 </ul>
 </section>
 <section class="doc-section" id="m0-2-tests-and-completion-gate" data-guide="M0.2 Baseline preservation">
 <p class="eyebrow">M0.2 Baseline preservation</p><h2>Tests and completion gate</h2>
 <ul>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T01 through M0-T04 using temporary Git repositories, staged/unstaged/untracked files and concurrent-source-change fixtures.</li>
-<li class="check-item"><span class="check pending">Pending</span>Implement M0-T19 and M0-T20: CPU pass/GPU unavailable, failed check and timed-out command with retained evidence.</li>
-<li class="check-item"><span class="check pending">Pending</span>Demonstrate that included source can be reconstructed and hashes checked; no recursive capture or unrelated generated payloads.</li>
-<li class="check-item"><span class="check pending">Pending</span>Review verifies that evidence is current and actual. Historical test counts cannot satisfy baseline acceptance; failure fixtures must fail readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T01 through M0-T04 using temporary Git repositories, staged/unstaged/untracked files and concurrent-source-change fixtures.</li>
+<li class="check-item"><span class="check done">Done</span>Implement M0-T19 and M0-T20: CPU pass/GPU unavailable, failed check and timed-out command with retained evidence.</li>
+<li class="check-item"><span class="check done">Done</span>Demonstrate that included source can be reconstructed and hashes checked; no recursive capture or unrelated generated payloads.</li>
+<li class="check-item"><span class="check done">Done</span>Review verifies that evidence is current and actual. Historical test counts cannot satisfy baseline acceptance; failure fixtures must fail readiness.</li>
 </ul>
 <p>Deliverables: source/environment/check capture functions; <code>baseline/</code> record contracts and relevant <code>tests/test_m0.py</code> coverage. No scientific training or historical test inference.</p>
 </section>
 <section class="doc-section" id="m0-2-progress-evidence" data-guide="M0.2 Baseline preservation">
 <p class="eyebrow">M0.2 Baseline preservation</p><h2>Progress evidence</h2>
 <ul>
-<li>Source identity: Pending.</li>
-<li>Test commands/results/logs: Pending.</li>
-<li>Reviewer/date: Pending.</li>
-<li>Open issues/restrictions: Not assessed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Tests passed.</li>
-<li class="check-item"><span class="check pending">Pending</span>Reviewed; tracker updated and M0.3 dependency released.</li>
+<li>Source identity: HEAD <code>5e71ec541ed76819b86b24c8c93081300e106990</code> plus dirty worktree snapshot <code>46d5cc6def17ddfabae6d17d13fef334ac747f093d6eaf739839e390713baa84</code>. The commit alone is not the tested identity. Snapshot includes tested source before these final acceptance notes; <code>acceptance-summary.json</code> records exact implementation/test hashes.</li>
+<li>Current local evidence: <code>artifacts/research/m0/m0-2-acceptance-20261107T102050Z/</code> (ignored local outputs, not shipped in Git). <code>baseline/git.json</code>, <code>source_inventory.json</code>, <code>source_snapshot/</code>, both patches, device records, <code>checks.json</code> and <code>consistency.json</code> preserve source and actual execution evidence. <code>acceptance-summary.json</code> records the outcome; <code>verification-summary.json</code> records independent snapshot/log verification.</li>
+<li>Actual command: <code>.venv-stage2-cpu/Scripts/python.exe -m unittest discover -s tests -v</code>; 86 tests passed, no skips, in 60.094 seconds. Logs: <code>logs/regressions.stdout.log</code> and <code>logs/regressions.stderr.log</code> within that run. Six CLI help checks, imports, interpreter metadata, pip commands and the existing synthetic CPU tensor/VGG environment check also passed.</li>
+<li>Coverage: 16 <code>tests/test_m0.py</code> cases cover M0-T01-T04 and M0-T19-T20, including staged deletion, binary diff, clean reconstruction, dirty source, excluded inputs, retry/failure, post-check drift, unavailable GPU, failed/timed-out regressions, malformed observations and skipped-suite rejection. The prior 70 tests also passed in this fresh run.</li>
+<li>Reviewer/date: Codex implementation/self-review, 7 November 2026; engineering package review, not independent scientific adjudication.</li>
+<li>Restrictions: GPU execution was not requested or validated in this CPU run; actual NVIDIA driver metadata was captured separately. LFS/submodules are recorded without hydration and block self-contained baseline eligibility if present. Full M0 CLI, data/exposure/protocol gates, evidence graph and G0 remain M0.3-M0.6. This is baseline acceptance, not full M0-T26 or scientific readiness.</li>
+<li class="check-item"><span class="check done">Done</span>Tests passed.</li>
+<li class="check-item"><span class="check done">Done</span>Reviewed; tracker updated and M0.3 dependency released.</li>
 </ul>
+</section>
+<section class="doc-section" id="m0-2-api" data-guide="M0.2 Baseline API">
+<p class="eyebrow">M0.2 Baseline API</p><h1>M0.2 baseline preservation API</h1>
+<p>Implemented in <code>breakhis/research/m0.py</code>. This is an engineering baseline API; the complete M0 runner, audit, governance and Gate G0 remain later packages. Importing this module performs no capture, dependency import or training.</p>
+</section>
+<section class="doc-section" id="m0-2-api-run-a-baseline" data-guide="M0.2 Baseline API">
+<p class="eyebrow">M0.2 Baseline API</p><h2>Run a baseline</h2>
+<p>From the repository root, with the intended virtual environment activated:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>@&#x27;
+from pathlib import Path
+from datetime import datetime, timezone
+from breakhis.research.records import create_run_directory
+from breakhis.research.m0 import capture_baseline
+
+repo = Path.cwd().resolve()
+run_id = datetime.now(timezone.utc).strftime(&#x27;baseline-%Y%m%dT%H%M%SZ&#x27;)
+run = create_run_directory(repo / &#x27;artifacts/research/m0&#x27;, run_id)
+result = capture_baseline(repo, run, run_id, devices=[&#x27;cpu&#x27;],
+                          environment_seconds=120, regression_seconds=600)
+print(&#x27;Evidence:&#x27;, run)
+print(&#x27;CPU engineering:&#x27;, result[&#x27;cpu_engineering_ready&#x27;])
+print(&#x27;GPU execution:&#x27;, result[&#x27;gpu_execution_ready&#x27;])
+print(&#x27;Restrictions:&#x27;, result[&#x27;restrictions&#x27;])
+&#x27;@ | python -</code></pre></div>
+<p>Use <code>devices=[&#x27;cpu&#x27;, &#x27;cuda&#x27;]</code> to check both devices with a CUDA-capable environment. CPU checks hide CUDA and use two OMP/MKL threads; the environment check performs synthetic tensor, preprocessing and VGG forward checks. Regressions use synthetic fixtures. These commands do not request scientific training or real-image test inference. No dependencies, weights or datasets are downloaded.</p>
+<p>Each invocation needs a fresh run directory. Failed/partial evidence is retained; do not reuse or edit it. No commit, push, dataset audit or checkpoint is created. The future M0 runner will provide configuration binding and final gate evaluation.</p>
+</section>
+<section class="doc-section" id="m0-2-api-functions-and-outputs" data-guide="M0.2 Baseline API">
+<p class="eyebrow">M0.2 Baseline API</p><h2>Functions and outputs</h2>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">API</th><th scope="col">Contract</th></tr></thead><tbody>
+<tr><td><code>capture_source(repo_root, run_dir, run_id)</code></td><td>Capture source only; refuse an existing baseline, retry source movement once, then fail with retained attempts</td></tr>
+<tr><td><code>baseline_plan(python, devices, environment_seconds=120, regression_seconds=600)</code></td><td>Inspect fixed allowlisted argv; no execution; positive integer timeouts</td></tr>
+<tr><td><code>capture_environment_checks(repo_root, run_dir, run_id, python=None, devices=None, environment_seconds=120, regression_seconds=600)</code></td><td>Current checks and metadata; default interpreter is the calling Python; default device CPU</td></tr>
+<tr><td><code>capture_baseline(repo_root, run_dir, run_id, **check_options)</code></td><td>Preferred combined API; additionally recheck source after checks, block eligibility on drift/unresolved source</td></tr>
+</tbody></table></div>
+<p><code>repo_root</code> must be the Git top-level directory with a HEAD commit. <code>run_dir</code> must already exist under repository <code>artifacts/research/m0/</code>; use the M0.1 directory helpers, not a dataset path. Filesystem containment follows M0.1&#x27;s trusted-root/static-path threat model. Git commands have a 60-second timeout.</p>
+<p>Records use M0.1 envelopes and no-clobber writes. <code>checks.json</code> is progressively updated within its owned run. UTF-8 stdout/stderr logs retain exact subprocess bytes, sizes and SHA-256 references. Each operation records argv, cwd, device, start/end UTC, elapsed time, timeout, return code, reason and source-record input hashes when source capture exists. Failures, absent utilities and timeouts remain failed observations. A timeout terminates the command tree; if the Windows tree-termination utility fails, that restriction is retained in the reason. Ctrl+C during a check records interruption and stops the remaining check plan.</p>
+<h3 id="m0-2-api-source-reconstruction">Source reconstruction</h3>
+<p><code>baseline/git.json</code> records HEAD/ref, NUL-delimited porcelain status (JSON-escaped), dirty state, index identity, policy, attempts, unresolved LFS/submodules and source identities. <code>source_inventory.json</code> lists portable repository-relative paths, tracked/untracked state, bytes, SHA-256 and capture status. Staged deletions have null bytes/hash and status <code>deleted</code>; no file is fabricated for them.</p>
+<p><code>source_snapshot/</code> contains the included working-tree files at their original relative paths. Copy these into an empty reconstruction directory, then compare each captured row&#x27;s hash/size; deleted rows must be absent. This reconstructs the included source, not the entire repository or its Git history. <code>tracked.patch</code> is the binary-capable included worktree diff against HEAD; <code>staged.patch</code> retains the included index diff against HEAD. Excluded files never enter either patch.</p>
+<p>Policy v1 includes canonical and compatibility Python source, tools/tests, configs, selected root project/dependency files, workflows and Markdown/assets. It excludes data/weights/environments/builds/generated outputs, generated HTML and non-allowlisted personal folders. Ignored untracked files are excluded; tracked files remain subject to the same capture policy. Keep sensitive source material outside these public-ready source folders. LFS pointers are copied as pointers, and submodule references are recorded without fetching their content; either prevents self-contained-baseline eligibility.</p>
+<p>The snapshot digest covers sorted present path/hash pairs and policy; the source identity additionally covers HEAD/index/status metadata, including dirty state. The commit alone never identifies a dirty baseline. Attempts are checked before and after copying; source changes during checks also invalidate combined-baseline eligibility. Failed attempt copies remain named <code>attempt-1</code> / <code>attempt-2</code> and are not presented as the accepted snapshot. Concurrent hostile path replacement is outside the M0.1 static-filesystem guarantee.</p>
+<h3 id="m0-2-api-environment-and-checks">Environment and checks</h3>
+<p><code>environment.cpu.json</code> and <code>environment.cuda.json</code> contain per-device status, actual interpreter/version/venv, platform/CPU/dependency metadata and synthetic environment observations when available. The separate metadata command runs even when scientific dependencies cannot import. Missing processor strings and failed environment observations are unavailable, not inferred hardware facts. <code>pip check</code>, <code>pip freeze --all</code> and <code>pip --version</code> outputs are separate logged checks. NVIDIA driver identifiers come only from the logged optional <code>nvidia-smi</code> query; absent utilities produce unknown driver metadata, not a guessed driver version. CUDA runtime and driver versions are distinct facts.</p>
+<p>The plan includes imports, all six supported CLI help commands, pip checks, per-requested-device synthetic environment checks, and the current full unittest suite. Skipped regressions or zero discovered tests cannot satisfy acceptance. An unrequested GPU is <code>not_requested</code>, not validated or known unavailable. GPU failure restricts GPU execution without negating passing CPU engineering checks. Optional driver utility failure alone does not block CPU or GPU compute checks. <code>baseline/consistency.json</code> records the final source recheck.</p>
+<p>The returned booleans are baseline-only eligibility. Neither means M0/G0 passed, nor establishes data integrity, clinical identity, untouched exposure, protocol agreement, scientific accuracy or confirmatory readiness.</p>
+</section>
+<section class="doc-section" id="m0-2-api-developer-tests" data-guide="M0.2 Baseline API">
+<p class="eyebrow">M0.2 Baseline API</p><h2>Developer tests</h2>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python -m unittest discover -s tests -p test_m0.py -v
+python -m unittest discover -s tests -v</code></pre></div>
+<p>See <a href="#m0-2">package checklist and evidence</a>.</p>
 </section>
 <section class="doc-section" id="m0-3" data-guide="M0.3 Data readiness">
 <p class="eyebrow">M0.3 Data readiness</p><h1>M0.3 — Data readiness</h1>
