@@ -107,7 +107,7 @@ class BaselinePlanTests(unittest.TestCase):
         l1=next(j for j in plan['fit_jobs'] if j['kind']=='l1_channel' and j['ratio']==random['ratio'] and j['seed']==random['seed'])
         self.assertEqual(random['planned_widths'],l1['planned_widths'])
         with self.assertRaisesRegex(ValueError,'experiment fields'):
-            e.load_config(self._save_draft(next(iter(configs.values()))['config']))
+            e.load_config(self._save_draft(next(iter(configs.values()))))
 
     def _save_draft(self,value):
         path=self.root/'draft.json'; e.write_json(path,value); return path

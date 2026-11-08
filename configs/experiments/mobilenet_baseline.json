@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "name": "mobilenet-baseline",
+  "data": {
+    "manifest": "../../artifacts/data/manifest.json",
+    "source": "cancer_binary",
+    "magnification": "40X",
+    "data_root": "../../../Dataset/dataset_cancer_v1/classificacao_binaria"
+  },
+  "training": {
+    "model": "mobilenet_v3_small",
+    "epochs": 25,
+    "batch_size": 32,
+    "num_workers": 0,
+    "device": "auto",
+    "seed": 102,
+    "deterministic": true,
+    "learning_rate": 0.0001,
+    "optimizer": "adam",
+    "weight_decay": 0.0001,
+    "scheduler": "none",
+    "selection_metric": "group_balanced_accuracy",
+    "cpu_threads": 2
+  },
+  "pruning": null,
+  "evaluation": {
+    "device": "cpu",
+    "cpu_threads": 2,
+    "batch_size": 1,
+    "warmup": 50,
+    "repeats": 200
+  },
+  "baseline": {
+    "kind": "standard",
+    "parent_selection": null,
+    "channels": null,
+    "topology_checkpoint": null,
+    "ranking": null,
+    "ranking_seed": null
+  }
+}

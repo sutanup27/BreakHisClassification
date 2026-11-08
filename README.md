@@ -31,6 +31,10 @@ See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
 [progress tracker](docs/research/MILESTONE_TRACKER.md). The existing
 individual commands below remain supported as an advanced reference.
 
+M2.2 adds [compact, continuation and scratch fits](docs/guides/EXPERIMENTS.md#m22-compact-baseline-continuation-and-scratch-fits).
+Use `configs/experiments/mobilenet_baseline.json` for a random-initialized
+MobileNetV3-Small example. Physical channel pruning remains custom-VGG-only.
+
 M2.1 also supports planning without training:
 `python run_baselines.py --study configs/baselines/m2_study.json --stage prepare`.
 See [baseline study planning](docs/guides/EXPERIMENTS.md#m21-prepare-a-baseline-study-without-fitting); generated configs are drafts until later M2 packages.
@@ -200,7 +204,8 @@ These arguments apply to **train, evaluate, prune, finetune, and compare**. Omit
 
 | Parameter | Default / allowed values | Purpose |
 | --- | --- | --- |
-| `--model` | `vgg`; `vgg`, `resnet`, `resnet18` | Architecture. `resnet` is an alias for torchvision ResNet18. The chosen name is used in the default checkpoint directory. |
+| `--initialization` | Optional frozen JSON | Advanced config-2 fresh-fit contract; normally supplied by the experiment runner. |
+| `--model` | `vgg`; `vgg`, `resnet`, `resnet18`, `mobilenet_v3_small` | Architecture. `resnet` is an alias for torchvision ResNet18. The chosen name is used in the default checkpoint directory. |
 | `--epochs` | `20`; positive integer | Passes through the training split. Validation runs after every epoch. |
 | `--learning-rate` | `0.001` | Initial SGD learning rate. Use a positive value; for example `0.0001` for smaller updates. |
 | `--pretrained` | Off; flag | Loads torchvision pretrained ResNet18 weights, potentially downloading them. The binary classifier head is replaced. Has no effect for VGG, which does not load pretrained weights. |

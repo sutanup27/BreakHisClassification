@@ -2,7 +2,7 @@
 
 Date: 8 November 2026. Outcome: **Aligned for implementation**.
 This is a specification assessment, not scientific approval or evidence of a novel
-method. M2.1 planning is implemented and reviewed; later implementation
+method. M2.1 planning and M2.2 initialization are implemented/reviewed; later implementation
 and scientific experiments remain Not started.
 Master: [M2_SPEC.md](M2_SPEC.md). Packages: [tracker](README.md).
 
@@ -109,3 +109,17 @@ M2.1 final evidence: 20 focused tests passed; full CPU suite ran 155 cases
 (153 passed, two CUDA-only skips). Real metadata-only preparation, source/artifact
 hashes, help and documentation checks passed. See the owning checklist for logs.
 No M2 real fitting, cost measurement or scientific baseline claim was made.
+
+## M2.2 implementation alignment
+
+Config-2 initialization and compact support now exist, with verified parent input
+versus exact child resume semantics. Scratch copies topology only and resets all
+numerical/BN state; continuation resets optimizer/schedule and preserves parent
+weights. Mode-specific artifacts expose zero child parent-fitting steps and bound
+external origins. Existing config-1 behavior and phase isolation pass regressions.
+Parent random/L1 control execution remains M2.3; baseline-control comparison remains
+M2.5, so no unsafe matched-cost table is exposed prematurely. CPU suite: 174 cases
+(171 passed, three CUDA-only skips); all 19 focused cases passed in the CUDA
+environment, plus fresh public VGG/continuation/scratch/compact phases. No O1/O2/O3
+scientific finding or real baseline quality is inferred from these implementation
+checks. See the owning M2.2 checklist for exact logs and remaining boundaries.

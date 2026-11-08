@@ -79,6 +79,7 @@ def main(argv=None):
         if name == 'evaluate':
             add_benchmark_options(command)
         if name in ('train', 'finetune'):
+            command.add_argument('--initialization',type=Path,help='Frozen config-2 fresh-fit initialization record')
             command.add_argument('--seed', type=int, help='Fresh-run RNG seed; inherited on resume')
             command.add_argument('--optimizer', choices=['sgd','adam'])
             command.add_argument('--weight-decay', type=float)
@@ -88,7 +89,7 @@ def main(argv=None):
             command.add_argument('--learning-rate', type=float, help='Initial SGD rate; default .001 or saved resume value')
             command.add_argument('--resume', type=Path, help='Restore a completed-epoch checkpoint and its optimizer/scheduler/RNG state')
         if name == 'train':
-            command.add_argument('--model', choices=['vgg', 'resnet', 'resnet18'])
+            command.add_argument('--model', choices=['vgg', 'resnet', 'resnet18', 'mobilenet_v3_small'])
             command.add_argument('--pretrained', action='store_true', help='Initialize ResNet with downloaded pretrained weights')
         else:
             command.add_argument('--checkpoint', type=Path, required=name != 'finetune')
@@ -162,6 +163,8 @@ def main(argv=None):
         if args.batch_size < 1 or args.num_workers < 0:
             raise ValueError('batch size must be positive; workers must be nonnegative')
         if args.command in ('train', 'finetune'):
+            args.initialization=args.initialization or previous.get('initialization')
+            if args.initialization: args.initialization=resolve_input(args.initialization,'Initialization')
             args.seed = args.seed if args.seed is not None else previous.get('seed', 0)
             args.optimizer = args.optimizer or previous.get('optimizer_name', 'sgd')
             args.weight_decay = args.weight_decay if args.weight_decay is not None else previous.get('weight_decay', 5e-4)
@@ -181,6 +184,8 @@ def main(argv=None):
             args.model = args.model or previous.get('model', 'vgg')
             if resume and args.model != payload['architecture']:
                 raise ValueError('Resume model differs from the saved architecture')
+            if args.model=='mobilenet_v3_small' and args.pretrained:
+                raise ValueError('Compact baseline uses random initialization; pretrained weights are unsupported')
             if resume and args.pretrained:
                 raise ValueError('--pretrained initializes a new model and cannot be used with --resume')
         if args.command == 'prune' and not 0 <= args.sparsity <= 1:
@@ -257,7 +262,8 @@ def main(argv=None):
             raise ValueError('Output cannot replace the input checkpoint')
         config = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
         config.update(output=str(output), resolved_device=str(device), data_root=str(selected_root),
-                      architecture=architecture, parent_checkpoint=str(input_path) if input_path else None)
+                      architecture=architecture, parent_checkpoint=str(input_path) if input_path else None,
+                      parent_checkpoint_sha256=hashlib.sha256(input_path.read_bytes()).hexdigest() if input_path else None)
         if args.command in ('train','finetune'):
             from .experiments import revision
             config.update(source_sha256=revision()['source_sha256'], cpu_threads=torch.get_num_threads())
@@ -267,6 +273,13 @@ def main(argv=None):
             config.update(optimizer_name=args.optimizer, scheduler_name=args.scheduler,
                 optimizer={'name': args.optimizer, 'momentum': .9 if args.optimizer == 'sgd' else None, 'weight_decay': args.weight_decay},
                 scheduler={'name': args.scheduler, 'T_max': args.epochs})
+        initialization=None
+        if args.command in ('train','finetune') and args.initialization:
+            from .baseline_init import verify_cli
+            from .experiment_io import read_json
+            initialization=read_json(args.initialization)
+            config['initialization_sha256']=hashlib.sha256(args.initialization.read_bytes()).hexdigest()
+            verify_cli(initialization,config,metadata,resume=bool(resume),input_path=input_path)
         if resume:
             import platform
             if payload.get('runtime') != {'python': platform.python_version(), 'torch': str(torch.__version__), 'cuda': torch.version.cuda}:
@@ -274,7 +287,7 @@ def main(argv=None):
             for field in ('epochs', 'learning_rate', 'batch_size', 'num_workers', 'deterministic', 'resolved_device', 'output'):
                 if config[field] != previous[field]:
                     raise ValueError(f'Resume configuration differs: {field} must be {previous[field]!r}')
-            for field in ('seed','optimizer_name','weight_decay','scheduler_name','selection_metric','cpu_threads','source_sha256','data_root'):
+            for field in ('seed','optimizer_name','weight_decay','scheduler_name','selection_metric','cpu_threads','source_sha256','data_root','initialization','initialization_sha256'):
                 if field in previous and config[field] != previous[field]:
                     raise ValueError(f'Resume configuration differs: {field}')
             if payload['epoch'] >= args.epochs:
@@ -294,6 +307,9 @@ def main(argv=None):
     criterion = nn.CrossEntropyLoss().to(device)
     if input_path:
         model, payload = load_checkpoint(input_path, device, payload=payload)
+    elif initialization:
+        from .baseline_init import fresh_model
+        model = fresh_model(initialization,len(loaders['train'].dataset.classes),device)
     else:
         model = create_model(architecture, classes=len(loaders['train'].dataset.classes),
                              pretrained=args.pretrained).to(device)
@@ -315,6 +331,12 @@ def main(argv=None):
             config_sha256=hashlib.sha256((args.experiment_config or config_path).read_bytes()).hexdigest(),
             aggregation=AGGREGATION,threshold=THRESHOLD,threshold_probability=.5,tie_class='benign',
             checkpoint_sha256=report['checkpoint_sha256'],evaluation_runtime=report['benchmark']['runtime'],**metadata)
+        if args.experiment_config is not None:
+            from .experiment_io import read_json
+            experiment_config=read_json(args.experiment_config)
+            if experiment_config.get('baseline'):
+                envelope['baseline_kind']=experiment_config['baseline']['kind']
+                envelope['checkpoint_initialization_sha256']=payload.get('config',{}).get('initialization_sha256')
         report.update(envelope)
         write_json(output, report)
         if args.predictions_output:

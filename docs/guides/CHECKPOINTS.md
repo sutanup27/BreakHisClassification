@@ -141,3 +141,22 @@ Old schema-1 run/report JSON stays readable. Supported version-1 state-dictionar
 weights remain usable for inference or a fresh fine-tuning run through individual
 commands. Old runs cannot be promoted to schema-2 phases or compared/resumed as
 phase-aware runs. Preserve the originals and use a new ID for the current workflow.
+
+## M2.2 initialization and parent lineage
+
+MobileNetV3-Small now has portable version-2 state-dictionary reconstruction with
+random initialization and explicit binary class mapping. Fresh narrow VGG saves
+its eight widths as a dense architecture, not as inherited pruned weights.
+
+For config-2 runs, `initialization.json` and its digest are frozen before fitting.
+A new continuation loads the exact selected parent weights but starts a fresh
+optimizer/schedule/RNG; its own `finetune-last.pth` is the only exact child resume
+boundary. Epoch zero, best/tie state and journaled history publication retain M1
+semantics. Scratch creates fresh weights and fresh BN affine/running state.
+
+External parent/topology references are confined to roots fixed in child inputs.
+Their hashes, supported completed development selection, class/recipe/seed/data
+identity and origin code/runtime are checked. The child records selected and
+executed parent epochs/steps without synthesizing parent optimizer/history files.
+Compatible older origins can be inputs to a new fit; this does not relax source
+checks for resuming/finalizing the child itself. Keep referenced origin files.

@@ -228,3 +228,25 @@ and `artifacts/m2-1-regression-reviewed.log`. The real metadata-only preparation
 `m2-1-planning-reviewed-20261108` has verified graph/artifact/source hashes and
 created no checkpoints.
 M1 GPU-specific evidence remains historical; M2.1 does no device probing or fitting.
+
+## M2.2 initialization checks
+
+```powershell
+python -m unittest discover -s tests -p test_baseline_initialization.py -v
+```
+
+Current full CPU suite: 174 cases, 171 passed and three CUDA-only skips, in
+211.713 seconds (`artifacts/m2-2-regression.log`). All 19 focused initialization
+cases passed in the CUDA installation (`artifacts/m2-2-cuda-tests.log`), including
+actual compact CUDA training and CPU checkpoint portability. Tests cover strict
+modes, immutable older parent origins, wrong seed/recipe/data/root/hash refusal,
+fresh scratch/BN state, fresh continuation optimizer, epoch-zero/interrupted
+resume and test-only final. No pretrained weights are downloaded.
+
+The retained generated-image public check is
+`artifacts/m2-2-initialization-smoke/summary.json`, with per-command logs/argv and
+`artifacts/m2-2-smoke.log`: real VGG parent, continuation, L1 topology, narrow
+scratch and compact runs completed; child development/final phases validated and
+parent checkpoint hashes stayed unchanged. These are functional checks, not
+competitive real-data fits or statistically controlled timing findings. Hosted
+CI remains distinct from these local results.

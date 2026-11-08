@@ -7,7 +7,8 @@ from .reporting import CLASSES, AGGREGATION, THRESHOLD, BENCHMARK_PROTOCOL
 
 
 def verify_stage(run,inputs,state,stage):
-    roots=dict(run=run,checkpoint=Path(inputs['checkpoint_directory']))
+    from .baseline_init import reference_roots
+    roots=reference_roots(run,inputs)
     record=state['stages'].get(stage,{})
     if record.get('status')!='completed': raise ValueError('Required stage is not completed: '+stage)
     actual=[setup.verify_reference(r,roots=roots) for r in record.get('artifacts',[])]
@@ -15,12 +16,15 @@ def verify_stage(run,inputs,state,stage):
         raise ValueError('Incomplete stage artifacts: '+stage)
 
 
-def development(run):
-    run=Path(run).resolve(); config,state,inputs=setup._read_prepared(run)
+def development(run, *, check_source=True):
+    run=Path(run).resolve(); config,state,inputs=setup._read_prepared(run,check_source=check_source)
     if state['phases']['development']['status']!='completed':
         raise ValueError('Final/comparison requires completed development')
-    roles=['dense','pruned','finetuned'] if config['pruning'] else ['dense']
-    stages=['train',*(['prune','finetune'] if config['pruning'] else []),
+    from .baseline_init import roles as baseline_roles, commands, continuation, designated, kind
+    roles=baseline_roles(config)
+    stages=[*commands(config),*(['prune'] if config['pruning'] else []),
+        *(['initialization'] if config.get('baseline') else []),
+        *(['parent'] if config.get('baseline') and kind(config)!='standard' else []),
         *['development-'+r for r in roles],'development-complete']
     for stage in stages: verify_stage(run,inputs,state,stage)
     selection=e.read_json(run/'development/selection.json')
@@ -28,13 +32,16 @@ def development(run):
     required=dict(schema_version=2,run_id=state['run_id'],config_sha256=identity['config_sha256'],
         manifest_sha256=identity['manifest_sha256'],preprocessing=identity['preprocessing'],
         aggregation=AGGREGATION,threshold=THRESHOLD,classes=CLASSES,
-        class_to_idx={v:i for i,v in enumerate(CLASSES)},designated_role='finetuned' if config['pruning'] else 'dense')
+        class_to_idx={v:i for i,v in enumerate(CLASSES)},designated_role=designated(config))
     if any(selection.get(k)!=v for k,v in required.items()) or set(selection.get('roles',{}))!=set(roles):
         raise ValueError('Selection config/manifest/policy/role binding differs')
-    roots=dict(run=run,checkpoint=Path(inputs['checkpoint_directory']))
+    from .baseline_init import reference_roots
+    roots=reference_roots(run,inputs)
     for role,binding in selection['roles'].items():
         command={'dense':'train','pruned':'prune','finetuned':'finetune'}[role]
-        expected=dict(checkpoint=Path(inputs['checkpoint_directory'])/f'{command}.pth',
+        inherited=continuation(config) and role=='dense'
+        inherited_parent=inputs['initialization']['parent'] if inherited else None
+        expected=dict(checkpoint=(setup.verify_reference(inherited_parent['checkpoint'],roots=roots) if inherited else Path(inputs['checkpoint_directory'])/f'{command}.pth'),
             report=run/'development'/f'{role}.metrics.json',predictions=run/'development'/f'{role}.predictions.json')
         for key,path in expected.items():
             if setup.verify_reference(binding[key],roots=roots)!=path:
@@ -44,9 +51,11 @@ def development(run):
             raise ValueError('Selection criterion/epoch differs')
         if role=='pruned':
             if binding['epoch']!=0: raise ValueError('Fixed pruning recipe must use epoch zero')
+        elif inherited:
+            if binding['epoch']!=inherited_parent['selected_epoch']: raise ValueError('Inherited parent epoch differs')
         else:
             history=e.read_json(run/f'{command}.history.json')['epochs']
-            planned=config['training']['epochs'] if command=='train' else config['pruning']['finetune_epochs']
+            planned=config['training']['epochs'] if command=='train' or continuation(config) else config['pruning']['finetune_epochs']
             if not history or len(history)!=planned or [r['epoch'] for r in history]!=list(range(1,planned+1)):
                 raise ValueError('History coverage differs')
             chosen=max(history,key=lambda r:(r['selection_score_percent'],
@@ -70,6 +79,7 @@ def validate_report(run,config,inputs,selection,role,phase):
         aggregation=AGGREGATION,threshold=THRESHOLD,threshold_probability=.5,tie_class='benign',
         source=config['data']['source'],magnification=config['data']['magnification'],
         preprocessing=inputs['identity']['preprocessing'])
+    if config.get('baseline'): fields['baseline_kind']=config['baseline']['kind']
     for document in (report,predictions):
         if any(document.get(k)!=v for k,v in fields.items()): raise ValueError('Report/prediction phase or identity differs')
         if document.get('evaluation_runtime')!=report['benchmark']['runtime']:

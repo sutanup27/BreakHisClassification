@@ -3,8 +3,8 @@
 Progress and next actions: [milestone tracker](MILESTONE_TRACKER.md).
 Milestone 1 development contract: [master spec and package tracker](../specs/m1/README.md).
 Milestone 2 baseline/control contract: [master spec and package tracker](../specs/m2/README.md);
-specifications reviewed; M2.1 plan preparation implemented, later execution and
-scientific experiments pending.
+specifications reviewed; M2.1 planning and M2.2 initialization/compact support
+implemented, later pruning-control execution and scientific experiments pending.
 
 Active implementation path, updated 8 November 2026. Use the five milestones
 below for the current research project.
@@ -16,7 +16,7 @@ This plan simplifies the workflow, not the scientific questions or evidence.
 | Milestone | Deliverable | Current implementation status | Acceptance |
 | --- | --- | --- | --- |
 | 1. Reproducible experiment foundation | Config-driven runs, saved group-separated splits, leakage checks, histories, predictions, metrics and explicit resume | Complete; all five M1 packages reviewed | Repeatable setup/run/evaluate/compare workflow; scientific quality remains separate. |
-| 2. Dense and conventional pruning baselines | Competitive dense model, conventional pruning, compact/scratch controls and matched training budgets | M2.1 plan compiler implemented; new controls and trained baselines pending | Establish the development-set detection/latency frontier and measured costs. |
+| 2. Dense and conventional pruning baselines | Competitive dense model, conventional pruning, compact/scratch controls and matched training budgets | M2.1-M2.2 planning/initialization implemented; full controls and trained baselines pending | Establish the development-set detection/latency frontier and measured costs. |
 | 3. Malignant-group vulnerability analysis (O1) | Controlled channel-removal probes, per-group damage and stability across fits | Not implemented | Determine whether conventional importance hides concentrated malignant-group harm. |
 | 4. Proposed method and decisive comparisons (O2) | Group-balanced vulnerability-aware pruning; selection-only, malignant-weighted and established competitors; targeted ablations | Not implemented | Isolate any improvement attributable to the proposed mechanism, or report a negative finding. |
 | 5. Final validation and reporting (O3) | Selected seeds/folds, paired uncertainty, repeated CPU/GPU timing, feasible replication and research tables/plots | Basic reporting available; research validation pending | Freeze development choices before final evaluation and bound claims to the evidence. |

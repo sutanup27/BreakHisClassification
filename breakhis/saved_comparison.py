@@ -24,6 +24,8 @@ def compare_saved(runs,output,*,phase='development',vary=()):
                 error=state.get('phases',{}).get(phase,{}).get('error')))
             continue
         config,state,inputs,selection=development(run)
+        if config.get('baseline',{}).get('kind','standard')!='standard':
+            raise ValueError('Baseline control comparisons require M2.5; individual development/final reports remain usable')
         if phase=='final':
             for role in selection['roles']: verify_stage(run,inputs,state,'final-'+role)
             verify_stage(run,inputs,state,'final-complete')

@@ -7,13 +7,13 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 
 | Field | Meaning and allowed values |
 | --- | --- |
-| `schema_version` | Integer `1`. |
+| `schema_version` | Integer `1` for existing configs, or `2` with the explicit `baseline` object below. |
 | `name` | Short label, 1-64 letters/digits/underscores/hyphens, beginning with a letter/digit. |
 | `data.manifest` | Path to a prepared binary manifest. Copied exactly into each run. |
 | `data.source` | `cancer_binary`; multiclass training is not yet supported. |
 | `data.magnification` | `40X`, `100X`, `200X`, `400X`, or `all`. Same split across magnifications. |
 | `data.data_root` | Source image folder, or `null` to use the manifest's root; permits relocation without changing assignments. |
-| `training.model` | `vgg`, `resnet`, or `resnet18`; fresh random initialization. |
+| `training.model` | `vgg`, `resnet`, `resnet18`; config 2 also supports `mobilenet_v3_small`. Initialization is explicit in config 2. |
 | `training.epochs` | Positive total planned dense-training epochs, not extra epochs on resume. |
 | `training.batch_size` | Positive training and image-evaluation loader batch size. |
 | `training.num_workers` | `0` for reproducible epoch-boundary resume. |
@@ -75,7 +75,8 @@ Comparison reads saved outputs only; it does not evaluate models.
 experiment config. Its complete fields/defaults are documented in
 [M2 master section 4](../specs/m2/M2_SPEC.md#4-study-matrix-and-configuration-contract).
 `run_baselines.py --stage prepare` implements this plan schema now; experiment
-config-2 execution remains M2.2-M2.4 work. Config-1 parsing has not changed.
+config-2 standard/continuation/scratch fits are implemented in M2.2; study job
+resolution/execution remains M2.3-M2.4 work. Config-1 parsing has not changed.
 
 The sample declares a 40X pilot, pooled main data, fitting seeds 102/103, ranking
 seed 202, ratios 0.25/0.50/0.75, B=20/F=5, two bounded Adam recipes and separate CPU/
@@ -109,3 +110,53 @@ without inventing a new parent fit. Actual execution/accounting is M2.4 work.
 The helpers report `execution_supported=false` even when capacity is sufficient.
 Use the exact current plan hash; changing study inputs requires fresh estimates/
 revision. Example cost numbers must not be treated as measured facts.
+
+## M2.2 explicit initialization (experiment config 2)
+
+Keep the six existing top-level fields and add exactly `baseline`. All six baseline
+fields must be present, using null where inapplicable. Paths resolve from the
+experiment config directory. Existing config-1 semantics remain unchanged.
+
+| Field | Values and constraints |
+| --- | --- |
+| `baseline.kind` | `standard`, `dense_continue`, `narrow_scratch`, `prune_from_parent` |
+| `baseline.parent_selection` | Completed phase-aware parent's `development/selection.json`, or null for standard |
+| `baseline.channels` | Eight positive VGG widths for scratch; otherwise null |
+| `baseline.topology_checkpoint` | Bound L1-pruned source defining those widths for scratch; otherwise null |
+| `baseline.ranking` | null outside parent pruning; `l1` or `random` within it |
+| `baseline.ranking_seed` | uint32 for random parent pruning; otherwise null |
+
+- `standard`: pruning and all other baseline fields null. Random VGG/ResNet18 or
+  MobileNetV3-Small. Compact example: `configs/experiments/mobilenet_baseline.json`.
+- `dense_continue`: parent required, pruning and other overrides null. Runs a
+  fresh optimizer/schedule for `training.epochs` (F), starting at the parent's
+  selected dense weights, not its optimizer state. No child `train.history.json`
+  or invented parent last checkpoint is created; child history is `finetune.history.json`.
+- `narrow_scratch`: VGG, parent, exact widths and topology required; pruning and
+  ranking fields null. Starts all numerical weights/classifier/BN state fresh.
+  Set `training.epochs` to the declared B+F budget. Parent lineage is topology
+  discovery provenance; no parent tensor/optimizer/RNG is inherited.
+- `prune_from_parent`: parsing/preparation validates the parent and ranking fields,
+  but fitting is refused until M2.3 implements the conventional controls. This
+  package does not claim random-channel pruning is executable yet.
+
+Parent fitting seed, optimizer/LR/decay/schedule, batch size, deterministic and
+selection settings, model, data/magnification/manifest/classes must match. Epoch
+allowances differ intentionally for continuation/scratch. Parent must designate
+an unpruned dense fit in a supported phase-aware run. Legacy schema-1 runs cannot
+be promoted. Origin code/runtime is retained; a compatible older parent may
+initialize a new fit, while exact child resume/final still requires the child's
+unchanged source/runtime rules. A new fit may run on a different device; that is
+not a claim of cross-device exact resume or equal compute.
+
+Scratch topology must carry `parent_checkpoint_sha256` and point to that exact
+parent. Generate it with the current low-level L1 channel prune command; old
+unbound topologies refuse with a regeneration message. Changing its file, parent
+weights/selection, declared widths, recipe or frozen initialization is an error.
+
+Preparation freezes `initialization.json` and declared external parent/topology
+roots/references in child inputs. `parent.json` records acquisition with zero
+child parent-fitting steps; the original histories and selected/executed epochs
+remain attributable by immutable reference. Do not move/change these inputs while
+using child resume/final. The runner passes advanced `--initialization FILE` to
+train/fine-tune automatically; manual use must match its complete fit contract.

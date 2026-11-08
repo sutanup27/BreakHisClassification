@@ -47,8 +47,11 @@ def integer(value, minimum, name):
 def load_config(path, *, seed=None, device=None):
     path = Path(path).resolve()
     config = read_json(path)
-    exact(config, {'schema_version','name','data','training','pruning','evaluation'}, 'experiment')
-    if type(config['schema_version']) is not int or config['schema_version'] != 1:
+    if not isinstance(config,dict): raise ValueError('Invalid experiment fields')
+    version=config.get('schema_version')
+    fields={'schema_version','name','data','training','pruning','evaluation'}
+    exact(config,fields | ({'baseline'} if type(version) is int and version==2 else set()),'experiment')
+    if type(version) is not int or version not in (1,2):
         raise ValueError('Unsupported experiment schema')
     from .paths import validate_experiment_id
     validate_experiment_id(config['name'])
@@ -73,7 +76,7 @@ def load_config(path, *, seed=None, device=None):
     integer(training['seed'], 0, 'seed')
     if training['seed'] >= 2**32: raise ValueError('Seed must be uint32')
     if type(training['deterministic']) is not bool: raise ValueError('Invalid deterministic flag')
-    if training['model'] not in ('vgg','resnet','resnet18') or training['device'] not in ('auto','cpu','cuda'):
+    if training['model'] not in (('vgg','resnet','resnet18','mobilenet_v3_small') if version==2 else ('vgg','resnet','resnet18')) or training['device'] not in ('auto','cpu','cuda'):
         raise ValueError('Unsupported model/device')
     if training['optimizer'] not in ('sgd','adam') or training['scheduler'] not in ('cosine','none'):
         raise ValueError('Unsupported optimizer/scheduler')
@@ -96,6 +99,9 @@ def load_config(path, *, seed=None, device=None):
     for field in ('repeats','batch_size','cpu_threads'): integer(evaluation[field], 1, field)
     integer(evaluation['warmup'], 0, 'warmup')
     if evaluation['device'] not in ('cpu','cuda'): raise ValueError('Choose a fixed evaluation device for comparisons')
+    if version==2:
+        from .baseline_init import validate_baseline
+        validate_baseline(config,path.parent)
     # Validate serializability/finite nested values before creating a run.
     json.dumps(config, allow_nan=False)
     return config

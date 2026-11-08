@@ -1,8 +1,8 @@
 # M2: Dense and conventional pruning baselines
 
 Specification: **M2-BASELINES-SPEC-001**, version 1.0. Date: 8 November 2026.
-Document status: Reviewed for implementation. M2.1 planning implemented;
-M2.2-M2.5 execution/model/control work and scientific experiments remain pending.
+Document status: Reviewed for implementation. M2.1-M2.2 are implemented/reviewed;
+M2.3-M2.5 pruning/control execution and scientific experiments remain pending.
 Tracker: [README.md](README.md). Assessment: [alignment review](ALIGNMENT_REVIEW.md).
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md), milestone 2.
 Scientific source: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md),
@@ -175,9 +175,9 @@ acceptance incomplete. A larger B/new recipe is an explicit bounded replan, not
 exact resume with a changed schedule. The fixed B/F numbers are adjustable pilot
 starting values; they must be frozen for each scientific matrix revision.
 
-### 4.3 Minimal proposed experiment extension
+### 4.3 Experiment config-2 extension (M2.2 implemented; parent pruning execution M2.3)
 
-Keep existing experiment schema 1 and M1 commands unchanged. **Proposed schema 2**
+Keep existing experiment schema 1 and M1 commands unchanged. **Implemented config schema 2**
 adds exactly one top-level `baseline` object to the six existing fields; existing
 schema-1 configs never acquire guessed initialization semantics.
 
@@ -437,3 +437,15 @@ a stated conservative basis covering every such job; the planner itself measures
 nothing. Unknown costs remain null. Capacity eligibility is distinct from execution
 support, which is false until later packages implement it. See the
 [implemented input guide](../../guides/EXPERIMENT_CONFIG.md#m21-study-and-cost-inputs).
+
+### M2.2 implementation handoff
+
+`baseline_init.py` validates/fixes explicit initialization modes, freezes verified
+origin references and creates only fresh model state or selected parent weights as
+declared. Config-2 standard, continuation and scratch execute with M1 histories,
+epoch publication and explicit final binding. MobileNetV3-Small has no-download
+initialization and portable strict reconstruction. Parent origins remain truthful
+across code revisions for new inputs; exact child resume/final stays source-bound.
+Shared-parent pruning execution remains M2.3, full study execution M2.4 and baseline
+control comparison/budget extensions M2.5. See the M2.2 checklist for measured test
+and generated-image evidence; no real-data convergence or novelty is claimed.

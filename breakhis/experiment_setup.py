@@ -28,7 +28,7 @@ def validate_request(*, config_file, run_id, phase, resume=False, seed=None, dev
 
 def artifact_reference(path, *, root, kind):
     from .experiments import digest
-    if kind not in ('run', 'checkpoint'):
+    if kind not in ('run', 'checkpoint', 'parent_run', 'parent_checkpoint', 'topology_checkpoint'):
         raise ValueError('Unknown artifact root kind')
     path = output_path(path, root=root)
     if not path.is_file():
@@ -57,11 +57,10 @@ def verify_reference(reference, *, roots):
 def expected_outputs(config, run, checkpoint):
     """List every required output, not just the checkpoint/metrics primary file."""
     outputs = {}
-    roles = ['dense']
-    commands = ['train']
+    from .baseline_init import roles as baseline_roles, commands as baseline_commands, kind
+    roles = baseline_roles(config)
+    commands = baseline_commands(config)
     if config['pruning']:
-        roles += ['pruned','finetuned']
-        commands += ['finetune']
         outputs['prune'] = [checkpoint/'prune.pth', checkpoint/'prune.config.json', checkpoint/'prune.validation.json']
     for command in commands:
         outputs[command] = [checkpoint/f'{command}{suffix}' for suffix in
@@ -70,13 +69,17 @@ def expected_outputs(config, run, checkpoint):
         for role in roles:
             outputs[phase+'-'+role] = [run/phase/f'{role}.metrics.json', run/phase/f'{role}.predictions.json',
                 run/phase/f'{role}.metrics.config.json']
+    if config.get('baseline'):
+        outputs['initialization']=[run/'initialization.json']
+        if kind(config)!='standard': outputs['parent']=[run/'parent.json']
     outputs['development-complete'] = [run/'development/selection.json',run/'development/results.json',
-        *[run/f'{command}.history.json' for command in commands]]
+        *[run/f'{command}.history.json' for command in commands],
+        *([run/'initialization.json'] if config.get('baseline') else [])]
     outputs['final-complete'] = [run/'final/results.json']
     return {stage:list(map(str, paths)) for stage,paths in outputs.items()}
 
 
-def _read_prepared(run):
+def _read_prepared(run, *, check_source=True):
     from .experiments import read_json, digest, revision
     for name in ('run.json','config.json','inputs.json','manifest.json','results.json'):
         output_path(run/name, root=run)
@@ -96,8 +99,14 @@ def _read_prepared(run):
         raise ValueError('Malformed phase states')
     if digest(run/'config.json') != identity['config_sha256'] or digest(run/'manifest.json') != identity['manifest_sha256']:
         raise ValueError('Frozen config/manifest changed')
-    if revision()['source_sha256'] != inputs['code']['source_sha256']:
+    if check_source and revision()['source_sha256'] != inputs['code']['source_sha256']:
         raise ValueError('Implementation changed since preparation')
+    if config.get('baseline'):
+        from .baseline_init import verify_record
+        if (digest(run/'initialization.json')!=inputs.get('initialization_sha256') or
+                read_json(run/'initialization.json')!=inputs.get('initialization')):
+            raise ValueError('Frozen initialization changed')
+        verify_record(inputs['initialization'])
     return config, state, inputs
 
 
@@ -138,6 +147,10 @@ def prepare_run(config_file=None, *, run_id=None, phase='development', resume=Fa
     manifest_bytes = Path(config['data']['manifest']).read_bytes()
     if hashlib.sha256(manifest_bytes).hexdigest() != manifest_hash or e.digest(source_config) != config_hash:
         raise ValueError('Inputs changed during preparation')
+    initialization=None
+    if config.get('baseline'):
+        from .baseline_init import inspect_initialization
+        initialization=inspect_initialization(config,manifest_hash)
     import torch
     training_device = config['training']['device']
     resolved = ('cuda' if torch.cuda.is_available() else 'cpu') if training_device == 'auto' else training_device
@@ -145,6 +158,7 @@ def prepare_run(config_file=None, *, run_id=None, phase='development', resume=Fa
         raise ValueError('CUDA training requested but unavailable')
     run_id = validate_experiment_id(run_id or config['name'][:55]+'-'+uuid.uuid4().hex[:8])
     protected = [source_config, config['data']['manifest'], config['data']['data_root']]
+    if initialization: protected.extend(initialization['roots'].values())
     run = output_path(e.RUNS/run_id, root=e.RUNS, protected=protected)
     checkpoint = checkpoint_output('cancer_binary',config['data']['magnification'],config['training']['model'],'train',experiment_id=run_id).parent
     output_path(checkpoint/'train.pth',root=checkpoint_directory('cancer_binary'),protected=[*protected,run])
@@ -159,6 +173,9 @@ def prepare_run(config_file=None, *, run_id=None, phase='development', resume=Fa
         config_source=str(source_config),config_source_sha256=config_hash,
         seeds=dict(split=json.loads(manifest_bytes).get('seed'),fitting=config['training']['seed']),
         checkpoint_directory=str(checkpoint), expected_artifacts=expected_outputs(config,run,checkpoint))
+    if initialization:
+        inputs.update(initialization=initialization,
+            initialization_sha256=hashlib.sha256(io.json_bytes(initialization)).hexdigest())
     state = dict(schema_version=SCHEMA_VERSION,run_id=run_id,status='prepared',active_phase='development',
         prepared_at=datetime.now(timezone.utc).isoformat(),
         phases={name:dict(status='not_requested') for name in PHASES},stages={})
@@ -169,6 +186,7 @@ def prepare_run(config_file=None, *, run_id=None, phase='development', resume=Fa
         checkpoint.mkdir(parents=True)
         io.publish(run/'config.json',config_bytes,root=run,protected=protected,overwrite=False)
         io.publish(run/'manifest.json',manifest_bytes,root=run,protected=protected,overwrite=False)
+        if initialization: io.write_json(run/'initialization.json',initialization,root=run,overwrite=False)
         io.write_json(run/'inputs.json',inputs,root=run,overwrite=False)
         io.write_json(run/'results.json',dict(schema_version=SCHEMA_VERSION,run_id=run_id,
             phases={name:None for name in PHASES}),root=run,overwrite=False)

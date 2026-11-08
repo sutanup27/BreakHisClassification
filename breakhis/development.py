@@ -15,6 +15,10 @@ def now():
 
 
 def run_development(config_file, *, run_id=None, resume=False, seed=None, device=None):
+    from .baseline_init import kind, continuation, commands, designated, parent_path, reference_roots
+    requested=e.load_config(config_file,seed=seed,device=device)
+    if kind(requested)=='prune_from_parent':
+        raise ValueError('Shared-parent pruning execution requires M2.3; preparation is supported')
     prepared=setup.prepare_run(config_file,run_id=run_id,resume=resume,seed=seed,device=device)
     run,config,state,inputs=(prepared[k] for k in ('run','config','state','inputs'))
     training=config['training']; evaluation=config['evaluation']; identity=inputs['identity']
@@ -27,7 +31,7 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
     frozen=dict(config,data=dict(config['data'],manifest=str(run/'manifest.json')))
     e.validate_data(frozen,splits=('train','validation'))
     checkpoint=Path(inputs['checkpoint_directory']); run_id=state['run_id']
-    roots=dict(run=run,checkpoint=checkpoint)
+    roots=reference_roots(run,inputs)
     expected=inputs['expected_artifacts']
     common=['--dataset','breakhis','--manifest',str(run/'manifest.json'),
         '--source',config['data']['source'],'--magnification',config['data']['magnification'],
@@ -72,7 +76,7 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
                     output=str(output),experiment_id=run_id,data_root=config['data']['data_root'])
                 if (any(saved.get(k)!=v for k,v in required.items()) or
                     boundary.get('runtime')!=identity['runtime'] or
-                    boundary['architecture']!=training['model'] or
+                    boundary['architecture'].replace('resnet18','resnet')!=training['model'].replace('resnet18','resnet') or
                     any(boundary['metadata'].get(k)!=v for k,v in dict(
                         manifest_sha256=identity['manifest_sha256'],source=config['data']['source'],
                         magnification=config['data']['magnification'],preprocessing=identity['preprocessing']).items()) or
@@ -108,13 +112,34 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
     fit=['--learning-rate',str(training['learning_rate']),'--optimizer',training['optimizer'],
         '--weight-decay',str(training['weight_decay']),'--scheduler',training['scheduler'],
         '--seed',str(training['seed']),'--selection-metric',training['selection_metric']]
+    if config.get('baseline'): fit += ['--initialization',str(run/'initialization.json')]
     try:
         state.update(status='running',active_phase='development')
         state.pop('error',None); phase.update(status='running',started_at=now()); phase.pop('error',None); save()
-        dense=checkpoint/'train.pth'
-        execute('train',['train',*common,*fit,'--model',training['model'],'--epochs',str(training['epochs']),
-            '--output',str(dense)],epochs=training['epochs'])
-        models=dict(dense=dense)
+        if config.get('baseline'):
+            if state['stages'].get('initialization',{}).get('status')=='completed':
+                verify_completed('initialization',state['stages']['initialization'])
+            else:
+                state['stages']['initialization']=dict(status='completed',artifacts=references('initialization'))
+            if kind(config)!='standard':
+                if state['stages'].get('parent',{}).get('status')=='completed':
+                    verify_completed('parent',state['stages']['parent'])
+                else:
+                    e.write_json(run/'parent.json',dict(kind=kind(config),parent=inputs['initialization']['parent'],
+                        topology=inputs['initialization']['topology'],child_parent_fit_steps=0,
+                        note='Immutable input acquisition; no parent fitting or synthetic optimizer/history boundary'))
+                    state['stages']['parent']=dict(status='completed',artifacts=references('parent'),optimizer_steps=0)
+                save()
+        if continuation(config):
+            dense=parent_path(inputs['initialization']); finetuned=checkpoint/'finetune.pth'
+            execute('finetune',['finetune',*common,*fit,'--checkpoint',str(dense),'--epochs',str(training['epochs']),
+                '--output',str(finetuned)],epochs=training['epochs'])
+            models=dict(dense=dense,finetuned=finetuned)
+        else:
+            dense=checkpoint/'train.pth'
+            execute('train',['train',*common,*fit,'--model',training['model'],'--epochs',str(training['epochs']),
+                '--output',str(dense)],epochs=training['epochs'])
+            models=dict(dense=dense)
         if config['pruning']:
             pruning=config['pruning']; pruned=checkpoint/'prune.pth'; finetuned=checkpoint/'finetune.pth'
             execute('prune',['prune',*common,'--checkpoint',str(dense),'--method',pruning['method'],
@@ -134,26 +159,31 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
             if e.read_json(report).get('split')!='validation' or e.read_json(prediction).get('split')!='validation':
                 raise ValueError('Development received a non-validation report')
             reports[role]=str(report); predictions[role]=str(prediction)
-        for command in ('train','finetune') if config['pruning'] else ('train',):
+        for command in commands(config):
             e.write_json(run/f'{command}.history.json',e.read_json(checkpoint/f'{command}.history.json'))
         from .checkpoints import read_checkpoint
         selected={}
+        def checkpoint_reference(path):
+            for name in ('checkpoint','parent_checkpoint'):
+                if name in roots and path.is_relative_to(roots[name]):
+                    return setup.artifact_reference(path,root=roots[name],kind=name)
+            raise ValueError('Selected checkpoint is outside declared roots')
         for role,path in models.items():
             payload=read_checkpoint(path)
-            selected[role]=dict(checkpoint=setup.artifact_reference(path,root=checkpoint,kind='checkpoint'),
+            selected[role]=dict(checkpoint=checkpoint_reference(path),
                 epoch=payload['epoch'],criterion='fixed_recipe' if role=='pruned' else training['selection_metric'],
                 report=setup.artifact_reference(reports[role],root=run,kind='run'),
                 predictions=setup.artifact_reference(predictions[role],root=run,kind='run'))
-        designated='finetuned' if config['pruning'] else 'dense'
+        designated_role=designated(config)
         selection=dict(schema_version=2,run_id=run_id,config_sha256=identity['config_sha256'],
             manifest_sha256=identity['manifest_sha256'],preprocessing=identity['preprocessing'],
             aggregation='filename-group/equal-magnification/mean-probability',threshold='argmax',
             classes=['benign','malignant'],class_to_idx={'benign':0,'malignant':1},
-            designated_role=designated,roles=selected)
+            designated_role=designated_role,roles=selected)
         e.write_json(run/'development/selection.json',selection)
         result=dict(schema_version=2,run_id=run_id,phase='development',split='validation',config=config,
-            identity=identity,reports=reports,predictions=predictions,designated_role=designated,
-            designated_metrics=e.read_json(reports[designated]),
+            identity=identity,reports=reports,predictions=predictions,designated_role=designated_role,
+            designated_metrics=e.read_json(reports[designated_role]),
             note='Validation development results; final evaluation has not run.')
         e.write_json(run/'development/results.json',result)
         state['stages']['development-complete']=dict(status='completed',artifacts=references('development-complete'))

@@ -287,9 +287,9 @@ Outputs under `artifacts/baselines/<study-id>/`:
 | `cost_inputs.json` | Optional copied cost inputs when supplied |
 | `status.json` | Preparing/prepared/failed state, no-fitting flag and complete output hashes |
 
-Drafts are deliberately not accepted by `run_experiment.py`. M2.2-M2.4 will
-implement config-2 model/init support, resolve parent/topology/recipe bindings and
-execute jobs. `pilot`, `parents`, `candidates`, `report` currently refuse clearly;
+Drafts are deliberately not accepted by `run_experiment.py`. M2.2 now supports
+resolved standard/continuation/scratch config-2 fits; M2.3-M2.4 still need to resolve
+job bindings and execute the study matrix. `pilot`, `parents`, `candidates`, `report` currently refuse clearly;
 preparation is the only implemented study stage. Existing M1 experiment commands
 remain supported and unchanged.
 
@@ -298,3 +298,60 @@ is measured by this command. Optional `--cost-estimates FILE` accepts the strict
 plan-bound JSON documented in the [config reference](EXPERIMENT_CONFIG.md#m21-study-and-cost-inputs).
 Even a sufficient capacity estimate does not enable unimplemented execution.
 A shortfall never silently removes jobs. M2.4 owns actual cost profiling/launch.
+
+## M2.2: compact baseline, continuation and scratch fits
+
+A complete compact example is now available (40X pilot, random initialization,
+25 epochs as an unvalidated B+F starting allowance):
+
+```powershell
+python run_experiment.py --config configs/experiments/mobilenet_baseline.json --run-id mobile-102
+```
+
+For continuation, copy a VGG experiment config in `configs/experiments/`, set
+`schema_version=2`, `pruning=null`, preserve the parent's fitting/data settings,
+set `training.epochs` to F, and add:
+
+```json
+"baseline": {
+  "kind": "dense_continue",
+  "parent_selection": "../../artifacts/experiments/parent-102/development/selection.json",
+  "channels": null,
+  "topology_checkpoint": null,
+  "ranking": null,
+  "ranking_seed": null
+}
+```
+
+The parent ID above is an example: use your completed dense run. Run the child
+through the same `run_experiment.py --config ... --run-id ...` entry point.
+Use the child's config/ID plus `--resume` after interruption; never point child
+resume at the parent's last checkpoint. Parent weights stay unchanged. Child
+selection binds the inherited `dense` and new `finetuned` roles, designating
+`finetuned` without choosing from test performance.
+
+For scratch, create the topology from that exact parent first:
+
+```powershell
+python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/vgg/parent-102/train.pth --method channel --sparsity 0.5 --experiment-id topology-102
+```
+
+Keep the source's manifest/root/magnification options if different from defaults.
+Then use baseline kind `narrow_scratch`, the same parent selection, eight actual
+widths from the topology checkpoint's `architecture_config.channels`, and its
+`topology_checkpoint` path. Set pruning/ranking/ranking seed null and epochs B+F.
+This rebuilds a fresh narrow network; it does not load the pruned numerical weights.
+See the [field rules](EXPERIMENT_CONFIG.md#m22-explicit-initialization-experiment-config-2).
+
+Standard, continuation and scratch keep validation-only development and support
+explicit `--phase final` on saved selections, including external parent bindings.
+They do not automatically test. Final needs only test images and the evaluation
+device; no optimizer or training pixels are required. Baseline-control comparison
+extensions belong to M2.5: saved comparisons currently refuse non-standard control
+kinds clearly rather than inventing cost/role equivalence. Standard compact runs
+remain compatible with supported saved comparisons when their invariants match.
+
+`run_baselines.py` still implements prepare only. Shared-parent pruning execution
+is M2.3; the complete real matrix, cost profiling and quality review are M2.4-M2.5.
+These initialization features and generated-image checks establish no convergence,
+pruning novelty or statistically significant deployment advantage.

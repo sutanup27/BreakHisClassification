@@ -21,7 +21,8 @@ def run_final(config_file=None,*,run_id=None,resume=False,seed=None,device=None)
     # No training availability/runtime or training-image requirement here.
     frozen=dict(config,data=dict(config['data'],manifest=str(run/'manifest.json')))
     e.validate_data(frozen,splits=('test',))
-    roots=dict(run=run,checkpoint=Path(inputs['checkpoint_directory']))
+    from .baseline_init import reference_roots
+    roots=reference_roots(run,inputs)
     from .checkpoints import read_checkpoint
     selected={}
     for role,binding in selection['roles'].items():

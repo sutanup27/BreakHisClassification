@@ -21,6 +21,12 @@ def create_model(architecture, classes=2, pretrained=False, channels=None):
         model = resnet18(weights='DEFAULT' if pretrained else None)
         model.fc = nn.Linear(model.fc.in_features, classes)
         return model
+    if architecture == 'mobilenet_v3_small':
+        if pretrained: raise ValueError('Compact baseline uses random initialization; pretrained weights are unsupported')
+        from torchvision.models import mobilenet_v3_small
+        model = mobilenet_v3_small(weights=None)
+        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features, classes)
+        return model
     raise ValueError(f'Unsupported architecture: {architecture}')
 
 
@@ -121,7 +127,7 @@ def read_checkpoint(path):
     required = {'architecture', 'classes', 'state_dict', 'metadata', 'epoch'}
     if required - payload.keys():
         raise ValueError(f'Checkpoint is missing fields: {sorted(required - payload.keys())}')
-    if payload['architecture'] not in ('vgg', 'resnet', 'resnet18'):
+    if payload['architecture'] not in ('vgg', 'resnet', 'resnet18', 'mobilenet_v3_small'):
         raise ValueError('Unsupported checkpoint architecture')
     if not isinstance(payload['classes'], list) or len(payload['classes']) < 2 or not all(
             isinstance(label, str) for label in payload['classes']) or len(set(payload['classes'])) != len(payload['classes']):
