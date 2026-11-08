@@ -61,7 +61,9 @@ The supported `prune` command uses PyTorch L1 unstructured weight pruning on
 convolution and linear layers. Masks are saved and reconstructed, and remain
 effective during fine-tuning. `--method channel` physically removes VGG channels
 and adjusts batch normalization, downstream inputs and classifier columns.
-Residual/depthwise channel models remain unsupported. Complete per-layer ratios
+Canonical ResNet18 also supports physical stage/block channel removal, coordinating
+identity/projection branches. Other residual/depthwise architectures remain unsupported.
+Complete per-layer ratios
 can be supplied with `--layer-sparsities`. For seeded random VGG channels, add
 `--ranking random --ranking-seed 202`; the default is `--ranking l1` with no seed.
 The random seed controls channel selection independently of fitting RNG.
@@ -168,3 +170,9 @@ New manifests change checkpoint provenance; retain originals for old runs.
 comparison on generated images, retaining commands, logs and reports. The regression
 suite includes the same integration path with temporary checkpoints. See
 [TESTING.md](TESTING.md) for CI, smoke options, supported scope and final acceptance.
+
+
+For ResNet18 channel pruning, optional `--group-sparsities FILE` replaces independent
+layer ratios with a complete 12-group map. `--layer-sparsities` remains available
+for VGG channels and weight masks; it refuses for ResNet channel surgery.
+See [the dependency-aware workflow](PRUNING.md#resnet18-dependency-aware-channel-pruning).

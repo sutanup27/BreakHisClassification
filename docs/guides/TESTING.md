@@ -122,7 +122,7 @@ checkpoint reconstruction, workers-zero completed-epoch resume, and
 evaluation/comparison reports. The baseline platform is Windows x64/Python 3.13;
 other OS environments need separate verification.
 
-Experimental/unsupported: multiclass training, residual/depthwise channel surgery,
+Experimental/unsupported: multiclass training, other residual/depthwise channel architectures,
 mixed channel/mask models and historical architecture-specific helpers.
 See [pruning limits](PRUNING.md).
 
@@ -250,3 +250,23 @@ scratch and compact runs completed; child development/final phases validated and
 parent checkpoint hashes stayed unchanged. These are functional checks, not
 competitive real-data fits or statistically controlled timing findings. Hosted
 CI remains distinct from these local results.
+
+
+ResNet18 channel software acceptance uses `test_resnet_channel_*.py`: canonical
+graph validation, dependency IDs, independent gated dense reference, exact slices,
+BN/classifier state, RNG, checkpoint corruption, parent controls/scratch, recovery,
+role isolation and CUDA/CPU portability. Run with:
+
+```powershell
+python -m unittest discover -s tests -p "test_resnet_channel_*.py"
+```
+
+Generated-image checks demonstrate software behavior; real ResNet baseline fitting,
+measured latency trade-offs and architecture-level research conclusions remain pending.
+
+
+M2.4: full CPU regression 206 cases (200 passed/six CUDA-only skips), five focused
+executor cases passed in the CUDA runtime, one saved-report frontier/accounting
+case and two session pause/deadline cases passed. Logs: `artifacts/m2-4-*-tests.log`
+and `artifacts/m2-4-regression.log`. Actual study artifacts, not generated fixture
+scores, determine real matrix completion. See M2.4 and its live execution status.

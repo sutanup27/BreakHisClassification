@@ -89,7 +89,7 @@ def load_config(path, *, seed=None, device=None):
     if pruning is not None:
         exact(pruning, {'method','sparsity','finetune_epochs'}, 'pruning')
         if pruning['method'] not in ('channel','unstructured'): raise ValueError('Unsupported pruning method')
-        if pruning['method'] == 'channel' and training['model'] != 'vgg': raise ValueError('Channel pruning supports VGG only')
+        if pruning['method'] == 'channel' and training['model'] not in ('vgg','resnet','resnet18'): raise ValueError('Channel pruning supports VGG and ResNet18 only')
         value = pruning['sparsity']
         if type(value) not in (int,float) or not math.isfinite(value) or not 0 < value < 1:
             raise ValueError('Pruning sparsity must be strictly between zero and one')

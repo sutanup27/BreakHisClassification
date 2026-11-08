@@ -289,8 +289,8 @@ Outputs under `artifacts/baselines/<study-id>/`:
 
 Drafts are deliberately not accepted by `run_experiment.py`. M2.2 now supports
 resolved config-2 fits, including shared-parent pruning; M2.4 still needs to resolve
-job bindings and execute the study matrix. `pilot`, `parents`, `candidates`, `report` currently refuse clearly;
-preparation is the only implemented study stage. Existing M1 experiment commands
+job bindings and execute the study matrix. `pilot`, `parents`, `candidates` and saved-only `report` are now implemented in M2.4.
+The executor resolves frozen drafts and gates main work on measured capacity. Existing M1 experiment commands
 remain supported and unchanged.
 
 Resource limits may remain null while planning. No hardware throughput or fit time
@@ -351,7 +351,7 @@ extensions belong to M2.5: saved comparisons currently refuse non-standard contr
 kinds clearly rather than inventing cost/role equivalence. Standard compact runs
 remain compatible with supported saved comparisons when their invariants match.
 
-`run_baselines.py` still implements prepare only. Shared-parent pruning execution
+`run_baselines.py` now implements prepare/pilot/parents/candidates/report. Shared-parent pruning execution
 is supported; the complete real matrix, cost profiling and quality review are M2.4-M2.5.
 These initialization features and generated-image checks establish no convergence,
 pruning novelty or statistically significant deployment advantage.
@@ -394,3 +394,109 @@ uses test only and remains separate from development.
 parent selected versus executed epochs, shared parent fitting, and separate scratch
 topology-discovery work. It does not certify equal compute or baseline convergence.
 M2.4 still owns study execution and measured budgets; M2.5 owns control comparisons.
+
+
+## ResNet18 parent and scratch controls
+
+Copy a complete config, set `training.model` to `resnet18`, and train the dense
+parent through `run_experiment.py`. Use `baseline.kind=prune_from_parent` with
+its completed development selection, preserving the same seed/recipe/batch/data
+and B. Set `pruning.method=channel`, ranking `l1` or `random` (with ranking seed),
+and recovery allowance F exactly as in the [shared-parent example](#m23-shared-parent-pruning-controls).
+Masks and dense continuation use the identical parent and F. For narrow scratch,
+copy `architecture_config.resnet_channels` from that parent's L1 pruning checkpoint
+to `baseline.channels`, bind it as `topology_checkpoint`, use fresh B+F fitting
+and null pruning/ranking. Do not reuse VGG widths or parent checkpoints for ResNet.
+
+```powershell
+python run_baselines.py --study configs/baselines/m2_study_resnet.json --stage prepare
+```
+
+This explicitly expanded study is separate from `m2_study.json`. Preparation reads
+metadata and required fitting-role paths, produces 50 prospective jobs, and neither
+fits models nor evaluates test pixels. M2.4 still owns study execution and measured
+costs; M2.5 still owns baseline-control comparisons. Cross-architecture equal
+sparsity/epoch counts do not imply equal compute or measured efficiency.
+
+## M2.4: real study execution and rest between sessions
+
+The active real binary BreaKHis study is `configs/baselines/m2_real_study.json`:
+50 maximum jobs, B=20/F=5, seeds 102/103, GPU fitting batch 32, CPU/CUDA profiles.
+Its provisional total allowance is 24 hours across three eight-hour sessions. Main
+execution requires a conservative estimate based on all six measured pilots.
+This is a resource ceiling, not a guarantee of scientific completion.
+
+The public study stages are now implemented:
+
+```powershell
+python run_baselines.py --study configs/baselines/m2_real_study.json --stage pilot --session-hours 8
+python run_baselines.py --study configs/baselines/m2_real_study.json --stage parents --session-hours 8 --second-recipes
+python run_baselines.py --study configs/baselines/m2_real_study.json --stage candidates --session-hours 8
+python run_baselines.py --study configs/baselines/m2_real_study.json --stage report
+```
+
+Preparation has already run for this study and never overwrites an existing study.
+Use `--resume` for interrupted execution with unchanged source/config/runtime.
+Completed parents/jobs are verified and reused. Candidate configs resolve recipe,
+parent and topology bindings into immutable `execution/configs` files. Optional
+second recipes are bounded and parent selection uses validation only.
+
+For a continuous session across parent/candidate stages, after resting:
+
+```powershell
+python tools/run_study_session.py --study configs/baselines/m2_real_study.json --session-hours 8 --second-recipes
+```
+
+A worker is already running; do not launch a duplicate. It waits for the active
+pilot and capacity check, then runs one job at a time. Its deadline includes the
+pilot when started with `--wait-for-pilot`. It pauses before another job would
+exceed conservative remaining headroom. Individual fits are not forcibly killed
+at an exact wall-clock instant; recorded overruns stay visible.
+
+To request rest, create an empty file named `PAUSE` in the study's `execution`
+directory. The worker stops its parent/control queue at the next job boundary.
+An independently running pilot stage finishes its short queue first. Once paused,
+rest the computer, remove that pause file manually, then run the worker command
+again. A new session resumes pending jobs; it does not retrain completed parents.
+
+Under `artifacts/baselines/m2-real-resnet-20261108/`:
+
+| Output | Meaning |
+| --- | --- |
+| `execution/live_status.json` | Worker PID, stage, deadline, pause/failure/completion |
+| `execution/ledger.json` | Jobs, attempts, selected parents, steps, presentations and replayed work |
+| `execution/measured_cost_inputs.json`, `capacity.json` | Conservative measured-family estimates and capacity |
+| `execution/profiles/` | Separate validation-only CUDA profiles |
+| `development/results.json`, `results.csv` | All completed rows and pending/failed diagnostics; descriptive frontier |
+
+Worker logs: `artifacts/m2-4-study-worker-r2.log` and `m2-4-study-worker-r2-error.log`.
+The worker refreshes the results dashboard after completed jobs. Refresh the
+browser to see the snapshot. Report performs no fitting or inference; no study
+stage evaluates held-out test pixels. M2.5 still owns matched comparisons,
+baseline-strength review and scientific frontier interpretation.
+
+
+The pilot measured a conservative maximum of about 18.16h, so the initial 16h
+allowance refused launch. Before any main fit, a resource-only revision increased
+the total allowance to 24h across three eight-hour sessions. Completed pilots and
+all scientific jobs/configs were preserved. This amendment is recorded in the
+ledger; the active worker has passed capacity and is fitting pooled parents.
+The safe revision helper permits an increased allowance only before any main
+job has started and verifies exact job/config equality; it does not change epochs,
+recipes, splits, seeds or source. Changes to those scientific settings still need
+a new study revision/ID. Current logs use the `-r2` filenames above.
+
+
+The session adapter can reconcile a failed publication before fitting, using
+verified prepared inputs and persistent stage records to prove zero fitting steps.
+For a direct stage retry stopped by an unknown-cost diagnostic, the corresponding
+public helper is:
+
+```powershell
+python tools/reconcile_study_accounting.py --study configs/baselines/m2_real_study.json
+```
+
+It only corrects failed pre-fit accounting with positive evidence and keeps all
+failed attempt wall time. It does not clear unknown partial training, alter a
+completed job or fabricate a recovery boundary. The running study remains frozen;
+operational helpers do not change its models/data/training source.

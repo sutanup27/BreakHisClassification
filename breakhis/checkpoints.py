@@ -14,13 +14,16 @@ from .models.vgg import VGG
 def create_model(architecture, classes=2, pretrained=False, channels=None):
     if architecture == 'vgg':
         return VGG(classes=classes, channels=channels)
-    if channels is not None:
-        raise ValueError('Channel configurations are supported only for VGG')
     if architecture in ('resnet', 'resnet18'):
+        if channels is not None:
+            if pretrained: raise ValueError('Narrow ResNet cannot initialize pretrained weights')
+            from .models.resnet import ChannelResNet18
+            return ChannelResNet18(channels,classes)
         from torchvision.models import resnet18
         model = resnet18(weights='DEFAULT' if pretrained else None)
         model.fc = nn.Linear(model.fc.in_features, classes)
         return model
+    if channels is not None: raise ValueError('Channel topology is unsupported for this architecture')
     if architecture == 'mobilenet_v3_small':
         if pretrained: raise ValueError('Compact baseline uses random initialization; pretrained weights are unsupported')
         from torchvision.models import mobilenet_v3_small
@@ -85,11 +88,12 @@ def save_checkpoint(path, model, architecture, metadata, epoch=0, *,
     architecture_config = {'classes': len(classes)}
     if isinstance(model, VGG) and model.channels != [value for value in VGG.ARCH if value != 'M']:
         architecture_config['channels'] = model.channels
+    if hasattr(model,'resnet_channels'): architecture_config['resnet_channels']=model.resnet_channels
     pruning_config = {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}
     if hasattr(model, 'channel_pruning'):
         if masks:
             raise ValueError('Mixed channel and weight-mask checkpoints are unsupported')
-        architecture_config['channels'] = model.channels
+        if isinstance(model,VGG): architecture_config['channels'] = model.channels
         pruning_config.update(type='channel', channel_config=model.channel_pruning)
     payload = dict(format_version=2, architecture=architecture,
                    architecture_config=architecture_config, classes=list(classes),
@@ -139,12 +143,17 @@ def read_checkpoint(path):
     if payload['format_version'] == 2:
         expected = {label: index for index, label in enumerate(payload['classes'])}
         architecture_config = payload.get('architecture_config', {})
-        if payload.get('class_to_idx') != expected or architecture_config.get('classes') != len(expected) or set(architecture_config) - {'classes', 'channels'}:
+        if payload.get('class_to_idx') != expected or architecture_config.get('classes') != len(expected) or set(architecture_config) - {'classes', 'channels', 'resnet_channels'}:
             raise ValueError('Checkpoint label mapping or architecture configuration is inconsistent')
         channels = architecture_config.get('channels')
         if channels is not None and (payload['architecture'] != 'vgg' or not isinstance(channels, list) or len(channels) != 8
                 or any(isinstance(value, bool) or not isinstance(value, int) or value < 1 for value in channels)):
             raise ValueError('Invalid VGG checkpoint channel configuration')
+        resnet_channels=architecture_config.get('resnet_channels')
+        if resnet_channels is not None:
+            if payload['architecture'] not in ('resnet','resnet18') or channels is not None: raise ValueError('Invalid ResNet architecture metadata')
+            from .models.resnet import validate_widths
+            validate_widths(resnet_channels)
         if not isinstance(payload.get('config'), dict):
             raise ValueError('Invalid checkpoint configuration')
         masks = [key.removesuffix('.weight_mask') for key in payload['state_dict'] if key.endswith('.weight_mask')]
@@ -152,11 +161,22 @@ def read_checkpoint(path):
         expected_pruning = {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}
         if pruning_config.get('type') == 'channel':
             channel_config = pruning_config.get('channel_config', {})
-            if masks or channels is None or channel_config.get('channels') != channels or channel_config.get('method') not in ('l1-output-channel','random-output-channel'):
-                raise ValueError('Inconsistent channel pruning metadata')
-            from .pruning import validate_channel_config
-            validate_channel_config(channel_config, channels)
+            if masks: raise ValueError('Mixed mask/channel checkpoint')
+            if payload['architecture'] in ('resnet','resnet18'):
+                if resnet_channels is None: raise ValueError('Missing ResNet channel topology')
+                from .resnet_pruning import validate_metadata
+                validate_metadata(channel_config,resnet_channels)
+            else:
+                if channels is None or channel_config.get('channels') != channels: raise ValueError('Inconsistent channel pruning metadata')
+                from .pruning import validate_channel_config
+                validate_channel_config(channel_config, channels)
             expected_pruning = {'type': 'channel', 'masked_modules': [], 'channel_config': channel_config}
+        if resnet_channels is not None:
+            from .models.resnet import ChannelResNet18
+            with torch.random.fork_rng(devices=[]),torch.device('meta'):
+                expected_state=ChannelResNet18(resnet_channels,len(expected)).state_dict()
+            if set(expected_state)!=set(payload['state_dict']) or any(not isinstance(payload['state_dict'][k],torch.Tensor) or payload['state_dict'][k].shape!=v.shape for k,v in expected_state.items()):
+                raise ValueError('ResNet checkpoint tensor shapes differ from topology/classes')
         if pruning_config != expected_pruning:
             raise ValueError('Checkpoint pruning configuration is inconsistent')
         for key, mask in payload['state_dict'].items():
@@ -171,7 +191,8 @@ def read_checkpoint(path):
 def load_checkpoint(path, device='cpu', *, payload=None):
     payload = payload if payload is not None else read_checkpoint(path)
     options = {}
-    channels = payload.get('architecture_config', {}).get('channels')
+    cfg=payload.get('architecture_config', {})
+    channels = cfg.get('resnet_channels',cfg.get('channels'))
     if channels is not None:
         options['channels'] = channels
     model = create_model(payload['architecture'], len(payload['classes']), **options)
@@ -182,6 +203,8 @@ def load_checkpoint(path, device='cpu', *, payload=None):
     model.load_state_dict(payload['state_dict'], strict=True)
     if payload.get('pruning', {}).get('type') == 'channel':
         model.channel_pruning = payload['pruning']['channel_config']
+        for name,settings in model.channel_pruning.get('batch_norm',{}).items():
+            module=model.get_submodule(name);module.eps=settings['eps'];module.momentum=settings['momentum']
     return model.to(device), payload
 
 

@@ -75,10 +75,12 @@ class ExperimentTests(unittest.TestCase):
         self.rows[0]['path']='../escape.png'; self.save()
         with self.assertRaisesRegex(ValueError,'Unsafe'): e.validate_data(e.load_config(self.file))
 
-    def test_channel_pruning_rejects_unsupported_models(self):
+    def test_channel_pruning_accepts_resnet_and_rejects_unknown_models(self):
         self.config['training']['model']='resnet18'
         self.config['pruning']=dict(method='channel',sparsity=.5,finetune_epochs=1); self.save()
-        with self.assertRaisesRegex(ValueError,'VGG'): e.load_config(self.file)
+        self.assertEqual(e.load_config(self.file)['training']['model'],'resnet18')
+        self.config['training']['model']='resnet50';self.save()
+        with self.assertRaisesRegex(ValueError,'model'): e.load_config(self.file)
 
     def test_magnification_balance_is_not_image_weighted(self):
         from breakhis.reporting import magnification_balanced_metrics,grouped_patient_metrics

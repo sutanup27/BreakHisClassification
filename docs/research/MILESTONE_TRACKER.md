@@ -9,8 +9,8 @@ capabilities are not completed scientific experiments or established novelty.
 
 | Milestone | Status | Already available | Completion target | Next action |
 | --- | --- | --- | --- | --- |
-| 1. Reproducible experiment foundation | Complete; M1.1-M1.5 reviewed | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); validation-only development and exact epoch recovery | Verify the complete contract, including development/final isolation and reproducible recovery | Implement M2.4 execution and budgets |
-| 2. Dense and conventional pruning baselines | In progress; M2.1-M2.3 reviewed, M2.4-M2.5/experiments pending | Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports | Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier | Implement [M2.4 execution and budgets](../specs/m2/M2_4_EXECUTION_BUDGETS.md) |
+| 1. Reproducible experiment foundation | Complete; M1.1-M1.5 reviewed | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); validation-only development and exact epoch recovery | Verify the complete contract, including development/final isolation and reproducible recovery | Monitor M2.4 actual fitting and session budget |
+| 2. Dense and conventional pruning baselines | In progress; M2.1-M2.3 reviewed, M2.4-M2.5/experiments pending | Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports | Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier | Monitor [M2.4 execution and budgets](../specs/m2/M2_4_EXECUTION_BUDGETS.md) |
 | 3. Malignant-group vulnerability analysis (O1) | Not started | Group metadata and prediction reporting can be reused | Controlled pruning probes establish whether conventional importance misses repeatable malignant-group damage | Define perturbations, per-group damage measurements and seed-stability analysis |
 | 4. Proposed method and decisive comparisons (O2) | Not started | Structural-pruning primitives can be reused | Implement the candidate mechanism and isolate its benefit from selection rules, class weighting, topology and training budget | Use milestone 3 findings to specify the method and decisive comparator/ablation matrix |
 | 5. Final validation and reporting (O3) | Not started; basic reports available | Metrics, saved predictions and resident-forward timing | Frozen evaluation, paired uncertainty, selected seed/fold repeats, repeated timing and claims bounded by feasible replication | Finalize the evaluation matrix after development choices are established |
@@ -79,3 +79,41 @@ recovery and honest saved epoch accounting. Tests cover immutable parents, fresh
 optimizers, exact child recovery, role isolation, tampering and CUDA-to-CPU final.
 These are software checks; scientific baseline runs and cost/frontier review remain
 pending. See [M2.3 evidence](../specs/m2/M2_3_PRUNING_CONTROLS.md#progress-evidence).
+
+
+### Requested ResNet18 extension
+
+[Full dependency-aware ResNet18 pruning](../specs/m2/RESNET18_CHANNEL_PRUNING_SPEC.md)
+is specified as M2.3-R: R1-R5 implementation packages and T01-T20 acceptance checks.
+Status: software implemented/reviewed. All 16 focused CUDA cases and generated
+public control phases passed; see the spec for CPU regression evidence. Next:
+M2.4 measured pilot/matrix execution using the explicit study schema-2 revision. Completed VGG M2.3 acceptance is unchanged. No real-data ResNet
+physical-pruning training/results are claimed.
+
+
+M2.3-R final software verification: full CPU suite 201 cases (195 passed, six
+CUDA-only skips; 280.079s), all 16 focused CUDA cases passed (52.958s), public
+fresh-process parent/control development and final passed, expanded study metadata
+preparation verified. Real ResNet scientific fitting and cost/frontier work remain
+pending; next M2.4. Details and logs are linked in the ResNet spec.
+
+
+### M2.4 actual study started
+
+The public study executor and accounting/retry/report software are tested: full
+CPU 206 cases (200 passed/six CUDA-only skips), five focused executor cases passed
+in CUDA runtime, plus saved-only frontier/accounting checks. Real-data study
+`m2-real-resnet-20261108` is in progress on RTX 5070 Ti: six one-epoch 40X/pooled
+pilots, then measured-capacity-gated dense parents/controls. Study artifacts hold
+the authoritative execution/live status; this tracker does not claim completed
+scientific fitting. Eight continuous hours per session, rest before continuation;
+provisional total 24h/50 jobs. M2.5 quality/frontier review still remains.
+
+
+M2.4 pilot update: all six real-data 40X/pooled cells and CPU/CUDA profiles
+completed. One-epoch validation image accuracy (40X / pooled): VGG 79.22% / 85.78%,
+ResNet18 75.90% / 74.74%, MobileNet 63.55% / 62.25%. These are preliminary pilots.
+Conservative maximum study cost ~18.16h exceeded provisional 16h; a recorded
+pre-main resource-only revision allocated 24h across three eight-hour sessions,
+preserving jobs/configs/completed pilots. Capacity passed and pooled B=20 VGG main
+training started. Required matrix and scientific quality acceptance remain pending.

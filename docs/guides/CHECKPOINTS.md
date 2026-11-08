@@ -60,7 +60,7 @@ Checkpoints use tensors and standard Python values, loaded with
 Writes use a temporary sibling file and atomic replacement. Dense and supported
 unstructured models reconstruct from their declared architecture; mask hooks are
 reinstalled before loading state. VGG channel models reconstruct from saved widths
-and retained-channel metadata. Residual/depthwise channel models and mixed
+and retained-channel metadata. Other residual/depthwise channel models and mixed
 channel/mask checkpoints remain unsupported.
 
 Version 1 checkpoints can be evaluated, pruned, or used to start a new fine-tuning
@@ -173,3 +173,26 @@ references remain hash-checked during development/final, including CPU evaluatio
 of CUDA-origin weights. Do not move or modify referenced inputs. Epoch accounting
 is in `development/results.json` under `baseline_budget`, with scratch topology
 cost separated from its own fresh training. Final evaluation never resumes fitting.
+
+
+### ResNet18 channel reconstruction
+
+Format-2 ResNet checkpoints may include `architecture_config.resnet_channels`:
+version 1, four `stage_widths` and four pairs of `hidden_widths`. Physical pruning
+metadata uses layout `resnet18-dependency-v1`, original/retained dependency IDs,
+ratios, group order, ranking rule/seed and BN eps/momentum settings. Loading checks
+metadata and state tensor shapes, then reconstructs the exact topology without
+network downloads. Both L1 and random models load on CPU from CUDA-origin files.
+Existing dense ResNet, VGG and MobileNet checkpoint contracts remain supported.
+
+
+### Actual fitting resource sidecars
+
+New fitting invocations save `train.resources.json` / `finetune.resources.json`
+next to checkpoints. They record actual optimizer callbacks/image presentations,
+including interrupted/replayed epochs, loop/checkpoint wall time and CUDA allocator
+peak allocated/reserved bytes. CPU peak RSS is null with a reason. Numerical
+resume histories remain unchanged. The study ledger hash-binds completed resource
+files and records outer job/pruning/report time separately. Hard-killed unrecorded
+work stays unknown and cannot silently certify pilot capacity. Old runs without
+these sidecars remain readable.

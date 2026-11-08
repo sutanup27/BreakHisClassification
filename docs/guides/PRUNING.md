@@ -1,15 +1,15 @@
 # Pruning and fine-tuning
 
-The supported workflow offers unstructured weight masks for VGG/ResNet18 and physical output-channel removal for sequential VGG. Pruning decisions and fine-tuned checkpoint selection use validation. Test evaluation remains a separate final step.
+The supported workflow offers unstructured weight masks for VGG/ResNet18 and physical output-channel removal for sequential VGG and canonical torchvision ResNet18. Pruning decisions and fine-tuned checkpoint selection use validation. Test evaluation remains a separate final step.
 
 ## Supported methods
 
 | Method | Models | Effect | Limits |
 | --- | --- | --- | --- |
 | `--method unstructured` (default) | VGG, ResNet18 | Masks convolution/linear weights | Dense tensor shapes remain; no guaranteed speedup |
-| `--method channel` | VGG only | Removes convolution output channels and corresponding BN/input/classifier dimensions | Ratios below 1; at least one channel remains |
+| `--method channel` | VGG, canonical ResNet18 | Removes convolution output channels and corresponding BN/input/classifier dimensions | Ratios below 1; at least one channel remains |
 
-Residual/depthwise channel surgery, tied/shared weight storage, and mixing channel-pruned models with weight masks are rejected. Historical custom ResNet, MobileNet, DenseNet, and Inception channel helpers remain experimental, outside supported commands. Unsupported channel operations do not fall back to masking.
+Other residual/depthwise architectures, tied/shared weight storage, and mixing channel-pruned models with weight masks are rejected. Historical custom ResNet, MobileNet, DenseNet, and Inception channel helpers remain experimental, outside supported commands. Unsupported channel operations do not fall back to masking.
 
 ## Channel-pruning workflow
 
@@ -78,7 +78,7 @@ Tests cover ties/boundaries, masks and momentum, missing layer settings, tied-we
 
 Use `--method channel --ranking random --ranking-seed 202` on the prune command.
 The default ranking is `l1` and accepts no ranking seed. Random ranking is not
-supported for masks, residual or depthwise surgery. Both channel rules retain
+supported for masks or depthwise surgery. Canonical ResNet18 also supports both ranking rules. Both channel rules retain
 `max(1, C - round(C * ratio))` outputs per layer and use the same checked rebuild.
 A local CPU generator selects sorted retained IDs without advancing fitting RNG.
 Saved random metadata records `random-output-channel`, seed and IDs; loading
@@ -86,3 +86,44 @@ checks that the IDs agree with the recorded seed. BN state, downstream inputs an
 classifier columns follow the selected channels. Channel reconstruction preserves
 the source model and RNG. See the [shared-parent workflow](EXPERIMENTS.md#m23-shared-parent-pruning-controls)
 for fair recovery and epoch accounting. Masks preserve dense shapes and MACs.
+
+
+## ResNet18 dependency-aware channel pruning
+
+Start from an unmasked, unpruned canonical torchvision ResNet18 parent. Both model
+aliases (`resnet`, `resnet18`) are supported. The checked graph has four stage
+output groups plus eight internal block groups. Stage 1 shares channel IDs with
+the stem; identity-connected outputs share IDs within a stage. Existing stage
+transition projections connect the different retained stage widths. Conv inputs,
+BN state and classifier columns follow those dependencies. The rebuilt model has
+smaller tensors and needs no runtime masks, gathers, padding or new projections.
+
+```powershell
+python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/resnet18/parent/train.pth --method channel --sparsity 0.5 --ranking l1 --experiment-id resnet-l1
+python -m breakhis prune --dataset breakhis --checkpoint ../checkpoint/binary/40X/resnet18/parent/train.pth --method channel --sparsity 0.5 --ranking random --ranking-seed 202 --experiment-id resnet-random
+```
+
+Supply the parent's manifest/source/root/magnification options when nondefault.
+Examples assume a completed parent called `parent`; they do not launch parent
+training. Existing finetune/evaluate commands reconstruct saved shapes automatically.
+For reproducible controls prefer the config-2 development runner and explicit final
+workflow in [EXPERIMENTS.md](EXPERIMENTS.md#resnet18-parent-and-scratch-controls).
+
+ResNet L1 importance averages the per-filter mean absolute weight across all
+producer convolutions in each dependency group, including projection producers
+(and the stem for stage 1). Ties use original IDs. This is a declared conventional
+heuristic, distinct from VGG's filter sum rule and from malignant-aware scoring.
+Random uses a local generator in recorded group order, preserving fitting RNG.
+
+Uniform `--sparsity` is the default. Advanced `--group-sparsities FILE` requires
+exactly `stage1` through `stage4` and `layer1.0.hidden`, `layer1.1.hidden`, ...,
+`layer4.1.hidden`, each with a finite ratio in [0,1). Use the same widths for
+L1/random. `--layer-sparsities` is rejected for ResNet channel pruning because
+individual layer choices can break residual dependencies. Group overrides are
+excluded from shared-parent uniform matrix controls. Source weights remain intact.
+
+Bottleneck/ResNet50, custom graph/normalization, grouped/depthwise/dilated models,
+masked/re-pruned sources and mixed channel/mask surgery refuse. A supported model
+with zero pruning retains dense predictions within numerical tolerance. Nonzero
+pruning changes predictions and requires recovery; lower MACs do not guarantee
+lower measured latency. Dense, scratch and pruned runs remain separate controls.

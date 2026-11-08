@@ -460,3 +460,15 @@ committed-epoch resume and explicit final. Parent weights stay immutable. Saved
 budgets distinguish executed/selected parent epochs, child fitting and scratch
 topology-discovery work; they do not equate passes with compute. M2.4/M2.5 measured
 costs, study execution and empirical baseline/frontier review remain pending.
+
+
+### Implemented ResNet18 extension (M2.3-R)
+
+The [dependency-aware spec](RESNET18_CHANNEL_PRUNING_SPEC.md) extends physical
+support from VGG to canonical ResNet18, including stage outputs, internal channels,
+existing projections and classifier inputs. R1-R5 software acceptance is reviewed.
+Use study schema 2 with explicit `pruning_models` for the expanded matrix; schema 1
+keeps the original VGG controls. Separate architecture cost buckets and strict
+phase/budget rules apply. Existing earlier references to residual surgery being
+out of scope describe the original VGG package, not this accepted extension.
+Real fitting/profiling and empirical control comparisons remain M2.4/M2.5 work.

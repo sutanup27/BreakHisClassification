@@ -33,8 +33,10 @@ def seed(value,name):
 
 def load_study(path):
     path=Path(path).expanduser().resolve(); study=io.read_json(path)
-    e.exact(study,FIELDS,'baseline study')
-    if type(study['schema_version']) is not int or study['schema_version']!=1: raise ValueError('Unsupported study schema')
+    version=study.get('schema_version')
+    e.exact(study,FIELDS|({'pruning_models'} if version==2 else set()),'baseline study')
+    if version==2 and (not isinstance(study['pruning_models'],list) or not study['pruning_models'] or any(not isinstance(m,str) or m not in ('vgg','resnet18') for m in study['pruning_models']) or len(set(study['pruning_models']))!=len(study['pruning_models'])):raise ValueError('Invalid pruning_models')
+    if type(study['schema_version']) is not int or study['schema_version'] not in (1,2): raise ValueError('Unsupported study schema')
     validate_experiment_id(study['study_id'])
     # A case-insensitive Windows workspace must not receive reserved device names.
     reserved={'CON','PRN','AUX','NUL',*[f'COM{i}' for i in range(1,10)],*[f'LPT{i}' for i in range(1,10)]}
@@ -135,6 +137,9 @@ def compile_plan(study_file):
         elif kind=='dense_continue': baseline['kind']='dense_continue'
         config['baseline']=baseline
         planned_widths=[max(1,c-round(c*ratio)) for c in widths] if ratio is not None and kind!='l1_mask' else None
+        if model=='resnet18' and planned_widths is not None:
+            stages=[max(1,c-round(c*ratio)) for c in (64,128,256,512)]
+            planned_widths=dict(version=1,stage_widths=stages,hidden_widths=[[v,v] for v in stages])
         # Drafts never guess a selected parent or pretend null lineage is runnable.
         unresolved=list((bindings or {}).keys())
         if kind=='narrow_scratch':
@@ -165,22 +170,23 @@ def compile_plan(study_file):
             policy='validation-group-BA/lower-loss/earlier-recipe',phase='development'))
         parents[(primary,model)]=selector
     repeat=study['repeat_seed']
-    repeat_parent=add('parent','vgg',repeat,B,dependencies=[parents[(primary,'vgg')]],
-        bindings={'training.recipe':parents[(primary,'vgg')]})
-    parents[(repeat,'vgg')]=repeat_parent
-    for fit_seed,ratios in ((primary,study['ratios']),(repeat,[study['repeat_ratio']])):
-        parent=parents[(fit_seed,'vgg')]
-        for ratio in ratios:
-            l1=add('l1_channel','vgg',fit_seed,B,ratio=ratio,dependencies=[parent],
-                bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,'vgg')]})
-            for kind in ('random_channel','l1_mask','narrow_scratch'):
-                deps=[parent,*([l1] if kind=='narrow_scratch' else [])]
-                bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,'vgg')]}
-                if kind=='narrow_scratch': bindings['baseline.topology_checkpoint']=l1
-                add(kind,'vgg',fit_seed,B+F if kind=='narrow_scratch' else B,ratio=ratio,
-                    dependencies=deps,bindings=bindings)
-        add('dense_continue','vgg',fit_seed,F,dependencies=[parent],
-            bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,'vgg')]})
+    for model in study.get('pruning_models',['vgg']):
+        repeat_parent=add('parent',model,repeat,B,dependencies=[parents[(primary,model)]],
+            bindings={'training.recipe':parents[(primary,model)]})
+        parents[(repeat,model)]=repeat_parent
+        for fit_seed,ratios in ((primary,study['ratios']),(repeat,[study['repeat_ratio']])):
+            parent=parents[(fit_seed,model)]
+            for ratio in ratios:
+                l1=add('l1_channel',model,fit_seed,B,ratio=ratio,dependencies=[parent],
+                    bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,model)]})
+                for kind in ('random_channel','l1_mask','narrow_scratch'):
+                    deps=[parent,*([l1] if kind=='narrow_scratch' else [])]
+                    bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,model)]}
+                    if kind=='narrow_scratch': bindings['baseline.topology_checkpoint']=l1
+                    add(kind,model,fit_seed,B+F if kind=='narrow_scratch' else B,ratio=ratio,
+                        dependencies=deps,bindings=bindings)
+            add('dense_continue',model,fit_seed,F,dependencies=[parent],
+                bindings={'baseline.parent_selection':parent,'training.recipe':parents[(primary,model)]})
     for mag in ('40X','all'):
         for model in ('vgg','resnet18',study['compact_model']):
             add('pilot',model,primary,1,scope='pilot-'+mag)
@@ -236,13 +242,13 @@ def validate_graph(plan):
         parent_id=job['bindings'].get('baseline.parent_selection')
         if parent_id:
             parent=by_id[parent_id]
-            if parent['seed']!=job['seed'] or parent['model']!='vgg' or parent.get('phase')!='development':
+            if parent['seed']!=job['seed'] or parent['model']!=job['model'] or parent.get('phase')!='development':
                 raise ValueError('Bound parent seed/model/phase differs')
         topology=job['bindings'].get('baseline.topology_checkpoint')
         if topology:
             origin=by_id[topology]
             if (origin.get('kind')!='l1_channel' or origin['seed']!=job['seed'] or
-                    origin['ratio']!=job['ratio'] or origin['planned_widths']!=job['planned_widths']):
+                    origin['model']!=job['model'] or origin['ratio']!=job['ratio'] or origin['planned_widths']!=job['planned_widths']):
                 raise ValueError('Topology source differs from matched L1 control')
     return plan
 
@@ -298,6 +304,8 @@ def require_capacity(plan,estimates=None,retries=()):
 
 
 def prepare(study_file,*,cost_file=None):
+    import time
+    preparation_started=time.perf_counter()
     plan,configs,manifest,template=compile_plan(study_file)
     estimates=io.read_json(cost_file) if cost_file else None
     cost=estimate_cost(plan,estimates)
@@ -325,7 +333,7 @@ def prepare(study_file,*,cost_file=None):
         if estimates is not None: io.write_json(root/'cost_inputs.json',estimates,root=root,overwrite=False)
         for job_id,config in configs.items(): io.write_json(root/f'configs/{job_id}.json',config,root=root,overwrite=False)
         artifacts={p.relative_to(root).as_posix():e.digest(p) for p in sorted(root.rglob('*')) if p.is_file() and p.name!='status.json'}
-        status.update(status='prepared',artifacts=artifacts,plan_sha256=sha(plan))
+        status.update(status='prepared',artifacts=artifacts,plan_sha256=sha(plan),preparation_seconds=time.perf_counter()-preparation_started)
         io.write_json(root/'status.json',status,root=root)
     except BaseException as error:
         status.update(status='interrupted' if isinstance(error,KeyboardInterrupt) else 'failed',error=dict(type=type(error).__name__,message=str(error)))
@@ -341,8 +349,19 @@ def main(argv=None):
     parser.add_argument('--stage',choices=['prepare','pilot','parents','candidates','report'],required=True)
     parser.add_argument('--cost-estimates',type=Path,help='Optional plan-bound cost JSON; no measurements are made by preparation')
     parser.add_argument('--resume',action='store_true')
+    parser.add_argument('--session-hours',type=float,default=8,help='Pause between jobs before this session allowance is exhausted')
+    parser.add_argument('--max-jobs',type=int,help='Optional session job count; does not reduce the required matrix')
+    parser.add_argument('--second-recipes',action='store_true',help='Run the bounded second recipe for all parent families before freezing selection')
     args=parser.parse_args(argv)
-    if args.stage!='prepare': parser.exit(1,'Only prepare is implemented (M2.1); execution/report stages require M2.2-M2.5.\n')
+    if args.stage!='prepare':
+        from .study_execution import execute
+        try:
+            if args.max_jobs is not None and args.max_jobs<1:raise ValueError('max-jobs must be positive')
+            result=execute(args.study,args.stage,resume=args.resume,session_hours=args.session_hours,max_jobs=args.max_jobs,second_recipes=args.second_recipes)
+            print('Study '+args.stage+' finished this session; completed report rows: '+str(len(result['rows'])))
+            print('Required matrix complete: '+str(result['complete_required'])+'; scientific quality review remains M2.5')
+        except (ValueError,OSError,KeyError,RuntimeError) as error:parser.exit(1,str(error)+'\n')
+        return
     if args.resume: parser.exit(1,'Preparation never overwrites a study; use a new study_id. Execution resume is added in M2.4.\n')
     try:
         root=prepare(args.study,cost_file=args.cost_estimates)

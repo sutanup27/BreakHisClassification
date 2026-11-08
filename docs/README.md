@@ -33,3 +33,14 @@ Edit Markdown in the appropriate group, then run `python tools/build_docs.py` to
 refresh `index.html`. Command examples assume the repository root as working
 directory, regardless of the Markdown file's folder. Runtime data/checkpoints
 retain their documented locations.
+
+
+The [results dashboard](results.html) is an offline snapshot of saved experiment
+reports with filters, charts and configuration details. Rebuild after experiments
+with `python tools/build_results.py`; see the repository README for scope and usage.
+
+
+For the requested additional architecture, see the [ResNet18 dependency-aware
+channel-pruning implementation and test spec](specs/m2/RESNET18_CHANNEL_PRUNING_SPEC.md).
+ResNet18 physical channel support is now implemented alongside VGG; measured
+scientific baseline experiments remain pending.

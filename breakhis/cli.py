@@ -105,6 +105,7 @@ def main(argv=None):
             command.add_argument('--ranking-seed',type=int)
             command.add_argument('--sparsity', type=float, default=.5)
             command.add_argument('--method', choices=['unstructured', 'channel'], default='unstructured')
+            command.add_argument('--group-sparsities',type=Path,help='Complete ResNet18 dependency-group ratio map')
             command.add_argument('--layer-sparsities', type=Path, help='JSON object specifying every eligible layer name and ratio')
     comparison = commands.add_parser('compare', help='Compare dense, pruned and fine-tuned checkpoints on the reserved test split')
     add_data_options(comparison)
@@ -202,6 +203,9 @@ def main(argv=None):
             elif args.ranking_seed is not None: raise ValueError('L1 ranking seed must be omitted')
             from .pruning import validate_sparsity
             validate_sparsity(args.sparsity, channel=args.method == 'channel')
+            if args.group_sparsities:
+                args.group_sparsities=resolve_input(args.group_sparsities,'Group sparsities')
+                if args.layer_sparsities or args.method!='channel': raise ValueError('Group ratios require channel pruning and no layer ratios')
             if args.layer_sparsities:
                 args.layer_sparsities = resolve_input(args.layer_sparsities, 'Layer sparsities')
         args.experiment_id = validate_experiment_id(args.experiment_id or previous.get('experiment_id') or
@@ -244,8 +248,20 @@ def main(argv=None):
             if payload['classes'] != ['benign', 'malignant']:
                 raise ValueError('Checkpoint class labels differ from the binary dataset')
         architecture = args.model if args.command == 'train' else payload['architecture']
-        if args.command == 'prune' and args.method == 'channel' and architecture != 'vgg':
-            raise ValueError('Channel pruning supports VGG only; residual/depthwise architectures are unsupported')
+        if args.command == 'prune' and args.method == 'channel' and architecture not in ('vgg','resnet','resnet18'):
+            raise ValueError('Channel pruning supports VGG and canonical ResNet18 only')
+        if args.command=='prune':
+            if args.group_sparsities and architecture not in ('resnet','resnet18'):raise ValueError('Group sparsities require ResNet18')
+            if args.method=='channel' and architecture in ('resnet','resnet18'):
+                if args.layer_sparsities:raise ValueError('ResNet18 requires dependency-group ratios, not layer sparsities')
+                from .resnet_pruning import GROUPS
+                from .pruning import layer_settings
+                settings=json.loads(args.group_sparsities.read_text(encoding='utf-8-sig')) if args.group_sparsities else None
+                layer_settings([(k,None) for k in GROUPS],args.sparsity,settings,channel=True)
+                # Reject unsupported source graphs before requesting any pixel loaders.
+                from .resnet_pruning import validate_source
+                preview,_=load_checkpoint(input_path,device,payload=payload)
+                validate_source(preview);del preview
         if args.command == 'evaluate':
             output = args.output.absolute() if args.output else checkpoint_output(
                 args.source, args.magnification, architecture, args.command,
@@ -360,8 +376,10 @@ def main(argv=None):
     if args.command == 'prune':
         from .pruning import prune_weights, prune_vgg_channels
         try:
-            settings = json.loads(args.layer_sparsities.read_text(encoding='utf-8-sig')) if args.layer_sparsities else None
-            model = (prune_vgg_channels(model,args.sparsity,settings,ranking=args.ranking,ranking_seed=args.ranking_seed)
+            settings = json.loads((args.group_sparsities or args.layer_sparsities).read_text(encoding='utf-8-sig')) if (args.group_sparsities or args.layer_sparsities) else None
+            from .resnet_pruning import prune_resnet_channels
+            surgery=prune_vgg_channels if architecture=='vgg' else prune_resnet_channels
+            model = (surgery(model,args.sparsity,settings,ranking=args.ranking,ranking_seed=args.ranking_seed)
                 if args.method=='channel' else prune_weights(model,args.sparsity,settings))
         except (ValueError, OSError) as error:
             parser.error(str(error))
@@ -400,16 +418,26 @@ def main(argv=None):
     # resume invocation's config or freshly initialized RNG state.
     if not resume:
         save_training(latest, 0)
+    resource_path=output.with_suffix('.resources.json')
+    from .experiment_io import read_json
+    resource_attempts=read_json(resource_path).get('attempts',[]) if resource_path.exists() else []
+    attempt_steps=attempt_images=0
+    attempt_status='running';attempt_started=time.perf_counter()
+    if device.type=='cuda':
+        torch.cuda.synchronize(device);torch.cuda.reset_peak_memory_stats(device)
     completed_epoch = first_epoch - 1
     try:
         for epoch in range(first_epoch, args.epochs + 1):
             learning_rate = optimizer.param_groups[0]['lr']
             optimizer_steps = 0
             def counted_step():
-                nonlocal optimizer_steps
-                optimizer_steps += 1
+                nonlocal optimizer_steps,attempt_steps,attempt_images
+                optimizer_steps += 1;attempt_steps+=1
+                attempt_images+=min(args.batch_size,max(0,len(loaders['train'].dataset)-(optimizer_steps-1)*args.batch_size))
+            if device.type=='cuda':torch.cuda.synchronize(device)
             started = time.perf_counter()
             loss = train(model, loaders['train'], criterion, optimizer, epoch=epoch, callbacks=[counted_step])
+            if device.type=='cuda':torch.cuda.synchronize(device)
             training_seconds = time.perf_counter() - started
             started = time.perf_counter()
             if args.selection_metric == 'group_balanced_accuracy':
@@ -425,6 +453,7 @@ def main(argv=None):
             else:
                 accuracy, val_loss = evaluate(model, loaders['validation'], criterion)
                 selection_score = accuracy
+            if device.type=='cuda':torch.cuda.synchronize(device)
             validation_seconds = time.perf_counter() - started
             print(f'Epoch {epoch}: train {training_seconds:.1f}s; validation {time.perf_counter()-started:.1f}s; loss {loss:.4f}; validation loss {val_loss:.4f}; accuracy {accuracy:.4f}%', flush=True)
             improved = selection_score > best_accuracy or (args.selection_metric == 'group_balanced_accuracy'
@@ -443,12 +472,26 @@ def main(argv=None):
             commit(output, latest, previous_epoch=completed_epoch,
                    save_latest=lambda: save_training(latest, epoch))
             completed_epoch = epoch
+        attempt_status='completed'
     except KeyboardInterrupt:
+        attempt_status='interrupted'
         interrupted = output.with_name(output.stem + '-interrupted.pth')
         save_checkpoint(interrupted, model, architecture, metadata, completed_epoch,
                         classes=loaders['train'].dataset.classes, config=config)
         print(f'Interrupted partial-epoch weights: {interrupted}; resume completed epochs from {latest}', flush=True)
         return
+    finally:
+        # Sidecar records actual replayed work without changing numerical histories.
+        if device.type=='cuda':torch.cuda.synchronize(device)
+        resource_attempts.append(dict(status=attempt_status if attempt_status!='running' else 'failed',
+            started_epoch=first_epoch,completed_epoch=completed_epoch,
+            optimizer_steps=attempt_steps,image_presentations=attempt_images,
+            seconds=time.perf_counter()-attempt_started,device=str(device),
+            cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated(device) if device.type=='cuda' else None,
+            cuda_peak_reserved_bytes=torch.cuda.max_memory_reserved(device) if device.type=='cuda' else None,
+            cpu_peak_rss_bytes=None,cpu_peak_rss_reason='Process RSS peak is not measured by this tensor-allocation profiler',
+            memory_scope='CUDA allocator peak since this fit invocation started; includes live model/optimizer, excludes other processes'))
+        write_json(resource_path,dict(schema_version=1,attempts=resource_attempts))
     print(f'Best validation {args.selection_metric}: {best_accuracy:.4f}%; checkpoint: {output}; resume checkpoint: {latest}', flush=True)
 
 

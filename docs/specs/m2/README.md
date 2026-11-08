@@ -15,7 +15,7 @@ measurement or research novelty is claimed from these documents.
 | [M2.1 Matrix and recipes](M2_1_MATRIX_RECIPES.md) | Strict study compiler, frozen job graph and honest capacity accounting | M2-R01-M2-R03 | M2-T01-M2-T04 | M1 | Reviewed | 20 focused tests; CPU 153 passed/2 skipped; real metadata-only preparation |
 | [M2.2 Initialization and models](M2_2_INITIALIZATION_MODELS.md) | Bound parent reuse, fresh continuation/scratch and compact model | M2-R04-M2-R06 | M2-T05-M2-T09 | M2.1 | Reviewed | CPU 171 passed/3 skipped; CUDA 19 focused cases passed; public initialization smoke passed |
 | [M2.3 Pruning controls](M2_3_PRUNING_CONTROLS.md) | Matched-width random/L1 surgery, masks and fair recovery through phase artifacts | M2-R07-M2-R09 | M2-T10-M2-T13 | M2.1-M2.2 | Reviewed | 11 focused cases: CPU 10 passed/1 skipped; CUDA all passed; CPU 181 passed/4 skipped; public controls verified |
-| [M2.4 Execution and budgets](M2_4_EXECUTION_BUDGETS.md) | Tested public executor, measured pilot and complete real core/repeat matrix | M2-R10-M2-R12 | M2-T14-M2-T18 | M2.1-M2.3 | Not started | No M2 fitting/profile performed |
+| [M2.4 Execution and budgets](M2_4_EXECUTION_BUDGETS.md) | Tested public executor, measured pilot and complete real core/repeat matrix | M2-R10-M2-R12 | M2-T14-M2-T18 | M2.1-M2.3 | Software tested; pilots complete, main fitting active | Public executor/fixture/recovery/accounting tests passed; actual study in progress |
 | [M2.5 Frontier and handoff](M2_5_FRONTIER_HANDOFF.md) | Verified comparisons, baseline-strength review and M3 inputs | M2-R13-M2-R15 | M2-T19-M2-T22 | M2.4 executor for code; real runs for final review | Not started | No real frontier/quality review produced |
 
 ## Implementation path
@@ -27,7 +27,7 @@ matrix/recipes -> initialization/models -> pruning controls
              -> development frontier/quality review -> M3 handoff
 ```
 
-Next: **M2.4 execution and budgets**. Build reporting/integration code from small fixtures before
+Next: **Monitor M2.4 main fitting and rest/resume sessions**, then M2.5 quality/frontier review. Build reporting/integration code from small fixtures before
 long fits to avoid source-drift interruption of active runs. M2.4/M2.5 acceptance
 requires real experiments; their implementation can be tested earlier. A verified
 parent input is distinct from exact resume of the original parent.
@@ -93,3 +93,31 @@ fitting and scratch topology discovery. CPU regression: 185 cases, 181 passed/fo
 CUDA-only skips (226.692s); focused CUDA: all 11 passed (14.416s). Public generated
 parent plus six control development/final workflows passed. Detailed commands/logs
 are listed in the M2.3 checklist. Next M2.4; real studies remain unrun.
+
+
+## Requested architecture extension: M2.3-R
+
+The [ResNet18 full dependency-aware pruning spec](RESNET18_CHANNEL_PRUNING_SPEC.md)
+adds coordinated residual-stage, hidden-channel, projection and classifier surgery.
+Its five ordered implementation packages R1-R5 and 20 acceptance tests T01-T20
+are **implemented and reviewed**. Full stage/hidden/projection/classifier surgery,
+L1/random ranking, checkpoints, fresh scratch/recovery and explicit final are
+verified. The opt-in study schema-2 example adds ResNet controls to the M2.4 matrix.
+Measured fitting/budget and quality review remain pending. Existing VGG configs and completed evidence remain unchanged.
+
+
+ResNet acceptance evidence: CPU 195 passed/six CUDA-only skips; focused CUDA all
+16 passed. Public generated-image parent plus six control development/final flows
+and real metadata-only study preparation passed. New plan maximum: 50 prospective
+fits; no real scientific fitting or throughput claim. See the extension spec.
+
+
+## M2.4 active real study
+
+Executor implementation is tested (CPU 200 passed/six skips; five focused executor
+cases also passed in the CUDA runtime). Actual study `m2-real-resnet-20261108`
+runs real 40X/pooled pilots before capacity-certified parents and controls.
+Checkpoint locations and the frozen phase workflow are unchanged. Eight-hour
+continuous sessions are resumable after rest; provisional total allocation is three
+sessions (24h), with 50 maximum planned fits. See the M2.4 evidence/status section.
+Scientific completion remains pending while the matrix and quality review run.

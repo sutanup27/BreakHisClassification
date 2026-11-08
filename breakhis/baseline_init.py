@@ -43,10 +43,13 @@ def validate_baseline(config,base):
             raise ValueError('Continuation/scratch cannot prune or rank')
         if mode=='dense_continue':
             if b['channels'] is not None or b['topology_checkpoint'] is not None: raise ValueError('Continuation cannot override topology')
-        elif (config['training']['model']!='vgg' or b['topology_checkpoint'] is None or
-              not isinstance(b['channels'],list) or len(b['channels'])!=8 or
-              any(type(v) is not int or v<1 for v in b['channels'])):
-            raise ValueError('Scratch requires VGG, eight positive widths and topology checkpoint')
+        else:
+            if b['topology_checkpoint'] is None: raise ValueError('Scratch requires topology checkpoint')
+            if config['training']['model'] in ('resnet','resnet18'):
+                from .models.resnet import validate_widths
+                validate_widths(b['channels'])
+            elif (config['training']['model']!='vgg' or not isinstance(b['channels'],list) or len(b['channels'])!=8 or any(type(v) is not int or v<1 for v in b['channels'])):
+                raise ValueError('Scratch requires supported architecture channel widths')
 
 
 def reference_roots(run,inputs):
@@ -130,9 +133,9 @@ def inspect_initialization(config,manifest_sha256):
         code=pi['code'],runtime=pi['identity']['runtime'],architecture=payload['architecture'])
     if kind(config)=='narrow_scratch':
         topology_path=Path(config['baseline']['topology_checkpoint']); topology=read_checkpoint(topology_path)
-        if (topology['architecture']!='vgg' or topology['classes']!=CLASSES or topology['pruning']['type']!='channel' or
+        if (topology['architecture'].replace('resnet18','resnet')!=pc['training']['model'].replace('resnet18','resnet') or topology['classes']!=CLASSES or topology['pruning']['type']!='channel' or
             topology['pruning']['channel_config']['method']!='l1-output-channel' or
-            topology['architecture_config'].get('channels')!=record['channels'] or
+            topology['architecture_config'].get('resnet_channels',topology['architecture_config'].get('channels'))!=record['channels'] or
             any(topology['metadata'].get(k)!=v for k,v in expected.items()) or
             topology['config'].get('parent_checkpoint_sha256')!=e.digest(parent_path) or
             Path(topology['config'].get('parent_checkpoint','')).resolve()!=parent_path.resolve()):
@@ -181,7 +184,7 @@ def verify_pruned(record,payload):
         cfg=pruning.get('channel_config',{})
         if (pruning['type']!='channel' or cfg.get('method')!=record['ranking']+'-output-channel' or
             cfg.get('ranking_seed')!=record['ranking_seed'] or
-            any(v['requested_sparsity']!=expected['sparsity'] for v in cfg.get('layers',{}).values())):
+            any(v['requested_sparsity']!=expected['sparsity'] for v in cfg.get('groups',cfg.get('layers',{})).values())):
             raise ValueError('Pruned channel topology differs from frozen control')
     elif pruning['type']!='unstructured': raise ValueError('Expected L1 masked checkpoint')
 
@@ -198,7 +201,7 @@ def verify_cli(record,config,metadata,*,resume=False,input_path=None):
         if actual!=v: raise ValueError('Initialization fit contract differs: '+k)
     if pruning_command:
         p=record['pruning']
-        if (Path(input_path)!=parent_path(record) or config.get('layer_sparsities') is not None or
+        if (Path(input_path)!=parent_path(record) or (config.get('layer_sparsities') is not None or config.get('group_sparsities') is not None) or
             config['method']!=p['method'] or config['sparsity']!=p['sparsity'] or
             config['ranking']!=record['ranking'] or config['ranking_seed']!=record['ranking_seed']):
             raise ValueError('Pruning command differs from frozen parent/ranking/ratio')

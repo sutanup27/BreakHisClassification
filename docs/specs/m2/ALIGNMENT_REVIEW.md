@@ -27,7 +27,7 @@ Coverage below describes the specification, not completed experiments.
 | --- | --- | --- | --- | --- | --- |
 | Roadmap M2; guide 12-14: credible dense references | M2-R01, M2-R05, M2-R10, M2-R14 | M2.1, M2.2, M2.4, M2.5 | VGG/ResNet18/compact real fits, bounded recipe opportunity, curves/absolute rates, reproducible artifacts; T01-T02, T07, T14, T17, T21 | Covered | Competitive quality must actually be reviewed; 20 epochs alone is not acceptance |
 | Guide 7 and 9: magnification/data/operating point | M2-R02, M2-R09 | M2.1, M2.3 | 40X pilot versus pooled main, same manifest, equal-magnification group reporting, argmax/0.5 tie-to-benign; T03, T13 | Covered | Full fold/threshold-calibration design belongs to later work; do not claim it exists |
-| Guide 15: physical surgery | M2-R07 | M2.3 | L1/random same checked VGG reconstruction, exact index/BN/classifier/mask tests; T10-T11 | Covered | No residual/depthwise surgery or compact-model pruning claimed |
+| Guide 15: physical surgery | M2-R07 | M2.3 | L1/random same checked VGG reconstruction, exact index/BN/classifier/mask tests; T10-T11 | Covered | Canonical ResNet18 added by M2.3-R; other residual/depthwise and compact pruning excluded |
 | Guide 16: bounded conventional pilot | M2-R01, M2-R10, M2-R11 | M2.1, M2.4 | Fixed ratios, cost profile, equal F and measured CPU/CUDA profiles; T02, T14-T17 | Covered | Conditional resource limits remain measured, not assumed |
 | Guide 17: dense/mask/L1/random/scratch/compact minimum controls | M2-R04-M2-R09, M2-R14 | M2.2, M2.3, M2.5 | Same parent per seed, same widths, scratch B+F, continuation, random rank and masks; T05-T13, T21 | Covered | Core controls cannot be silently dropped when unhelpful |
 | Guide 17 full comparator list: adaptive/hardware-aware and class-aware methods | M2-R13, M2-R14 provide reusable comparison/cost foundation | M2.5 handoff; M4 future implementation | Current matrix does not test benefit beyond these competitors | Partial | M4 must implement/faithfully adapt established competitors under matched selection/search/recovery budgets before O2 claims |
@@ -135,3 +135,15 @@ Generated-image execution/recovery/final and CUDA-origin portability tests exerc
 these contracts. No real study fitting, quality conclusion or speedup is claimed.
 Measured pilot/matrix execution remains M2.4; comparison/frontier review remains M2.5.
 See the M2.3 checklist for retained verification evidence.
+
+
+## ResNet18 extension alignment
+
+The requested M2.3-R extension now implements conventional physical ResNet18
+controls across all residual stages, hidden channels and existing projections.
+Same-parent L1/random widths, fresh recovery/scratch, explicit final and immutable
+references reuse M1/M2 contracts. The original VGG study is unchanged; opt-in schema
+2 explicitly expands the plan to 50 maximum prospective fits with separate cost
+buckets. Oracle/gradient/checkpoint/recovery/isolation tests and fresh-process
+verification establish software behavior. Measured experiments and quality/frontier
+review remain M2.4/M2.5; this is not malignant-aware pruning or an O1/O2/O3 result.

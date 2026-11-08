@@ -27,7 +27,7 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 | `training.selection_metric` | `group_balanced_accuracy` (recommended) or legacy image `accuracy`. Selection uses validation only. |
 | `training.cpu_threads` | Positive CPU thread setting for training subprocesses through OMP/MKL. |
 | `pruning` | `null` for dense baseline, otherwise the object below. |
-| `pruning.method` | `channel` (VGG only) or `unstructured` (weight masking). |
+| `pruning.method` | `channel` (VGG or canonical ResNet18) or `unstructured` (weight masking). |
 | `pruning.sparsity` | Fraction strictly between 0 and 1; fixed before running. |
 | `pruning.finetune_epochs` | Positive fine-tuning epoch count after pruning; optimizer/scheduler start fresh using the training recipe. |
 | `evaluation.device` | Fixed `cpu` or `cuda`, independent of training. |
@@ -107,7 +107,8 @@ Developer helpers `estimate_cost(plan, estimates, retries)` and
 with exactly `job_id`, `extra_fit_jobs`, `extra_seconds`, `basis`. Restarting from
 epoch zero may charge another fit; replaying a partial epoch can charge seconds
 without inventing a new parent fit. Actual execution/accounting is M2.4 work.
-The helpers report `execution_supported=false` even when capacity is sufficient.
+The planning helpers report `execution_supported=false` because they never launch jobs.
+The M2.4 executor separately verifies pilots/capacity and resolves frozen configs.
 Use the exact current plan hash; changing study inputs requires fresh estimates/
 revision. Example cost numbers must not be treated as measured facts.
 
@@ -121,7 +122,7 @@ experiment config directory. Existing config-1 semantics remain unchanged.
 | --- | --- |
 | `baseline.kind` | `standard`, `dense_continue`, `narrow_scratch`, `prune_from_parent` |
 | `baseline.parent_selection` | Completed phase-aware parent's `development/selection.json`, or null for standard |
-| `baseline.channels` | Eight positive VGG widths for scratch; otherwise null |
+| `baseline.channels` | Eight VGG widths, or ResNet version-1 stage/hidden-width object for scratch; otherwise null |
 | `baseline.topology_checkpoint` | Bound L1-pruned source defining those widths for scratch; otherwise null |
 | `baseline.ranking` | null outside parent pruning; `l1` or `random` within it |
 | `baseline.ranking_seed` | uint32 for random parent pruning; otherwise null |
@@ -132,7 +133,7 @@ experiment config directory. Existing config-1 semantics remain unchanged.
   fresh optimizer/schedule for `training.epochs` (F), starting at the parent's
   selected dense weights, not its optimizer state. No child `train.history.json`
   or invented parent last checkpoint is created; child history is `finetune.history.json`.
-- `narrow_scratch`: VGG, parent, exact widths and topology required; pruning and
+- `narrow_scratch`: VGG/ResNet18, parent, exact widths and topology required; pruning and
   ranking fields null. Starts all numerical weights/classifier/BN state fresh.
   Set `training.epochs` to the declared B+F budget. Parent lineage is topology
   discovery provenance; no parent tensor/optimizer/RNG is inherited.
@@ -162,3 +163,23 @@ child parent-fitting steps; the original histories and selected/executed epochs
 remain attributable by immutable reference. Do not move/change these inputs while
 using child resume/final. The runner passes advanced `--initialization FILE` to
 train/prune/fine-tune automatically; manual use must match its complete fit contract.
+
+
+### Explicit ResNet study revision
+
+`configs/baselines/m2_study_resnet.json` uses study schema 2, adding exactly
+`pruning_models: ["vgg", "resnet18"]`. The list must be nonempty, unique, and use
+only these names. Study schema 1 retains VGG-only controls with the existing dense
+ResNet comparator. Schema 2 adds controls/repeat parents only for the declared
+architectures. Its default graph contains 41 required main, three optional recipe,
+and six pilot jobs: maximum 50, versus the original maximum 31. Cost keys separate
+model, magnitude scope, kind and ratio; all jobs count toward capacity. Generated
+configs remain non-runnable drafts; the M2.4 executor resolves them before fitting.
+
+ResNet scratch `baseline.channels` is an object with exact fields:
+`version: 1`, `stage_widths: [32,64,128,256]`, and
+`hidden_widths: [[32,32],[64,64],[128,128],[256,256]]` (example widths only).
+Use the actual parent-bound L1 topology's `architecture_config.resnet_channels`,
+not a hand-guessed width list. VGG keeps its existing eight-int list. New ResNet
+pruning checkpoints also retain BN epsilon/momentum under channel metadata;
+width-only scratch starts with fresh canonical BN state.

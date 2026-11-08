@@ -103,7 +103,7 @@ def enforce_masks(model, optimizer=None):
 
 @torch.no_grad()
 def prune_weights(model, sparsity=.5, settings=None):
-    if hasattr(model, 'channel_pruning'):
+    if hasattr(model, 'channel_pruning') or hasattr(model,'resnet_channels'):
         raise ValueError('Combining channel pruning with weight masks is not supported')
     layers = [(name, module) for name, module in model.named_modules()
               if isinstance(module, (nn.Conv2d, nn.Linear))]

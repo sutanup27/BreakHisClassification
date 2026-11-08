@@ -33,7 +33,7 @@ individual commands below remain supported as an advanced reference.
 
 M2.2 adds [compact, continuation and scratch fits](docs/guides/EXPERIMENTS.md#m22-compact-baseline-continuation-and-scratch-fits).
 Use `configs/experiments/mobilenet_baseline.json` for a random-initialized
-MobileNetV3-Small example. Physical channel pruning remains custom-VGG-only.
+MobileNetV3-Small example. Physical channel pruning supports custom VGG and canonical torchvision ResNet18.
 
 M2.1 also supports planning without training:
 `python run_baselines.py --study configs/baselines/m2_study.json --stage prepare`.
@@ -226,7 +226,7 @@ This custom filename saves to `../checkpoint/binary/resnet18-baseline.pth`.
 | --- | --- | --- |
 | `--checkpoint` | **Required**; file path | Supported checkpoint to prune. Architecture is reconstructed automatically. |
 | `--sparsity` | `0.5`; number from `0` to `1` inclusive | Fraction selected for L1 unstructured pruning in each convolution and linear layer. `0.5` requests 50%; `0` requests none; `1` selects all. This does not remove channels or guarantee faster inference. |
-| `--method` | `unstructured`; `unstructured`, `channel` | Weight masks for VGG/ResNet18, or physical VGG channel removal. Channel ratios must be below 1; residual/depthwise channel models are unsupported. |
+| `--method` | `unstructured`; `unstructured`, `channel` | Weight masks for VGG/ResNet18, or physical VGG/ResNet18 channel removal. Channel ratios must be below 1; other residual/depthwise architectures are unsupported. |
 | `--layer-sparsities` | None; JSON file path | Complete layer-name-to-ratio map. Replaces the uniform ratio; missing/unknown names fail. See [pruning details](docs/guides/PRUNING.md) for names and a template. |
 
 Masks are stored in the checkpoint and reconstructed on loading. Dense tensor shapes remain unchanged.
@@ -522,3 +522,48 @@ Shared-parent L1/random channel and L1 mask controls are available through
 experiment config 2, with fresh recovery and saved parent/child epoch accounting.
 See the [M2.3 workflow](docs/guides/EXPERIMENTS.md#m23-shared-parent-pruning-controls).
 Study execution/profiling and scientific baseline comparisons remain M2.4-M2.5.
+
+
+### Visual results dashboard
+
+Open [Results observatory](docs/results.html) in a browser to explore saved reports:
+real-data versus generated verification runs, validation versus test, detection
+metrics, confusion matrices, learning history, timing, full configs and CSV export.
+The page is a standalone offline snapshot; it does not run experiments or publish
+anything online. Refresh after new runs:
+
+```powershell
+python tools/build_results.py
+```
+
+The builder reads `artifacts/experiments` and writes `docs/results.html` using only
+Python's standard library. Optional `--runs DIRECTORY --output FILE.html` selects
+another saved-run folder/output. Preparation-only runs have no reports and are
+omitted. Multiple phases/roles from one run are counted as reports, not independent
+experiments. Generated datasets are identified by `/artifacts/` in the configured
+data-root path; other populated paths are labeled real, so review that classification
+when using custom synthetic locations. Earlier checkpoint-only smoke checks are
+outside this dashboard. Saved early test results are labeled legacy and preliminary.
+
+
+### ResNet18 physical channel pruning
+
+Canonical torchvision ResNet18 now supports full dependency-aware channel pruning,
+including residual-stage outputs, block internals, projection shortcuts and classifier
+inputs. L1 and seed-local random controls use identical group widths. See the
+[pruning guide](docs/guides/PRUNING.md#resnet18-dependency-aware-channel-pruning)
+and [implementation spec](docs/specs/m2/RESNET18_CHANNEL_PRUNING_SPEC.md).
+Use `configs/baselines/m2_study_resnet.json` to prepare the explicitly expanded
+VGG + ResNet study; the original VGG control plan is unchanged. Study execution
+and measured resource budgets remain M2.4 work.
+
+
+### Active real-data study (M2.4)
+
+Real BreaKHis study `m2-real-resnet-20261108` now runs 40X/pooled cost pilots,
+then capacity-gated dense parents and conventional controls. A resumable worker
+uses eight continuous hours including the active pilot before pausing for rest.
+Provisional total allowance: three sessions (24h), 50 maximum planned jobs. Scientific
+matrix completion and quality review remain in progress. See [session/progress
+instructions](docs/guides/EXPERIMENTS.md#m24-real-study-execution-and-rest-between-sessions)
+and refresh the [results dashboard](docs/results.html) for completed real reports.

@@ -255,7 +255,7 @@ class BaselinePlanTests(unittest.TestCase):
             altered=copy.deepcopy(plan); altered['identity'][key]=value
             with self.subTest(key=key),self.assertRaisesRegex(ValueError,'identity differs'): b.validate_graph(altered)
 
-    def test_public_cli_refuses_unimplemented_execution_and_prepare_resume(self):
+    def test_public_cli_refuses_unprepared_execution_and_prepare_resume(self):
         for args in (['--stage','pilot'],['--stage','prepare','--resume'],['--stage','parents'],['--stage','report']):
             with self.subTest(args=args),contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
                 b.main(['--study',str(self.study_file),*args])
