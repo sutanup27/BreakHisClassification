@@ -3,7 +3,7 @@
 Specification: M0-SPEC-001, version 1.0. Prepared: 7 November 2026.
 Status: engineering implementation and real-run evidence acceptance completed 7 November 2026. All 26 M0 acceptance IDs have actual evidence; see the tracker. G0 allows M1 engineering but blocks scientific fitting/confirmation pending named unresolved reviews and policy agreements.
 
-Parent: [research implementation roadmap](../../research/RESEARCH_IMPLEMENTATION_ROADMAP.md), M0/G0. Scientific intent: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md). Experiment mapping: [operational plan](../../research/RESEARCH_PAPER_PLAN.md), P0/E01. Existing behavior: [dataset audit](../../guides/DATASETS.md) and [testing](../../guides/TESTING.md).
+Parent: [research implementation roadmap](../../archive/research/RESEARCH_IMPLEMENTATION_ROADMAP.md), M0/G0. Scientific intent: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md). Experiment mapping: [operational plan](../../archive/research/RESEARCH_PAPER_PLAN.md), P0/E01. Existing behavior: [dataset audit](../../guides/DATASETS.md) and [testing](../../guides/TESTING.md).
 
 MUST denotes an acceptance requirement; SHOULD permits a justified documented exception; MAY is optional. Proposed files, schemas and commands below are development targets, not existing capabilities. This document governs M0 coding, review and testing. M1 implementation and scientific experiments are outside its execution scope.
 
@@ -108,7 +108,7 @@ All generated JSON record roots MUST contain `schema_version`, `record_type`, `r
 M0.1 schema binding: object-record payload fields described below live under
 `data`; collections use `items`. The common envelope validator enforces those
 exact roots, while later packages validate domain payloads and readiness. See the
-[implemented records API](M0_1_RECORDS_API.md) for the concrete pre-run configuration
+[implemented records API](../../archive/specs/m0/M0_1_RECORDS_API.md) for the concrete pre-run configuration
 keys, hash policy and evidence-interface boundaries. This binding does not mark
 M0.2-M0.6 implemented or establish Gate G0.
 
@@ -189,7 +189,7 @@ M0 records eligibility, not folds. It cannot select held-out groups using past m
 M0.4 schema binding: `component_eligibility/items` stores per-component statuses;
 `exposure_summary/data` stores reviewed-scope declarations, blockers and limits.
 These additive v1 record types follow the common envelope and do not grant G0.
-See the [exposure API](M0_4_EXPOSURE_API.md) for the implemented input contracts.
+See the [exposure API](../../archive/specs/m0/M0_4_EXPOSURE_API.md) for the implemented input contracts.
 
 ### 5.6 Initial protocol and decision register
 
@@ -213,7 +213,7 @@ Unknown numerical thresholds, margins, trial counts and identity facts remain pr
 `decisions.json` preserves revision history: stable decision ID, revision, topic/status, rationale/evidence, owner role, deadline milestone, affected claims and supersedes reference. Roles such as `research_owner` are allowed when no person is assigned; critical unassigned reviews must be surfaced.
 
 M0.5 schema binding: the additive `protocol_review/data` record preserves binding,
-decision and literature validation restrictions. See the [protocol API](M0_5_PROTOCOL_API.md)
+decision and literature validation restrictions. See the [protocol API](../../archive/specs/m0/M0_5_PROTOCOL_API.md)
 for exact input topic/subpolicy fields, revision chains and non-promoting lifecycle rules.
 
 ### 5.7 Focused literature matrix
@@ -234,7 +234,7 @@ Detect changed/unreadable files during capture and source/file-set changes at au
 
 ## 7. Proposed runner interface
 
-Implemented in M0.6; see the [runner reference](M0_6_RUNNER_API.md) for current behavior and restrictions:
+Implemented in M0.6; see the [runner reference](../../archive/specs/m0/M0_6_RUNNER_API.md) for current behavior and restrictions:
 
 ```text
 python tools/run_m0.py --config configs/research/m0.example.json --run-id m0-<unique-id>
@@ -279,7 +279,7 @@ Pilot lineage exceptions require a recorded decision and stated claims, not an a
 
 ## 9. Implementation work packages
 
-Execution is organized into six short checklists in the [M0 package tracker](README.md).
+Execution is organized into six short checklists in the [M0 package tracker](../../archive/specs/m0/README.md).
 They map WP0-WP9 below into M0.1-M0.6 and track `Not started`, `In progress`,
 `Tests passed`, and `Reviewed`. This master specification remains the authority
 for schemas, semantics and acceptance; checklist review does not resolve unknown
@@ -348,7 +348,7 @@ Unit/integration tests MUST use temporary repositories/data where possible and n
 - [x] Human report lists operations, measured counts, restrictions and open questions without invented results.
 - [x] M1 receives source snapshot identity, inventory/component hashes, exposure eligibility, protocol/decision version and allowed research mode/claims.
 
-Acceptance evidence: [M0.6 real run and reverification](M0_6_RUNNER_GATE.md#progress-evidence).
+Acceptance evidence: [M0.6 real run and reverification](../../archive/specs/m0/M0_6_RUNNER_GATE.md#progress-evidence).
 This closes M0's engineering/evidence contract, not its unresolved scientific facts.
 M1 then implements folds, seeds, development predictions and aggregation against
 these contracts. Real scientific fits and confirmatory evaluation remain gated

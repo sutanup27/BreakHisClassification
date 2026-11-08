@@ -1,14 +1,12 @@
-# Milestone specifications
+# Historical milestone specifications
 
-[Documentation map](../README.md)
+These preserve the earlier infrastructure plan, not the active milestones or
+prerequisites for experiments. Use the [simple experiment roadmap](../research/EXPERIMENT_ROADMAP.md).
 
-Keep each milestone's master contract and execution checklists together.
+| Reference | Location |
+| --- | --- |
+| M0 specification | [M0_SPEC.md](m0/M0_SPEC.md), retained for the optional M0 runner |
+| M0 completed package records and APIs | [Archived M0 tracker](../archive/specs/m0/README.md) |
+| M1 historical plan and implemented M1.1 API | [Archived M1 tracker](../archive/specs/m1/README.md) |
 
-| Milestone | Source of truth | Progress |
-| --- | --- | --- |
-| M0: preservation, protocol and data readiness | [M0_SPEC.md](m0/M0_SPEC.md) | [Tracker and six package checklists](m0/README.md) |
-| M1: scientific data and reporting infrastructure | [M1_SPEC.md](m1/M1_SPEC.md) | [Tracker and six package checklists](m1/README.md) |
-
-M0 engineering acceptance is complete. M1 now has a detailed specification and
-six staged checklists; M1.1 is reviewed and M1.2-M1.6 are not started. M2-M7 remain in the
-[research roadmap](../research/RESEARCH_IMPLEMENTATION_ROADMAP.md).
+See the [archive index](../archive/README.md) for the full historical map.

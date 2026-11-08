@@ -8,45 +8,23 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCES = [('readme', ROOT / 'README.md', 'User guide'),
-           ('documentation-map', ROOT / 'docs/README.md', 'Documentation map'),
-           ('guides-index', ROOT / 'docs/guides/README.md', 'Guide index'),
-           ('environment', ROOT / 'docs/guides/ENVIRONMENT.md', 'Environment'),
-           ('commands', ROOT / 'docs/guides/COMMANDS.md', 'Command reference'),
-           ('datasets', ROOT / 'docs/guides/DATASETS.md', 'Dataset policy'),
-           ('checkpoints', ROOT / 'docs/guides/CHECKPOINTS.md', 'Checkpoints & resume'),
-           ('pruning', ROOT / 'docs/guides/PRUNING.md', 'Pruning & fine-tuning'),
-           ('evaluation', ROOT / 'docs/guides/EVALUATION.md', 'Evaluation & efficiency'),
-           ('testing', ROOT / 'docs/guides/TESTING.md', 'Testing & operations'),
-           ('research-index', ROOT / 'docs/research/README.md', 'Research index'),
-           ('research-protocol', ROOT / 'docs/research/RESEARCH_PROTOCOL.md', 'Initial research protocol'),
-           ('research-roadmap', ROOT / 'docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md', 'Research implementation roadmap'),
-           ('specs-index', ROOT / 'docs/specs/README.md', 'Milestone specification index'),
-           ('m0-spec', ROOT / 'docs/specs/m0/M0_SPEC.md', 'M0 implementation specification'),
-           ('m0-tracker', ROOT / 'docs/specs/m0/README.md', 'M0 package tracker'),
-           ('m0-1', ROOT / 'docs/specs/m0/M0_1_RECORDS_INTEGRITY.md', 'M0.1 Records & integrity'),
-           ('m0-1-api', ROOT / 'docs/specs/m0/M0_1_RECORDS_API.md', 'M0.1 Records API'),
-           ('m0-2', ROOT / 'docs/specs/m0/M0_2_BASELINE_PRESERVATION.md', 'M0.2 Baseline preservation'),
-           ('m0-2-api', ROOT / 'docs/specs/m0/M0_2_BASELINE_API.md', 'M0.2 Baseline API'),
-           ('m0-3', ROOT / 'docs/specs/m0/M0_3_DATA_READINESS.md', 'M0.3 Data readiness'),
-           ('m0-3-api', ROOT / 'docs/specs/m0/M0_3_DATA_API.md', 'M0.3 Data API'),
-           ('m0-4', ROOT / 'docs/specs/m0/M0_4_EXPOSURE_GOVERNANCE.md', 'M0.4 Exposure governance'),
-           ('m0-4-api', ROOT / 'docs/specs/m0/M0_4_EXPOSURE_API.md', 'M0.4 Exposure API'),
-           ('m0-5', ROOT / 'docs/specs/m0/M0_5_PROTOCOL_LITERATURE.md', 'M0.5 Protocol & literature'),
-           ('m0-5-api', ROOT / 'docs/specs/m0/M0_5_PROTOCOL_API.md', 'M0.5 Protocol API'),
-           ('m0-6', ROOT / 'docs/specs/m0/M0_6_RUNNER_GATE.md', 'M0.6 Runner & Gate G0'),
-           ('m0-6-api', ROOT / 'docs/specs/m0/M0_6_RUNNER_API.md', 'M0.6 Runner API'),
-           ('m1-spec', ROOT / 'docs/specs/m1/M1_SPEC.md', 'M1 implementation specification'),
-           ('m1-tracker', ROOT / 'docs/specs/m1/README.md', 'M1 package tracker'),
-           ('m1-1', ROOT / 'docs/specs/m1/M1_1_CONTRACTS_PERMISSIONS.md', 'M1.1 Contracts & permissions'),
-           ('m1-1-api', ROOT / 'docs/specs/m1/M1_1_CONTRACTS_API.md', 'M1.1 Contracts API'),
-           ('m1-2', ROOT / 'docs/specs/m1/M1_2_FOLDS_ROLES.md', 'M1.2 Folds & roles'),
-           ('m1-3', ROOT / 'docs/specs/m1/M1_3_SEEDS_RESUME.md', 'M1.3 Seeds & resume'),
-           ('m1-4', ROOT / 'docs/specs/m1/M1_4_DEVELOPMENT_REPORTING.md', 'M1.4 Development reporting'),
-           ('m1-5', ROOT / 'docs/specs/m1/M1_5_AGGREGATION_SELECTION.md', 'M1.5 Aggregation & selection'),
-           ('m1-6', ROOT / 'docs/specs/m1/M1_6_RUNNER_GATE.md', 'M1.6 Runner & Gate G1'),
-           ('archive-index', ROOT / 'docs/archive/README.md', 'Archive index'),
-           ('roadmap', ROOT / 'docs/archive/CODEBASE_FIX_ROADMAP.md', 'Historical repair roadmap')]
+SOURCES = [
+    ('readme', ROOT / 'README.md', 'User guide'),
+    ('experiments', ROOT / 'docs/guides/EXPERIMENTS.md', 'Run and compare experiments'),
+    ('experiment-config', ROOT / 'docs/guides/EXPERIMENT_CONFIG.md', 'Experiment configuration'),
+    ('experiment-roadmap', ROOT / 'docs/research/EXPERIMENT_ROADMAP.md', 'Simple experiment milestones'),
+    ('documentation-map', ROOT / 'docs/README.md', 'Documentation map'),
+    ('guides-index', ROOT / 'docs/guides/README.md', 'Guide index'),
+    ('environment', ROOT / 'docs/guides/ENVIRONMENT.md', 'Environment'),
+    ('commands', ROOT / 'docs/guides/COMMANDS.md', 'Command reference'),
+    ('datasets', ROOT / 'docs/guides/DATASETS.md', 'Dataset policy'),
+    ('checkpoints', ROOT / 'docs/guides/CHECKPOINTS.md', 'Checkpoints & resume'),
+    ('pruning', ROOT / 'docs/guides/PRUNING.md', 'Pruning & fine-tuning'),
+    ('evaluation', ROOT / 'docs/guides/EVALUATION.md', 'Evaluation & efficiency'),
+    ('testing', ROOT / 'docs/guides/TESTING.md', 'Testing & operations'),
+    ('research-index', ROOT / 'docs/research/README.md', 'Research index'),
+    ('archive-index', ROOT / 'docs/archive/README.md', 'Historical and optional references'),
+]
 SOURCE_IDS = {path.resolve(): key for key, path, _ in SOURCES}
 
 
@@ -61,7 +39,9 @@ def link_target(target, source):
         if resolved in SOURCE_IDS:
             prefix = SOURCE_IDS[resolved]
             return '#' + prefix + ('-' + slug(anchor) if anchor else '')
-        return (Path('..') / resolved.relative_to(ROOT)).as_posix() if resolved.is_relative_to(ROOT) else '#'
+        if resolved.is_relative_to(ROOT):
+            return (Path('..') / resolved.relative_to(ROOT)).as_posix() + ('#' + anchor if anchor else '')
+        return '#'
     return target if target.startswith(('https://', 'http://', 'mailto:')) else '#'
 
 
@@ -188,7 +168,7 @@ def main():
         groups[group].append(nav)
     navigation = '\n'.join('<details class="documentation-group"' + (' open' if name == 'Start here' else '') +
         '><summary>' + html.escape(name) + '</summary>' + '\n'.join(items) + '</details>'
-        for name, items in groups.items())
+        for name, items in groups.items() if items)
     css = (ROOT / 'docs/assets/guide.css').read_text(encoding='utf-8-sig')
     script = (ROOT / 'docs/assets/guide.js').read_text(encoding='utf-8-sig')
     page = '''<!doctype html>
@@ -201,7 +181,7 @@ def main():
 <nav aria-label="Documentation navigation">''' + navigation + '''</nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
 <div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
-<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Stages 1–9 implemented</span></div></div>
+<main id="main"><div class="intro"><p class="eyebrow">USER &amp; DEVELOPER DOCUMENTATION</p><h1>Your guide to the codebase.</h1><p>From a working environment to a reproducible binary classification experiment. Every command, argument, saved file, and current limitation in one place.</p><div class="badges"><span>Python 3.13</span><span>Binary workflow</span><span>Config-driven experiments</span></div></div>
 <div class="notice"><strong>Current workspace:</strong> use the saved manifest with <code>cancer_binary</code>. The v2 copy was removed; prepare-data supports v1-only sources. Multiclass training and full-data experimental acceptance remain pending.</div>
 <p id="search-status" role="status" aria-live="polite"></p><p id="no-results" hidden>No matching section. Try a command name, parameter, or error message.</p>
 ''' + content + '''

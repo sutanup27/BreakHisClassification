@@ -1,6 +1,6 @@
 # Codebase repair roadmap
 
-> Historical engineering record. For current research implementation use the [research roadmap](../research/RESEARCH_IMPLEMENTATION_ROADMAP.md) and [M0 package tracker](../specs/m0/README.md). Active full-data acceptance is tracked in [testing and operations](../guides/TESTING.md). Past verification statements remain historical.
+> Historical engineering record. For current research implementation use the [research roadmap](research/RESEARCH_IMPLEMENTATION_ROADMAP.md) and [M0 package tracker](specs/m0/README.md). Active full-data acceptance is tracked in [testing and operations](../guides/TESTING.md). Past verification statements remain historical.
 
 Updated: 11 October 2026
 

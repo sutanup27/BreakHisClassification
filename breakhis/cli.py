@@ -65,6 +65,11 @@ def main(argv=None):
         if name == 'evaluate':
             add_benchmark_options(command)
         if name in ('train', 'finetune'):
+            command.add_argument('--seed', type=int, help='Fresh-run RNG seed; inherited on resume')
+            command.add_argument('--optimizer', choices=['sgd','adam'])
+            command.add_argument('--weight-decay', type=float)
+            command.add_argument('--scheduler', choices=['cosine','none'])
+            command.add_argument('--selection-metric', choices=['accuracy','group_balanced_accuracy'])
             command.add_argument('--epochs', type=int, help='Total planned epochs; default 20 or saved resume value')
             command.add_argument('--learning-rate', type=float, help='Initial SGD rate; default .001 or saved resume value')
             command.add_argument('--resume', type=Path, help='Restore a completed-epoch checkpoint and its optimizer/scheduler/RNG state')
@@ -73,6 +78,8 @@ def main(argv=None):
             command.add_argument('--pretrained', action='store_true', help='Initialize ResNet with downloaded pretrained weights')
         else:
             command.add_argument('--checkpoint', type=Path, required=name != 'finetune')
+        if name == 'evaluate':
+            command.add_argument('--predictions-output', type=Path, help='Save ordered per-image predictions as JSON')
         if name == 'prune':
             command.add_argument('--sparsity', type=float, default=.5)
             command.add_argument('--method', choices=['unstructured', 'channel'], default='unstructured')
@@ -138,6 +145,13 @@ def main(argv=None):
         if args.batch_size < 1 or args.num_workers < 0:
             raise ValueError('batch size must be positive; workers must be nonnegative')
         if args.command in ('train', 'finetune'):
+            args.seed = args.seed if args.seed is not None else previous.get('seed', 0)
+            args.optimizer = args.optimizer or previous.get('optimizer_name', 'sgd')
+            args.weight_decay = args.weight_decay if args.weight_decay is not None else previous.get('weight_decay', 5e-4)
+            args.scheduler = args.scheduler or previous.get('scheduler_name', 'cosine')
+            args.selection_metric = args.selection_metric or previous.get('selection_metric', 'accuracy')
+            if not 0 <= args.seed < 2**32 or not math.isfinite(args.weight_decay) or args.weight_decay < 0:
+                raise ValueError('Seed must be uint32 and weight decay finite/nonnegative')
             args.epochs = args.epochs if args.epochs is not None else previous.get('epochs', 20)
             args.learning_rate = args.learning_rate if args.learning_rate is not None else previous.get('learning_rate', .001)
             if args.epochs < 1:
@@ -221,8 +235,9 @@ def main(argv=None):
         if resume and args.command == 'train':
             config['pretrained'] = previous.get('pretrained', False)
         if args.command in ('train', 'finetune'):
-            config.update(optimizer={'name': 'SGD', 'momentum': .9, 'weight_decay': 5e-4},
-                          scheduler={'name': 'CosineAnnealingLR', 'T_max': args.epochs})
+            config.update(optimizer_name=args.optimizer, scheduler_name=args.scheduler,
+                optimizer={'name': args.optimizer, 'momentum': .9 if args.optimizer == 'sgd' else None, 'weight_decay': args.weight_decay},
+                scheduler={'name': args.scheduler, 'T_max': args.epochs})
         if resume:
             import platform
             if payload.get('runtime') != {'python': platform.python_version(), 'torch': str(torch.__version__), 'cuda': torch.version.cuda}:
@@ -230,6 +245,9 @@ def main(argv=None):
             for field in ('epochs', 'learning_rate', 'batch_size', 'num_workers', 'deterministic', 'resolved_device', 'output'):
                 if config[field] != previous[field]:
                     raise ValueError(f'Resume configuration differs: {field} must be {previous[field]!r}')
+            for field in ('seed','optimizer_name','weight_decay','scheduler_name','selection_metric'):
+                if field in previous and config[field] != previous[field]:
+                    raise ValueError(f'Resume configuration differs: {field}')
             if payload['epoch'] >= args.epochs:
                 raise ValueError('Resume checkpoint has already completed all planned epochs')
             if payload['epoch'] > 0 and not output.is_file():
@@ -238,7 +256,7 @@ def main(argv=None):
         parser.error(str(error))
 
     loaders = get_split_loaders(args.manifest, args.source, args.magnification, selected_root,
-                               args.batch_size, args.num_workers, device, deterministic=args.deterministic)
+                               args.batch_size, args.num_workers, device, seed=getattr(args, 'seed', 0), deterministic=args.deterministic)
     criterion = nn.CrossEntropyLoss().to(device)
     if input_path:
         model, payload = load_checkpoint(input_path, device, payload=payload)
@@ -252,10 +270,15 @@ def main(argv=None):
     print('Images:', {split: len(loader.dataset) for split, loader in loaders.items()}, flush=True)
     if args.command == 'evaluate':
         from .reporting import checkpoint_report
+        predictions = []
         report = checkpoint_report(model, loaders['test'], input_path,
-            batch_size=args.benchmark_batch_size, warmup=args.benchmark_warmup, repeats=args.benchmark_repeats)
+            batch_size=args.benchmark_batch_size, warmup=args.benchmark_warmup, repeats=args.benchmark_repeats,
+            prediction_rows=predictions)
         report.update(schema_version=1, split='test', experiment_id=args.experiment_id, **metadata)
         write_json(output, report)
+        if args.predictions_output:
+            write_json(args.predictions_output, dict(schema_version=1, split='test', classes=payload['classes'],
+                checkpoint_sha256=report['checkpoint_sha256'], manifest_sha256=metadata['manifest_sha256'], rows=predictions))
         print(json.dumps(report, indent=2))
         print(f'Report: {output}; configuration: {config_path}')
         return
@@ -276,13 +299,20 @@ def main(argv=None):
         save_checkpoint(output, model, architecture, metadata, classes=loaders['train'].dataset.classes, config=config)
         print(f'Validation accuracy after pruning: {accuracy:.4f}%; saved {output}')
         return
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=.9, weight_decay=5e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
+    optimizer = (torch.optim.SGD(model.parameters(), lr=args.learning_rate, momentum=.9, weight_decay=args.weight_decay)
+                 if args.optimizer == 'sgd' else torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay))
+    scheduler = (torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs) if args.scheduler == 'cosine'
+                 else torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _:1.0))
     best_accuracy, first_epoch = float('-inf'), 1
     if resume:
         first_epoch, best_accuracy = restore_training_state(payload, optimizer, scheduler, config)
         print(f'Restored optimizer, scheduler and RNG; next epoch: {first_epoch}', flush=True)
     latest = output.with_name(output.stem + '-last.pth')
+    history_path = output.with_suffix('.history.json')
+    history = json.loads(history_path.read_text(encoding='utf-8'))['epochs'] if resume and history_path.exists() else []
+    history = [row for row in history if row['epoch'] < first_epoch]
+    best_val_loss = min((row['validation_loss'] for row in history
+                        if row['selection_score_percent'] == best_accuracy), default=float('inf'))
     def save_training(path, epoch):
         state = training_state(optimizer, scheduler, best_accuracy, config)
         save_checkpoint(path, model, architecture, metadata, epoch,
@@ -296,14 +326,33 @@ def main(argv=None):
             loss = train(model, loaders['train'], criterion, optimizer, epoch=epoch)
             training_seconds = time.perf_counter() - started
             started = time.perf_counter()
-            accuracy, val_loss = evaluate(model, loaders['validation'], criterion)
+            if args.selection_metric == 'group_balanced_accuracy':
+                from .reporting import collect_predictions, magnification_balanced_metrics
+                predictions = []
+                image_metrics, _, _ = collect_predictions(model, loaders['validation'], prediction_rows=predictions)
+                group_metrics = magnification_balanced_metrics(loaders['validation'].dataset.rows,
+                    [v['target'] for v in predictions], [v['probabilities'] for v in predictions], loaders['validation'].dataset.classes)
+                if not group_metrics['available']:
+                    raise ValueError('Group selection requires magnification metadata')
+                accuracy, val_loss = image_metrics['accuracy'], image_metrics['loss']
+                selection_score = 100 * group_metrics['balanced_accuracy']
+            else:
+                accuracy, val_loss = evaluate(model, loaders['validation'], criterion)
+                selection_score = accuracy
             print(f'Epoch {epoch}: train {training_seconds:.1f}s; validation {time.perf_counter()-started:.1f}s; loss {loss:.4f}; validation loss {val_loss:.4f}; accuracy {accuracy:.4f}%', flush=True)
-            improved = accuracy > best_accuracy
+            improved = selection_score > best_accuracy or (args.selection_metric == 'group_balanced_accuracy'
+                and selection_score == best_accuracy and val_loss < best_val_loss)
             if improved:
-                best_accuracy = accuracy
+                best_accuracy = selection_score
+                best_val_loss = val_loss
             scheduler.step()
             if improved:
                 save_training(output, epoch)
+            history.append(dict(epoch=epoch, training_loss=loss, validation_loss=val_loss,
+                validation_accuracy_percent=accuracy, selection_metric=args.selection_metric,
+                selection_score_percent=selection_score, training_seconds=training_seconds,
+                learning_rate=optimizer.param_groups[0]['lr']))
+            write_json(history_path, dict(schema_version=1, epochs=history, selection_split='validation'))
             save_training(latest, epoch)
             completed_epoch = epoch
     except KeyboardInterrupt:
@@ -312,7 +361,7 @@ def main(argv=None):
                         classes=loaders['train'].dataset.classes, config=config)
         print(f'Interrupted partial-epoch weights: {interrupted}; resume completed epochs from {latest}', flush=True)
         return
-    print(f'Best validation accuracy: {best_accuracy:.4f}%; checkpoint: {output}; resume checkpoint: {latest}', flush=True)
+    print(f'Best validation {args.selection_metric}: {best_accuracy:.4f}%; checkpoint: {output}; resume checkpoint: {latest}', flush=True)
 
 
 if __name__ == '__main__':

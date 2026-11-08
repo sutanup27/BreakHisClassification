@@ -4,6 +4,30 @@ This project trains PyTorch models to classify breast histology images as **beni
 
 ## Start here
 
+**Recommended workflow:** [run and compare experiments](docs/guides/EXPERIMENTS.md).
+Use one saved config per experiment; G0 approvals, review roles and literature
+completion are not required to run the normal training commands.
+
+```powershell
+# Activate your installed environment first; prepare the split only if missing.
+python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/data --seed 101
+python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id baseline-102
+python run_experiment.py --config configs/experiments/vgg_channel.json --run-id channel-102
+python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/baseline-vs-channel.json
+```
+
+Reuse an existing manifest instead of rerunning preparation. Each experiment
+saves its resolved config, split, seed/code identity, histories, predictions and
+metrics under `artifacts/experiments/<run-id>/`. Checkpoints remain in the parent
+`checkpoint/binary` directory. Use a new ID for fresh runs; use `--resume` with
+the original config/ID for interrupted runs.
+
+See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
+[five practical milestones](docs/research/EXPERIMENT_ROADMAP.md). The existing
+individual commands below remain supported as an advanced reference. M0/M1
+specifications and research gate archives describe earlier infrastructure and
+optional tools; they do not control everyday experiment execution.
+
 See the [documentation map](docs/README.md) for guides, research plans, milestone
 specifications and historical archives.
 
@@ -21,11 +45,8 @@ in a browser; no web server, installation, or internet connection is required.
 | Find or interpret saved files | [Checkpoint paths](#checkpoint-paths-and-loading-rules), [format details](docs/guides/CHECKPOINTS.md) |
 | Modify the implementation | [Working on the codebase](#working-on-the-codebase) |
 | Diagnose an error | [Troubleshooting](#troubleshooting-and-remaining-work) |
-| Plan the research experiments | [7-9 day research implementation roadmap](docs/research/RESEARCH_IMPLEMENTATION_ROADMAP.md) |
-| Implement and test the first research milestone | [M0 specification](docs/specs/m0/M0_SPEC.md) |
-| Track M0 implementation package by package | [M0 checklist tracker](docs/specs/m0/README.md) |
-| Generate or verify M0 evidence and read Gate G0 | [M0 runner reference](docs/specs/m0/M0_6_RUNNER_API.md) |
-| Plan M1 infrastructure and track its implementation | [M1 specification and six-package tracker](docs/specs/m1/README.md) |
+| Plan the research experiments | [Simple experiment milestones](docs/research/EXPERIMENT_ROADMAP.md) |
+| Historical infrastructure and optional gate tools | [Archive/reference index](docs/archive/README.md) |
 
 ## First-run checklist
 

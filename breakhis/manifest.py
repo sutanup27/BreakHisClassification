@@ -143,6 +143,8 @@ def compare_sources(rows, first='breakhis_v2', second='cancer_binary'):
 
 def prepare_dataset(dataset_root, output, seed=0, workers=8, sources=None):
     dataset_root, output = Path(dataset_root).resolve(), Path(output).resolve()
+    if (output/'manifest.json').exists() or (output/'audit.json').exists():
+        raise ValueError('Prepared split already exists; reuse its manifest or choose a new output directory')
     configured = {'breakhis_v2':dataset_root/'BreaKHis_v2',
                'cancer_binary':dataset_root/'dataset_cancer_v1'/'classificacao_binaria',
                'cancer_multiclass':dataset_root/'dataset_cancer_v1'/'classificacao_multiclasse'}

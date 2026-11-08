@@ -125,7 +125,7 @@ def load_inputs(config_file):
 
 def _scope(scope):
     fields={'status','reviewer','component_ids','lineage_exception','claims','evidence_refs','rationale','training_device'}
-    if not isinstance(scope,dict) or set(scope)!=fields or scope['status'] not in ('reviewed','unreviewed'):
+    if not isinstance(scope,dict) or set(scope)-{'university_pilot'}!=fields or scope['status'] not in ('reviewed','unreviewed'):
         raise r.RecordError('Invalid pilot scope declaration')
     if type(scope['lineage_exception']) is not bool or not isinstance(scope['component_ids'],list) or not all(isinstance(c,str) for c in scope['component_ids']): raise r.RecordError('Invalid pilot component scope')
     if len(set(scope['component_ids']))!=len(scope['component_ids']): raise r.RecordError('Duplicate pilot component')
@@ -135,6 +135,15 @@ def _scope(scope):
         e._text(scope['reviewer'],'Pilot reviewer'); e._text(scope['rationale'],'Pilot scope rationale')
         if not scope['component_ids'] or not scope['evidence_refs'] or scope['training_device'] not in ('cpu','cuda') or not {'exploratory-only','filename-group-only','derivative-only'}<=set(scope['claims']):
             raise r.RecordError('Reviewed pilot requires explicit components, device, claims and evidence')
+    if 'university_pilot' in scope:
+        declaration=scope['university_pilot']
+        expected={'version':1,'dataset_source':'researcher-declared-breakhis-website',
+                  'prior_use':'acknowledged','workflow':'fresh-no-reuse',
+                  'evaluation_claim':'within-study-held-out','protocol':'university-pilot-v1'}
+        if not isinstance(declaration,dict) or declaration!=expected or type(declaration.get('version')) is not int:
+            raise r.RecordError('Invalid university pilot v1 declaration')
+        if scope['status']!='reviewed' or not scope['lineage_exception']:
+            raise r.RecordError('University pilot requires reviewed declared-lineage scope')
     return scope
 
 
@@ -223,6 +232,11 @@ def _facts(run):
         gpu_ready=any(check['check_id']=='environment-cuda' and check['status']=='passed' and check['return_code']==0 for check in checks),
         training_device=scope['training_device'] if scoped else planned_device,fold_support=type(folds) is int and min(labels.get('benign',0),labels.get('malignant',0))>=folds,
         real_input=config['run_kind']=='real',acceptance_complete=all(row['status']=='pass' for row in _get(run,'acceptance/tests.json')))
+    # Opt-in only: legacy archives recompute their original gate without new fields.
+    # The profile is indexed, schema checked and hash-bound to preserved evidence.
+    if 'university_pilot' in scope:
+        _scope(scope)
+        facts['university_pilot_reviewed']=scoped and scope['reviewer'] not in ('research_owner','reviewer')
     return facts
 
 

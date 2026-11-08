@@ -30,14 +30,20 @@ def evaluate_gate(facts, requested_mode, index_sha256):
     if not facts['acceptance_complete']: scientific.append('ACCEPTANCE_TRACE_INCOMPLETE')
     pilot, pilot_limits = list(scientific), []
     if not facts['scope_reviewed']: pilot.append('PILOT_SCOPE_UNREVIEWED')
-    if not facts['protocol_pilot_ready']: pilot.append('PROTOCOL_PENDING')
-    if not facts['owners_assigned']: pilot.append('REVIEW_OWNER_UNASSIGNED')
+    university = facts.get('university_pilot_reviewed') is True and facts['scope_reviewed'] and facts['lineage_scope_approved']
+    if not facts['protocol_pilot_ready']:
+        (pilot_limits if university else pilot).append('PILOT_PROTOCOL_DECLARED' if university else 'PROTOCOL_PENDING')
+    if not facts['owners_assigned']:
+        (pilot_limits if university else pilot).append('PILOT_OWNER_DECLARED' if university else 'REVIEW_OWNER_UNASSIGNED')
     if not facts['lineage_known']:
         (pilot_limits if facts['lineage_scope_approved'] else pilot).append('LINEAGE_UNKNOWN')
     if not facts['history_ready']:
         (pilot_limits if facts['scope_reviewed'] else pilot).append('EXPOSURE_UNRESOLVED')
     if facts['training_device'] == 'cuda' and not facts['gpu_ready']: pilot.append('GPU_UNAVAILABLE')
     if not facts['literature_complete']: pilot_limits.append('LITERATURE_INCOMPLETE')
+    if university:
+        pilot_limits.extend(['UNIVERSITY_PILOT_ONLY','WITHIN_STUDY_HELD_OUT_ONLY',
+                             'PILOT_PARTITION_VALIDATION_REQUIRED'])
     dimension('exploratory', pilot, pilot_limits)
     design = list(scientific)
     if not facts['history_ready']: design.append('EXPOSURE_UNRESOLVED')
@@ -53,10 +59,16 @@ def evaluate_gate(facts, requested_mode, index_sha256):
     dimension('novelty_review', (), [] if facts['literature_complete'] else ['LITERATURE_INCOMPLETE'])
     selected = dimensions['exploratory' if requested_mode == 'pilot' else 'confirmatory_design']['status']
     if dimensions['engineering']['status'] == 'blocked': selected = 'blocked'
-    return dict(requested_mode=requested_mode, overall_status=selected, dimensions=dimensions,
+    result = dict(requested_mode=requested_mode, overall_status=selected, dimensions=dimensions,
         evidence_index_sha256=index_sha256, blockers=blockers,
         restrictions=sorted({code for d in dimensions.values() for code in d['reason_codes']}),
         m1_engineering_allowed=dimensions['engineering']['status'] != 'blocked',
         real_fit_scope_allowed=dimensions['exploratory']['status'] != 'blocked',
         novelty_claim='unverified; review completion never establishes novelty',
         clinical_claim='not established', confirmatory_frozen=False)
+    if university:
+        result.update(policy_profile='university-pilot-v1',
+            pilot_fit_preconditions=['Validated component-disjoint train/selection/calibration/test assignments',
+                'Both-class role support; no outer-test feedback; fresh weights and resolved settings'],
+            pilot_scope_note='Scope eligibility only; downstream role/split guards still apply. No historical untouched claim.')
+    return result

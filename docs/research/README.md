@@ -1,20 +1,17 @@
-# Research plans
+# Research documents
 
 [Documentation map](../README.md)
 
-| Document | Role |
+| Active document | Purpose |
 | --- | --- |
-| [Research implementation roadmap](RESEARCH_IMPLEMENTATION_ROADMAP.md) | Active 7-9 day milestone schedule, implementation gaps, acceptance gates and scope cuts |
-| [End-to-end research guide](Breast_Histopathology_Pruning_End_to_End_Research_Guide.md) | Scientific objectives, novelty boundaries, design, baselines, statistics and publication gates |
-| [Operational experiment plan](RESEARCH_PAPER_PLAN.md) | Detailed P0/P1/P2 and E01-E14 execution sequence and dependencies |
-| [Initial research protocol](RESEARCH_PROTOCOL.md) | Implemented draft/template policies, decision history, literature status and approval boundaries |
+| [Simple experiment milestones](EXPERIMENT_ROADMAP.md) | Current implementation progress and experiment checklist |
+| [End-to-end research guide](Breast_Histopathology_Pruning_End_to_End_Research_Guide.md) | Scientific objectives, proposed mechanism, baselines and research questions |
 
-Use the roadmap for the current sprint, the guide for scientific intent, and the
-operational plan for experiment detail. Later scoped decisions must be recorded
-in the protocol/decision register; historical proposed choices are not frozen
-automatically. The initial M0 protocol/template API is implemented; it remains
-draft and does not authorize scientific fits or confirmatory evaluation.
+For execution, use [Run and compare experiments](../guides/EXPERIMENTS.md) and
+the [config reference](../guides/EXPERIMENT_CONFIG.md). Literature and approval
+records are not prerequisites for running a baseline.
 
-[M0 specifications and checklists](../specs/m0/README.md) translate the first
-milestone into development/test contracts. The [active testing guide](../guides/TESTING.md)
-separates engineering validation from full-data experimental acceptance.
+Superseded plans are listed in the [archive](../archive/README.md). The older
+`UNIVERSITY_PILOT_PROTOCOL.md` remains here only because the optional saved G0
+configuration binds its path and content hash. It is a historical declaration,
+not the active experiment recipe. Historical G0 documentation is in the archive.

@@ -75,8 +75,35 @@ def grouped_patient_metrics(rows, targets, probabilities, classes):
     return result
 
 
+def magnification_balanced_metrics(rows, targets, probabilities, classes):
+    """One vote per available magnification, then one vote per filename group."""
+    if rows is None or any(not row.get('magnification') for row in rows):
+        return dict(available=False, reason='Ordered magnification metadata unavailable')
+    if len(rows) != len(targets) or len(targets) != len(probabilities):
+        raise ValueError('Group prediction metadata length differs')
+    groups = {}
+    for row, target, scores in zip(rows, targets, probabilities):
+        group = groups.setdefault(row['patient_id'], dict(target=target, magnifications={}))
+        if group['target'] != target:
+            raise ValueError('Conflicting labels in filename group')
+        group['magnifications'].setdefault(row['magnification'], []).append(scores)
+    records = []
+    for name, group in sorted(groups.items()):
+        means = [[sum(v[i] for v in values)/len(values) for i in range(len(classes))]
+                 for values in group['magnifications'].values()]
+        scores = [sum(v[i] for v in means)/len(means) for i in range(len(classes))]
+        records.append(dict(group_id=name, target=group['target'], probabilities=scores,
+            prediction=max(range(len(classes)), key=lambda i:scores[i]),
+            magnifications=sorted(group['magnifications'])))
+    result = classification_metrics([v['target'] for v in records], [v['prediction'] for v in records], classes)
+    result.update(available=True, balanced_accuracy=result['macro']['recall'], groups=records,
+        aggregation='Mean probability within magnification, then equal mean over available magnifications',
+        grouping='Filename group; not independently verified patient identity', missing_magnifications='available-only')
+    return result
+
+
 @torch.inference_mode()
-def collect_predictions(model, loader):
+def collect_predictions(model, loader, *, prediction_rows=None):
     if getattr(loader, 'drop_last', False):
         raise ValueError('Evaluation cannot drop the last batch')
     rows = getattr(loader.dataset, 'rows', None)
@@ -112,6 +139,11 @@ def collect_predictions(model, loader):
     metrics['loss'] = loss_sum / len(targets)
     metrics['loss_definition'] = 'Mean image cross-entropy'
     patients = grouped_patient_metrics(rows, targets, probabilities, classes)
+    if prediction_rows is not None:
+        for index, (target, prediction, scores) in enumerate(zip(targets, predictions, probabilities)):
+            identity = {key: rows[index][key] for key in ('path','sha256','patient_id','group_id','magnification','split')
+                        if rows is not None and key in rows[index]}
+            prediction_rows.append(dict(**identity, target=target, prediction=prediction, probabilities=scores))
     return metrics, patients, first_input
 
 
@@ -235,12 +267,17 @@ def benchmark_model(model, first_input, batch_size=1, warmup=10, repeats=30):
                 runtime=runtime_report(device))
 
 
-def checkpoint_report(model, loader, checkpoint, *, batch_size=1, warmup=10, repeats=30):
-    image, patient, first_input = collect_predictions(model, loader)
+def checkpoint_report(model, loader, checkpoint, *, batch_size=1, warmup=10, repeats=30, prediction_rows=None):
+    predictions = []
+    image, patient, first_input = collect_predictions(model, loader, prediction_rows=predictions)
+    if prediction_rows is not None:
+        prediction_rows.extend(predictions)
+    groups = magnification_balanced_metrics(getattr(loader.dataset, 'rows', None),
+        [v['target'] for v in predictions], [v['probabilities'] for v in predictions], loader.dataset.classes)
     with Path(checkpoint).open('rb') as source:
         digest = hashlib.file_digest(source, 'sha256').hexdigest()
     return dict(checkpoint=str(Path(checkpoint).resolve()), checkpoint_sha256=digest,
                 accuracy=image['accuracy'], accuracy_unit='percent', loss=image['loss'],
-                image_metrics=image, patient_metrics=patient,
+                image_metrics=image, patient_metrics=patient, group_metrics=groups,
                 size=size_report(model, checkpoint),
                 benchmark=benchmark_model(model, first_input, batch_size, warmup, repeats))
