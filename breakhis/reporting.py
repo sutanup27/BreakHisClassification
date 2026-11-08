@@ -10,9 +10,14 @@ import time
 
 import torch
 from torch import nn
-from torch.utils.data import SequentialSampler
+from torch.utils.data import SequentialSampler, BatchSampler
 
 from .training import model_device
+
+AGGREGATION = 'filename-group/equal-magnification/mean-probability'
+THRESHOLD = 'argmax'
+BENCHMARK_PROTOCOL = 'resident-forward-synthetic-v1'
+CLASSES = ['benign', 'malignant']
 
 
 def classification_metrics(targets, predictions, classes):
@@ -29,20 +34,27 @@ def classification_metrics(targets, predictions, classes):
         true_positive = matrix[index][index]
         support = sum(matrix[index])
         predicted = sum(row[index] for row in matrix)
-        precision = true_positive / predicted if predicted else 0.0
-        recall = true_positive / support if support else 0.0
-        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
-        per_class[label] = dict(precision=precision, recall=recall, f1=f1, support=support)
+        precision = true_positive / predicted if predicted else None
+        recall = true_positive / support if support else None
+        f1 = 2 * true_positive / (support + predicted) if support + predicted else None
+        per_class[label] = dict(precision=precision, recall=recall, f1=f1, support=support, predicted=predicted,
+            undefined={k:v for k,v in dict(precision='No predicted positives' if not predicted else None,
+                recall='No true class support' if not support else None,
+                f1='No true or predicted support' if not support+predicted else None).items() if v})
     total = len(targets)
-    macro = {metric: sum(value[metric] for value in per_class.values()) / count
-             for metric in ('precision', 'recall', 'f1')}
-    weighted = {metric: sum(value[metric] * value['support'] for value in per_class.values()) / total
-                for metric in ('precision', 'recall', 'f1')}
+    def average(metric, weighted=False):
+        values=[(v[metric],v['support'] if weighted else 1) for v in per_class.values()
+                if not weighted or v['support']]
+        if any(v is None for v,w in values): return None
+        return sum(v*w for v,w in values)/sum(w for v,w in values)
+    macro = {m:average(m) for m in ('precision','recall','f1')}
+    weighted = {m:average(m,True) for m in ('precision','recall','f1')}
     result = dict(samples=total, classes=list(classes), class_to_idx={label: index for index, label in enumerate(classes)},
                   accuracy=100 * sum(matrix[index][index] for index in range(count)) / total,
                   accuracy_unit='percent', rate_unit='fraction', per_class=per_class,
                   macro=macro, weighted=weighted, confusion_matrix=matrix,
-                  confusion_matrix_axes={'rows': 'true', 'columns': 'predicted'}, zero_division=0)
+                  confusion_matrix_axes={'rows': 'true', 'columns': 'predicted'}, zero_division=None, balanced_accuracy=macro['recall'],
+                  balanced_accuracy_reason='Missing true class support' if macro['recall'] is None else None)
     if classes == ['benign', 'malignant']:
         result.update(positive_class='malignant', sensitivity=per_class['malignant']['recall'],
                       specificity=per_class['benign']['recall'])
@@ -52,6 +64,7 @@ def classification_metrics(targets, predictions, classes):
 def grouped_patient_metrics(rows, targets, probabilities, classes):
     if rows is None:
         return {'available': False, 'reason': 'Dataset has no ordered filename patient metadata'}
+    validate_probabilities(targets, probabilities, classes)
     if len(rows) != len(targets):
         raise ValueError('Patient metadata and predictions differ in length')
     groups = {}
@@ -69,6 +82,7 @@ def grouped_patient_metrics(rows, targets, probabilities, classes):
         scores = [value / group['images'] for value in group['scores']]
         records.append(dict(patient_id=patient, images=group['images'], target=group['target'],
                             prediction=max(range(len(classes)), key=lambda index: scores[index]), probabilities=scores))
+    attach_group_identity(records, rows, 'patient_id')
     result = classification_metrics([row['target'] for row in records], [row['prediction'] for row in records], classes)
     result.update(available=True, aggregation='Unweighted mean softmax probability per filename patient/slide ID; argmax with first-label tie break',
                   grouping='YEAR-SLIDE_ID; a filename surrogate, not independently verified patient identity', groups=records)
@@ -81,6 +95,7 @@ def magnification_balanced_metrics(rows, targets, probabilities, classes):
         return dict(available=False, reason='Ordered magnification metadata unavailable')
     if len(rows) != len(targets) or len(targets) != len(probabilities):
         raise ValueError('Group prediction metadata length differs')
+    validate_probabilities(targets, probabilities, classes)
     groups = {}
     for row, target, scores in zip(rows, targets, probabilities):
         group = groups.setdefault(row['patient_id'], dict(target=target, magnifications={}))
@@ -95,11 +110,30 @@ def magnification_balanced_metrics(rows, targets, probabilities, classes):
         records.append(dict(group_id=name, target=group['target'], probabilities=scores,
             prediction=max(range(len(classes)), key=lambda i:scores[i]),
             magnifications=sorted(group['magnifications'])))
+    attach_group_identity(records, rows, 'group_id')
     result = classification_metrics([v['target'] for v in records], [v['prediction'] for v in records], classes)
     result.update(available=True, balanced_accuracy=result['macro']['recall'], groups=records,
         aggregation='Mean probability within magnification, then equal mean over available magnifications',
         grouping='Filename group; not independently verified patient identity', missing_magnifications='available-only')
     return result
+
+
+def validate_probabilities(targets, probabilities, classes):
+    if len(targets)!=len(probabilities): raise ValueError('Probability coverage differs')
+    for scores in probabilities:
+        if (len(scores)!=len(classes) or any(not math.isfinite(v) or not 0<=v<=1 for v in scores)
+                or not math.isclose(sum(scores),1.,abs_tol=1e-5)):
+            raise ValueError('Invalid class-ordered probabilities')
+
+
+def attach_group_identity(records, rows, key):
+    for record in records:
+        patient=record[key]; selected=[r for r in rows if r['patient_id']==patient]
+        components={r['group_id'] for r in selected if 'group_id' in r}
+        if len(components)>1: raise ValueError('Inconsistent component within filename group')
+        record.update(patient_id=patient,component_id=next(iter(components),None),
+            subtypes=sorted({r['subtype'] for r in selected if 'subtype' in r}),
+            images=len(selected),magnifications=sorted({r['magnification'] for r in selected if 'magnification' in r}))
 
 
 @torch.inference_mode()
@@ -109,6 +143,12 @@ def collect_predictions(model, loader, *, prediction_rows=None):
     rows = getattr(loader.dataset, 'rows', None)
     if rows is not None and not isinstance(loader.sampler, SequentialSampler):
         raise ValueError('Patient reporting requires an ordered sequential evaluation loader')
+    if type(loader.batch_sampler) is not BatchSampler or list(loader.sampler)!=list(range(len(loader.dataset))):
+        raise ValueError('Evaluation requires complete sequential batch coverage')
+    if rows is not None:
+        if len(rows)!=len(loader.dataset): raise ValueError('Metadata coverage differs from dataset')
+        paths=[r['path'].casefold() for r in rows if 'path' in r]
+        if len(set(paths))!=len(paths): raise ValueError('Duplicate prediction image identity')
     device = model_device(model)
     model.eval()
     targets, predictions, probabilities = [], [], []
@@ -135,13 +175,16 @@ def collect_predictions(model, loader, *, prediction_rows=None):
         targets.extend(labels.cpu().tolist())
         predictions.extend(logits.argmax(1).cpu().tolist())
         probabilities.extend(logits.softmax(1).cpu().tolist())
+    if len(targets)!=len(loader.dataset): raise ValueError('Missing or duplicated evaluation rows')
+    if rows is not None and any('label' in r and classes[t]!=r['label'] for r,t in zip(rows,targets)):
+        raise ValueError('Prediction target differs from manifest label')
     metrics = classification_metrics(targets, predictions, classes)
     metrics['loss'] = loss_sum / len(targets)
     metrics['loss_definition'] = 'Mean image cross-entropy'
     patients = grouped_patient_metrics(rows, targets, probabilities, classes)
     if prediction_rows is not None:
         for index, (target, prediction, scores) in enumerate(zip(targets, predictions, probabilities)):
-            identity = {key: rows[index][key] for key in ('path','sha256','patient_id','group_id','magnification','split')
+            identity = {key: rows[index][key] for key in ('path','sha256','pixel_sha256','patient_id','group_id','magnification','subtype','split')
                         if rows is not None and key in rows[index]}
             prediction_rows.append(dict(**identity, target=target, prediction=prediction, probabilities=scores))
     return metrics, patients, first_input
@@ -230,7 +273,10 @@ def benchmark_model(model, first_input, batch_size=1, warmup=10, repeats=30):
         raise ValueError('Benchmark batch size/repeats must be positive; warmup nonnegative')
     device = model_device(model)
     model.eval()
-    inputs = first_input.expand(batch_size, *first_input.shape[1:]).contiguous().to(device)
+    generator = torch.Generator(device='cpu').manual_seed(0)
+    synthetic = torch.randn((batch_size,*first_input.shape[1:]),generator=generator,dtype=first_input.dtype)
+    input_sha256 = hashlib.sha256(synthetic.numpy().tobytes()).hexdigest()
+    inputs = synthetic.to(device)
     def synchronize():
         if device.type == 'cuda': torch.cuda.synchronize(device)
     macs = convolution_linear_macs(model, inputs)
@@ -245,6 +291,7 @@ def benchmark_model(model, first_input, batch_size=1, warmup=10, repeats=30):
         elapsed = (time.perf_counter_ns() - started) / 1e6
         if not torch.isfinite(outputs).all():
             raise ValueError('Nonfinite benchmark outputs')
+        if not math.isfinite(elapsed) or elapsed<=0: raise ValueError('Invalid benchmark duration')
         timings.append(elapsed)
     ordered = sorted(timings)
     position = .95 * (len(ordered) - 1)
@@ -252,7 +299,8 @@ def benchmark_model(model, first_input, batch_size=1, warmup=10, repeats=30):
     p95 = ordered[lower] + (ordered[min(lower+1, len(ordered)-1)] - ordered[lower]) * (position-lower)
     median = statistics.median(timings)
     return dict(input_shape=list(inputs.shape), dtype=str(inputs.dtype), warmup=warmup, repeats=repeats,
-                input_policy='First actual preprocessed evaluation image repeated into a contiguous resident batch',
+                protocol=BENCHMARK_PROTOCOL, input_seed=0, input_sha256=input_sha256,
+                input_policy='Local CPU RNG standard-normal synthetic resident input; independent of held-out image values',
                 pre_measurement_forwards={'mac_counting': 1, 'warmup': warmup},
                 timing_method='Device-synchronized wall-clock forward latency; GPU sync before and after every measured call',
                 excludes=['disk IO', 'image transforms', 'host-to-device copy', 'loss', 'metrics'],

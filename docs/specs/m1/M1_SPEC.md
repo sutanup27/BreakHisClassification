@@ -2,7 +2,7 @@
 
 Specification: **M1-FOUNDATION-SPEC-001**, version 1.0. Date: 8 November 2026.
 Document status: Reviewed for implementation. Implementation: In progress;
-M1.1-M1.3 are reviewed; M1.4-M1.5 remain pending. See the package tracker
+M1.1-M1.4 are reviewed; M1.5 remains pending. See the package tracker
 for current evidence; this master describes the full milestone target.
 
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md).
@@ -62,7 +62,7 @@ train/validation/test split remains supported; extra roles are not invented.
 
 At specification creation, runner/comparison commands lacked phase execution.
 M1.3 now executes development by default or explicit `--phase development`;
-final execution and phase-aware comparisons remain M1.4 targets. The existing
+M1.4 now also executes bound final inference and phase-aware saved comparisons. The existing
 six-section experiment JSON is documented in the [configuration guide](../../guides/EXPERIMENT_CONFIG.md).
 
 Keep config schema version 1 and its exact top-level fields:
@@ -82,7 +82,7 @@ Preserve existing transforms: resize shorter edge 256, crop 224, ImageNet
 normalization; random crop/horizontal flip only for training. Save this actual
 preprocessing contract, not the different settings in earlier discussions.
 
-### 3.2 Command contract: development implemented; final/comparison pending
+### 3.2 Implemented command contract: development, final and saved comparisons
 
 ```powershell
 # Development is the new default; no test inference.
@@ -271,7 +271,7 @@ identity/measurement invariants to manufacture a matched result.
 
 Model, seed, dense epochs and fixed pruning settings may differ, as currently
 supported; enumerate every such difference in the output. Selection criterion is
-normally fixed, but a deliberate experiment may declare it through a proposed
+normally fixed, but a deliberate experiment may declare it through the implemented
 `--vary training.selection_metric` option. Reject an undeclared difference; do not
 force every future comparator to use identical selection methods or invent
 class-weighting/search support here. Those extensions belong to milestone 4.

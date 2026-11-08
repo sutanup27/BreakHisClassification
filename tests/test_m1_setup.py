@@ -185,7 +185,7 @@ class PreparationTests(unittest.TestCase):
         result=self.prepare(); outputs=result['inputs']['expected_artifacts']
         self.assertTrue(any(p.endswith('train.history.json') for p in outputs['train']))
         self.assertTrue(any(p.endswith('prune.validation.json') for p in outputs['prune']))
-        self.assertEqual(len(outputs['final-finetuned']),2)
+        self.assertEqual(len(outputs['final-finetuned']),3)
         self.assertIn(str(result['run']/'train.history.json'),outputs['development-complete'])
         self.assertIn(str(result['run']/'finetune.history.json'),outputs['development-complete'])
         setup.prepare_run(self.file,run_id='prepared',resume=True)  # Read-only preparation validation.

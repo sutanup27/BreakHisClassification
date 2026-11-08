@@ -69,7 +69,7 @@ def expected_outputs(config, run, checkpoint):
     for phase in PHASES:
         for role in roles:
             outputs[phase+'-'+role] = [run/phase/f'{role}.metrics.json', run/phase/f'{role}.predictions.json',
-                *([run/phase/f'{role}.metrics.config.json'] if phase=='development' else [])]
+                run/phase/f'{role}.metrics.config.json']
     outputs['development-complete'] = [run/'development/selection.json',run/'development/results.json',
         *[run/f'{command}.history.json' for command in commands]]
     outputs['final-complete'] = [run/'final/results.json']

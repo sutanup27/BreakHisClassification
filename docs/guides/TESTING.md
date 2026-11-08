@@ -154,3 +154,17 @@ Check items only when evidence for the actual declared experiment is recorded.
 - [ ] Evaluate selected baseline and pruned models on reserved test data.
 - [ ] Generate the accuracy, size, compute and latency comparison report.
 - [ ] Preserve configurations, split references, checkpoint hashes and logs.
+
+## M1.4 phase evaluation checks
+
+The active CPU suite has 131 cases (129 pass, two CUDA-only cases skip on CPU).
+Run `python -m unittest discover -s tests -p test_m1_evaluation.py` with a CUDA
+installation to exercise all 23 focused phase/report/comparison cases, including
+actual CUDA training with subsequent CPU final inference and synchronized GPU
+timing. Numerical resume checks remain in the M1.3/core suite.
+
+`python tools/smoke_experiments.py` uses actual subprocess VGG training, channel
+pruning and fine-tuning on generated images. It checks dense seed reproduction,
+explicit final inference, both saved comparison phases and JSON/CSV outputs.
+It leaves ordinary run artifacts/checkpoints; it does not establish research
+accuracy, statistical significance or end-to-end deployment performance.

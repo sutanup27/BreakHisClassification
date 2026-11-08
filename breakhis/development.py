@@ -126,7 +126,8 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
         reports={}; predictions={}
         for role,path in models.items():
             report=run/'development'/f'{role}.metrics.json'; prediction=report.with_name(f'{role}.predictions.json')
-            execute('development-'+role,['evaluate',*common,'--split','validation','--device',evaluation['device'],
+            execute('development-'+role,['evaluate',*common,'--split','validation','--model-role',role,
+                '--experiment-config',str(run/'config.json'),'--device',evaluation['device'],
                 '--checkpoint',str(path),'--output',str(report),'--predictions-output',str(prediction),
                 '--benchmark-warmup',str(evaluation['warmup']),'--benchmark-repeats',str(evaluation['repeats']),
                 '--benchmark-batch-size',str(evaluation['batch_size']),'--cpu-threads',str(evaluation['cpu_threads'])])

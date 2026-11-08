@@ -1,6 +1,6 @@
 # Evaluation and efficiency reporting
 
-Stage 8 extends `evaluate` and adds `compare`. Reports use the selected manifest's
+Low-level `evaluate` and `compare` use the selected manifest's
 test split by default with deterministic validation/test preprocessing.
 Use `evaluate --split validation` for development reporting; `compare` uses test.
 Only the requested evaluation role is constructed. Training,
@@ -47,6 +47,10 @@ Both commands accept shared data options from the [README](../../README.md).
 | Argument | Commands | Default and meaning |
 | --- | --- | --- |
 | `--checkpoint` | evaluate | Required input checkpoint |
+| `--split` | evaluate | `test` by default; `validation` for development |
+| `--predictions-output` | evaluate | Optional separate JSON with ordered image/group rows |
+| `--experiment-config` | evaluate | Optional frozen config for SHA-256 attribution |
+| `--model-role` | evaluate | `standalone` default; runner uses `dense`, `pruned`, `finetuned` |
 | `--dense` | compare | Required dense baseline file |
 | `--pruned` | compare | Required pruned-before-fine-tuning file |
 | `--finetuned` | compare | Required selected fine-tuned file |
@@ -69,22 +73,27 @@ task folder. `compare` uses `--dense/--pruned/--finetuned`, not `--checkpoint`.
   classes and `class_to_idx` are explicit: benign 0, malignant 1.
 - Per-class precision/recall/F1 and support are reported. Macro metrics give each
   declared class equal weight; weighted metrics use class support. Undefined
-  divisions are zero, including absent classes. This convention can lower macro
-  scores on a split containing only one class; support remains visible.
+  divisions return JSON `null` with per-class reasons. Recall needs true class
+  support; precision needs predicted positives; F1 needs true or predicted
+  support. Macro rates are null if any class rate is undefined. Weighted rates
+  omit zero-support classes; normal role checks require both true classes.
 - Binary sensitivity is malignant recall. Specificity is benign recall.
 - Loss is mean image cross-entropy, weighted by image count across uneven batches.
 
 ## Filename patient/slide metrics
 
-Use manifest `patient_id` (YEAR-SLIDE_ID) as a grouping surrogate. Average softmax
-probabilities over each group's images and select the highest mean; ties select
-the first label. Each group then contributes one classification observation,
+Use manifest `patient_id` (YEAR-SLIDE_ID) as a grouping surrogate. Primary
+`group_metrics` average softmax probabilities within each available magnification,
+then average those magnification means equally. Secondary `patient_metrics`
+use ordinary image-mean probabilities. Both use argmax, ties to benign; the
+binary reference threshold is fixed at 0.5. No threshold fitting is performed. Each group then contributes one classification observation,
 regardless of image count. Reports preserve group probabilities, labels, image
 counts, and the same confusion/averaging conventions as image metrics.
 
 These are **filename-group metrics**, not independently verified clinical
-patient metrics. `all` magnifications aggregate all selected images within the
-group. Mixed labels in a group, missing identifiers, dropped last batches, and
+patient metrics. Missing magnifications are not imputed. Groups preserve
+filename ID, duplicate-linked component ID, subtype list, available magnifications
+and image count. Component linkage protects splits; it is not a clinical identity. Mixed labels in a group, missing identifiers, dropped last batches, and
 shuffled manifest loaders are rejected. Generic datasets without row metadata
 report patient metrics as unavailable rather than inventing identities.
 
@@ -109,10 +118,12 @@ payloads differ. Neither difference alone establishes deployment model size.
 
 ## Compute and latency protocol
 
-Input dimensions come from the first real preprocessed evaluation image (normally
-3 x 224 x 224), not a CIFAR-sized placeholder. Benchmark inputs repeat that image
-into a contiguous batch of `--benchmark-batch-size`, resident on the model device.
-The report records exact NCHW shape and dtype.
+Input shape/dtype come from preprocessed evaluation inputs (normally 3 x 224 x
+224). Values are standard-normal synthetic data generated with a local CPU RNG,
+seed zero, then copied to the resident model device. Global fitting RNG state is
+not changed by input generation. Protocol `resident-forward-synthetic-v1` records
+NCHW shape, dtype, seed and input SHA-256. Timing does not depend on held-out image
+values. Copies and input generation occur outside the timed interval.
 
 Hooks count Conv2d/Linear multiply-accumulates from actual forward outputs,
 including grouped convolution dimensions. This is explicitly a **Conv2d/Linear
@@ -153,3 +164,20 @@ group aggregation, mask-aware sizes, invalid settings/provenance, and no train/
 validation iteration during comparisons. Existing real-v1 smoke checkpoints were
 compared for both masks and channel removal. Those small reports verify execution,
 not full-dataset accuracy or general hardware speedup claims.
+
+## Phase-aware records and saved comparisons
+
+New evaluate reports/predictions use schema 2. Envelopes record run, phase, split,
+model role, class order, config/manifest/checkpoint digests, policies and actual
+evaluation runtime. Image rows preserve path, raw/pixel hashes, filename ID,
+component ID, magnification, subtype, target and class-ordered probabilities.
+Sequential complete coverage is mandatory; shuffled/dropped/duplicate/missing
+rows fail. Report/prediction/config destinations must be distinct and cannot
+replace input manifests, weights, configs or source images.
+
+`run_experiment.py --phase final --run-id ID` verifies the development selection
+before accessing test pixels. `compare_experiments.py --phase development|final`
+reads saved artifacts only and verifies phase/identity/measurement invariants.
+See the [experiment workflow](EXPERIMENTS.md) for final retries, factor declarations,
+budgets and compatibility. Low-level `breakhis compare` remains an explicit
+three-checkpoint test-inference command; saved comparison performs no inference.

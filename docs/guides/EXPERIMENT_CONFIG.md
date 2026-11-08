@@ -43,7 +43,7 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 | `--seed N` | Override and save the fitting seed; does not resplit data. |
 | `--device cpu/cuda/auto` | Override and save training device; evaluation keeps its fixed config device. |
 | `--resume` | Continue the same interrupted run with identical inputs/code/runtime; never implicitly initializes a new experiment. |
-| `--phase development/final` | Development is the execution default, with validation reports only. Final execution remains M1.4; only final preparation validation is currently available. |
+| `--phase development/final` | Development is the default, with validation reports only. Final explicitly evaluates bound selections on test, using the frozen config and evaluation device without fitting. |
 | `--prepare-only` | Save schema-2 frozen inputs and expected-output contracts without training/inference. With `--resume`, revalidate an existing preparation read-only. Final preparation validation requires already completed development. |
 
 Preparation saves exact manifest bytes and SHA-256, a frozen effective config
@@ -62,3 +62,9 @@ For split seeds, use `prepare-data --seed N` with a new output directory. For
 new training seeds, use `run_experiment.py --seed N` and a new run ID. For
 additional sparsities, copy a config and change `pruning.sparsity`; pick a
 prespecified set or perform selection on development data, never on test metrics.
+
+Comparison options: `--runs` (at least two completed requested phases), `--output`
+(new JSON path; CSV sibling is also saved), `--phase development|final` (default
+`development`) and repeatable `--vary training.selection_metric` for a deliberate
+selection-policy study. No data, split or benchmark invariant can be overridden.
+Comparison reads saved outputs only; it does not evaluate models.

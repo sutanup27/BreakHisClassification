@@ -6,10 +6,10 @@ Technical checks for invalid inputs, duplicate/group leakage and missing classes
 remain active. Existing individual package commands remain supported.
 
 **Development is the default:** the runner trains, selects weights and reports on
-validation. It never automatically evaluates test images. M1.4 will add the bound
-final-inference and phase-specific comparison commands; those are not available
-for the new schema-2 runs yet. Explicit low-level `evaluate --split test` remains
-available, but test reports must not guide development choices.
+validation. It never automatically evaluates test images. Use `--phase final`
+only after development choices are fixed. Final inference verifies the saved
+selection and evaluates its fixed checkpoint roles; it does not fit or select
+weights. Saved comparisons are phase-specific and run no inference.
 
 Optional preparation without fitting:
 
@@ -98,7 +98,10 @@ artifacts/experiments/<run-id>/
     pruned.* / finetuned.*        present for pruning runs
     selection.json               selected weight hashes/epochs and report bindings
     results.json                 validation results and designated pipeline role
-  results.json                   phase references; final stays null
+  final/                         created only by explicit --phase final
+    dense.* / pruned.* / finetuned.*  test reports and ordered predictions
+    results.json                 test results tied to development selection
+  results.json                   separate development/final references
 ```
 
 Checkpoints stay outside the codebase:
@@ -135,17 +138,55 @@ validation seconds, losses and selection score for each committed epoch.
 A **fresh rerun** uses a new ID without `--resume`. Completed runs are never
 silently overwritten or extended by changing their planned epoch count.
 
-## 5. Final evaluation and comparison
+## 5. Compare development results, then explicitly evaluate final weights
 
-M1.4 implements final inference from saved development selections and phase-aware
-comparison tables. Until then, inspect each run's `development/results.json` and
-validation reports. The existing `compare_experiments.py` handles old schema-1
-completed runs only; it does not compare these new schema-2 development runs.
+```powershell
+# Development comparison is the default; reads saved validation outputs only.
+python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/development.json
 
-Fine-tuning adds epochs: include an equal-total-budget dense control before
-attributing improvements to pruning. Seed repeats are not independent patient
-samples. Match hardware and training budgets; masked zeros do not automatically
-speed up dense operations. Final test metrics must never select the best recipe.
+# After fixing experimental choices, explicitly evaluate the bound checkpoints.
+python run_experiment.py --run-id baseline-102 --phase final
+python run_experiment.py --run-id channel-102 --phase final
+python compare_experiments.py --runs baseline-102 channel-102 --phase final --output artifacts/comparisons/final.json
+```
+
+Final reads the frozen config, manifest, selected checkpoint hashes/epochs and
+policy IDs. It requests test only, needs only the configured evaluation device,
+and can evaluate portable CUDA-trained weights on CPU without the training GPU
+or training images. It evaluates all fixed roles, using the recipe's designated
+role (`dense` or `finetuned`); it never picks the best test score. Final outputs
+live under `final/`, separately from `development/`. A failed final phase leaves
+development results usable. Retry an incomplete final with:
+
+```powershell
+python run_experiment.py --run-id baseline-102 --phase final --resume
+```
+
+Completed final stages are verified and skipped; completed final phases cannot
+be overwritten. Missing/corrupt completed artifacts fail rather than being
+silently replaced. Current package source hashes must match the saved run.
+Old schema-1 records remain readable and their weights remain usable with
+individual commands, but phase-aware final/comparison does not migrate them.
+
+Comparison exports JSON and CSV without loading a model or opening images. It
+requires two completed requested phases and verifies reports, predictions,
+checkpoint hashes, manifests, policy IDs, training recipe and timing invariants.
+It never falls back to another phase. With at least two valid runs, extra
+incomplete runs appear as diagnostics, never as scored rows. Model/seed/epoch/
+pruning differences are enumerated. An intentional checkpoint-selection study
+must declare the selection difference explicitly:
+
+```powershell
+python compare_experiments.py --runs selection-a selection-b --vary training.selection_metric --output artifacts/comparisons/selection-study.json
+```
+
+That declaration cannot override data or measurement invariants. Rows include
+planned/completed epochs, optimizer steps, measured fitting/validation/stage
+seconds, selected checkpoint identity, group support, rates, MACs and latency.
+Fine-tuning adds work: include equal-budget controls before attributing gains to
+pruning. Disclosing budgets does not prove fairness. Seeds are not independent
+patient samples; one timing session does not establish a significant speedup.
+Masked zeros do not automatically speed up dense operations.
 
 ## Minimal evaluation protocol
 
@@ -180,7 +221,8 @@ python -m unittest discover -s tests -v
 ```
 
 The smoke workflow generates 12 images, trains one-epoch dense/channel-pruned
-runs, saves validation predictions, selection bindings and histories, and checks
-that matching seeds reproduce dense weights. Its scores and timing are not
+runs, checks matching-seed dense weights, explicitly evaluates both fixed final
+selections and exports development/final comparison JSON/CSV. It retains phase
+reports, ordered predictions, selection bindings and histories. Its scores and timing are not
 research results. Real experiments still need adequate training and replicated
 evaluation. See the [five-milestone plan](../research/EXPERIMENT_ROADMAP.md).

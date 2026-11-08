@@ -16,7 +16,7 @@ def main():
     args=parser.parse_args()
     from PIL import Image
     from breakhis.manifest import prepare_dataset
-    from breakhis.experiments import load_config,read_json,write_json,run_experiment
+    from breakhis.experiments import load_config,read_json,write_json,run_experiment,compare_runs
     from breakhis.checkpoints import read_checkpoint
     import torch
     identifier='simple-smoke-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+uuid.uuid4().hex[:4]
@@ -60,8 +60,15 @@ def main():
         assert read_json(run/'development/dense.predictions.json')['split']=='validation'
     assert dense[0].keys()==dense[1].keys()
     assert all(torch.equal(dense[0][key],dense[1][key]) for key in dense[0]), 'Identical fresh seeds/configs must reproduce the dense model'
+    from breakhis.final_evaluation import run_final
+    for run in runs:
+        run_final(run_id=run.name)
+        assert read_json(run/'run.json')['phases']['final']['status']=='completed'
+        assert read_json(run/'final/dense.predictions.json')['split']=='test'
+    comparisons={phase:str(compare_runs(runs,work/f'{phase}.comparison.json',phase=phase))
+        for phase in ('development','final')}
     summary=dict(status='passed',synthetic=True,accuracy_claim=False,images=12,
-        runs=list(map(str,runs)),phase='development',split='validation',dense_weights_reproduced=True,
+        runs=list(map(str,runs)),phases=['development','final'],comparisons=comparisons,dense_weights_reproduced=True,
         limitation='One-epoch generated-image execution check; two timing repeats do not establish performance.')
     write_json(work/'summary.json',summary)
     print(json.dumps(summary,indent=2))

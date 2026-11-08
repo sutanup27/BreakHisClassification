@@ -138,50 +138,9 @@ def run_experiment(config_file, *, run_id=None, resume=False, seed=None, device=
     return run_development(config_file,run_id=run_id,resume=resume,seed=seed,device=device)
 
 
-def compare_runs(runs, output):
-    results=[]
-    for value in runs:
-        directory=Path(value) if Path(value).is_dir() else RUNS/value
-        state=read_json(directory/'run.json')
-        if state['status']!='completed': raise ValueError('Only completed runs can be compared')
-        for stage,record in state['stages'].items():
-            if stage.startswith('evaluate-') and digest(record['output'])!=record['output_sha256']:
-                raise ValueError('Evaluation report changed: '+stage)
-        results.append(read_json(directory/'results.json'))
-    if len(results)<2: raise ValueError('Compare at least two runs')
-    first=results[0]
-    def protocol(result):
-        config=result['config']
-        return dict(manifest=result['identity']['manifest_sha256'],preprocessing=result['identity']['preprocessing'],
-            source=config['data']['source'],magnification=config['data']['magnification'],
-            training={key:value for key,value in config['training'].items() if key not in ('seed','epochs','model')},
-            evaluation=config['evaluation'],runtime=result['identity']['runtime'],
-            training_device=result['identity']['resolved_device'],
-            benchmark_runtime=result['final_metrics']['benchmark']['runtime'])
-    if any(protocol(result)!=protocol(first) for result in results[1:]):
-        raise ValueError('Comparison requires identical split, preprocessing, optimizer/selection and evaluation/runtime settings')
-    table=[]
-    for result in results:
-        for role,path in result['reports'].items():
-            report=read_json(path)
-            group=report['group_metrics']; image=report['image_metrics']
-            if not group.get('available'): raise ValueError('Group metrics missing')
-            table.append(dict(run_id=result['run_id'],role=role,
-                model=result['config']['training']['model'],seed=result['config']['training']['seed'],
-                method=(result['config']['pruning'] or {}).get('method','dense') if role!='dense' else 'dense',
-                group_balanced_accuracy=group['balanced_accuracy'],group_sensitivity=group['sensitivity'],group_specificity=group['specificity'],
-                image_accuracy_percent=image['accuracy'],parameters=report['size']['logical_parameters'],
-                median_latency_ms=report['benchmark']['latency_ms']['median'],
-                training_epochs=result['config']['training']['epochs'],
-                extra_finetune_epochs=(result['config']['pruning'] or {}).get('finetune_epochs',0) if role=='finetuned' else 0))
-    output=Path(output).resolve()
-    if output.suffix!='.json' or output.exists() or output.with_suffix('.csv').exists():
-        raise ValueError('Choose a new .json comparison output')
-    write_json(output,dict(schema_version=1,comparison_protocol=protocol(first),rows=table,
-        note='Descriptive held-out comparison, not model selection. Seeds/models and training budgets are listed explicitly. Seed repeats are not independent patient samples. Fine-tuned models receive extra epochs; include an equal-budget dense control for method claims.'))
-    with output.with_suffix('.csv').open('w',newline='',encoding='utf-8') as stream:
-        writer=csv.DictWriter(stream,fieldnames=list(table[0])); writer.writeheader(); writer.writerows(table)
-    return output
+def compare_runs(runs, output, *, phase='development', vary=()):
+    from .saved_comparison import compare_saved
+    return compare_saved(runs,output,phase=phase,vary=vary)
 
 
 def main(argv=None):
@@ -191,19 +150,20 @@ def main(argv=None):
     parser.add_argument('--resume',action='store_true',help='Continue an interrupted run at completed-epoch/stage boundaries')
     parser.add_argument('--seed',type=int,help='Override and record the training seed; split seed remains in the manifest')
     parser.add_argument('--device',choices=['auto','cpu','cuda'])
-    parser.add_argument('--phase',choices=['development','final'],help='Development is the default; final execution is added in M1.4')
+    parser.add_argument('--phase',choices=['development','final'],help='Development is the default; final explicitly evaluates saved selections')
     parser.add_argument('--prepare-only',action='store_true',help='Validate and save schema-2 inputs without training or inference')
     args=parser.parse_args(argv)
     try:
-        if args.prepare_only or args.phase == 'final':
+        if args.prepare_only:
             from .experiment_setup import prepare_run, validate_request
             phase=args.phase or 'development'
             validate_request(config_file=args.config,run_id=args.run_id,phase=phase,
                 resume=args.resume,seed=args.seed,device=args.device)
-            if not args.prepare_only:
-                raise ValueError('Final execution is not implemented yet (M1.4); development execution is available')
             prepared=prepare_run(args.config,run_id=args.run_id,phase=phase,resume=args.resume,seed=args.seed,device=args.device)
             print('Prepared/validated inputs only; no training or inference: '+str(prepared['run']))
+        elif args.phase == 'final':
+            from .final_evaluation import run_final
+            run_final(args.config,run_id=args.run_id,resume=args.resume,seed=args.seed,device=args.device)
         else:
             if args.config is None:
                 raise ValueError('Development requires --config')
@@ -216,6 +176,8 @@ def comparison_main(argv=None):
     parser=argparse.ArgumentParser(description='Export comparable completed runs as JSON and CSV')
     parser.add_argument('--runs',nargs='+',required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--phase',choices=['development','final'],default='development')
+    parser.add_argument('--vary',action='append',default=[],choices=['training.selection_metric'])
     args=parser.parse_args(argv)
-    try: print(compare_runs(args.runs,args.output))
+    try: print(compare_runs(args.runs,args.output,phase=args.phase,vary=args.vary))
     except (ValueError,OSError,KeyError) as error: parser.exit(1,str(error)+'\n')

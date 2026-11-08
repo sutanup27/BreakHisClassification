@@ -6,21 +6,24 @@ This project trains PyTorch models to classify breast histology images as **beni
 
 **Recommended workflow:** [run and compare experiments](docs/guides/EXPERIMENTS.md).
 Use one saved config per experiment. The runner defaults to development and
-exports validation results. Bound final inference and phase-specific comparisons
-are the next package (M1.4).
+exports validation results. Compare saved development results, then explicitly
+request final evaluation after fixing your experimental choices.
 
 ```powershell
 # Activate your installed environment first; prepare the split only if missing.
 python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/data --seed 101
 python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id baseline-102
 python run_experiment.py --config configs/experiments/vgg_channel.json --run-id channel-102
+python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/development.json
 ```
 
 Reuse an existing manifest instead of rerunning preparation. Each experiment
 saves its resolved config, split, seed/code identity, histories, predictions and
 metrics under `artifacts/experiments/<run-id>/`. Checkpoints remain in the parent
 `checkpoint/binary` directory. Use a new ID for fresh runs; use `--resume` with
-the original config/ID for interrupted runs.
+the original config/ID for interrupted development runs. For explicit final test
+inference: `python run_experiment.py --run-id baseline-102 --phase final`.
+Final uses saved development selections and never retrains.
 
 See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
 [five practical milestones](docs/research/EXPERIMENT_ROADMAP.md) and
@@ -256,6 +259,9 @@ Uses the same optimizer, scheduler, and validation selection as training. Withou
 | --- | --- | --- |
 | `--checkpoint` | **Required**; file path | Model weights; architecture and pruning masks are reconstructed. |
 | `--split` | `test`; `validation` or `test` | Choose development validation or reserved final test reporting. |
+| `--predictions-output` | Optional `.json` path | Save complete ordered image/group predictions and provenance. |
+| `--experiment-config` | Optional config path | Attribute reports to frozen experiment config bytes; runner supplies this. |
+| `--model-role` | `standalone`; `dense`, `pruned`, `finetuned` | Label checkpoint origin; runner supplies its fixed role. |
 | `--output` | Experiment-directory `evaluate.json` | JSON report path. Example: `--output artifacts/final-test.json`. Parent folders are created. Evaluation saves no model weights. |
 
 The JSON report is printed and saved even without `--output`. It now includes

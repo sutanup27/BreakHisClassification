@@ -17,7 +17,7 @@ results are not silently promoted to coverage of new phase/role requirements.
 | [M1.1 Config, storage and identity](M1_1_CONFIG_IDENTITY.md) | Valid inputs, no-overwrite paths and phase/run contracts | M1-R01, M1-R02, M1-R03 | M1-T01-M1-T04 | None | Reviewed; 14 new tests, 77 total passed |
 | [M1.2 Splits and roles](M1_2_SPLITS_ROLES.md) | Full-source leakage checks and requested-role data access | M1-R04, M1-R05, M1-R06 | M1-T05-M1-T08 | M1.1 | Reviewed; 15 new tests, 92 total passed |
 | [M1.3 Execution and resume](M1_3_EXECUTION_RESUME.md) | Development-only default, exact resume and complete histories | M1-R07, M1-R08, M1-R09, M1-R10 | M1-T09-M1-T14 | M1.1, M1.2 | Reviewed; 16 new tests, 108 total passed |
-| [M1.4 Evaluation and comparison](M1_4_EVALUATION_COMPARISON.md) | Bound explicit final inference and phase-specific outputs/tables | M1-R11, M1-R12, M1-R13, M1-R14, M1-R15 | M1-T15-M1-T21 | M1.1-M1.3 | Not started |
+| [M1.4 Evaluation and comparison](M1_4_EVALUATION_COMPARISON.md) | Bound explicit final inference and phase-specific outputs/tables | M1-R11, M1-R12, M1-R13, M1-R14, M1-R15 | M1-T15-M1-T21 | M1.1-M1.3 | Reviewed; 23 new cases; CPU 129 passed/2 skipped, CUDA 23 passed |
 | [M1.5 Integration and docs](M1_5_INTEGRATION.md) | Complete public workflow and accurate guides | M1-R16, M1-R17 | M1-T22-M1-T25 | M1.1-M1.4 | Not started |
 
 ## Implementation path
@@ -27,7 +27,7 @@ M1.1 config/identity -> M1.2 role-safe data -> M1.3 development/resume
                     -> M1.4 evaluation/comparison -> M1.5 integration/docs
 ```
 
-Next: implement/revalidate **M1.4 evaluation and comparison**. Do not start a new
+Next: implement/revalidate **M1.5 integration and docs**. Do not start a new
 scientific training matrix merely to finish this foundation. The acceptance
 fixtures should be small and deterministic, with fresh-process smoke coverage.
 
@@ -42,9 +42,9 @@ service, mandatory review owner or elaborate archive is required.
 M1.1 implementation commit: `b077f23`; exact source hashes
 are saved in the real preparation's `inputs.json`. The M1.1 CPU suite passed
 77 tests, including 14 new preparation/identity tests. See M1.1's evidence section
-for commands and logs. M1-T01-M1-T04 are covered; M1-T05-M1-T08 are now covered by M1.2; M1-T09-M1-T14 are covered by M1.3; M1-T15-M1-T25 remain outstanding.
+for commands and logs. M1-T01-M1-T04 are covered; M1-T05-M1-T08 are now covered by M1.2; M1-T09-M1-T14 are covered by M1.3; M1-T15-M1-T21 are covered by M1.4; M1-T22-M1-T25 remain outstanding.
 Development execution is now the default and reports validation only. Final
-inference and phase-specific comparisons remain M1.4 work.
+inference and phase-specific comparisons are now implemented and reviewed in M1.4.
 
 Update the owning checklist, this table and the global tracker after actual
 implementation/test work. If evidence invalidates a completed item, reopen it
@@ -55,3 +55,7 @@ preparation/revalidation succeeded without fitting; see the M1.2 evidence sectio
 
 M1.3 reviewed: 108 CPU tests passed; fresh-process VGG dense/channel development
 passed with reproduced dense weights. See M1.3 for resume/failure test evidence.
+
+M1.4 reviewed: CPU suite ran 131 cases (129 passed, 2 CUDA-only skips); all 23
+focused cases passed in the CUDA environment. Fresh-process VGG dense/channel
+flows completed both phases and saved comparisons. See M1.4 for evidence.

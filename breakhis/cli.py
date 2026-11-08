@@ -93,6 +93,8 @@ def main(argv=None):
         else:
             command.add_argument('--checkpoint', type=Path, required=name != 'finetune')
         if name == 'evaluate':
+            command.add_argument('--experiment-config',type=Path,help='Frozen experiment config for report attribution')
+            command.add_argument('--model-role',choices=['dense','pruned','finetuned','standalone'],default='standalone')
             command.add_argument('--predictions-output', type=Path, help='Save ordered per-image predictions as JSON')
             command.add_argument('--split',choices=['validation','test'],default='test',help='Explicit evaluation role; validation for development reporting')
         if name == 'prune':
@@ -236,7 +238,12 @@ def main(argv=None):
                 experiment_id=args.experiment_id).with_suffix('.json')
             if output.suffix.lower() != '.json':
                 raise ValueError('Evaluation report output must end in .json')
-            destinations = report_paths(output,args.predictions_output,protected=[args.manifest,input_path])
+            if args.experiment_config is not None:
+                args.experiment_config=resolve_input(args.experiment_config,'Experiment config')
+            protected=[args.manifest,input_path,selected_root,input_path.with_suffix('.config.json'),
+                input_path.with_suffix('.history.json'),input_path.with_suffix('.validation.json')]
+            if args.experiment_config is not None: protected.append(args.experiment_config)
+            destinations = report_paths(output,args.predictions_output,protected=protected)
             output = destinations['report']
             if args.predictions_output is not None:
                 args.predictions_output = destinations['predictions']
@@ -301,11 +308,19 @@ def main(argv=None):
         report = checkpoint_report(model, loaders[args.split], input_path,
             batch_size=args.benchmark_batch_size, warmup=args.benchmark_warmup, repeats=args.benchmark_repeats,
             prediction_rows=predictions)
-        report.update(schema_version=1, split=args.split, experiment_id=args.experiment_id, **metadata)
+        from .reporting import AGGREGATION, THRESHOLD
+        envelope=dict(schema_version=2,phase='development' if args.split=='validation' else 'final',
+            split=args.split,run_id=args.experiment_id,experiment_id=args.experiment_id,model_role=args.model_role,
+            classes=payload['classes'],class_to_idx={v:i for i,v in enumerate(payload['classes'])},
+            config_sha256=hashlib.sha256((args.experiment_config or config_path).read_bytes()).hexdigest(),
+            aggregation=AGGREGATION,threshold=THRESHOLD,threshold_probability=.5,tie_class='benign',
+            checkpoint_sha256=report['checkpoint_sha256'],evaluation_runtime=report['benchmark']['runtime'],**metadata)
+        report.update(envelope)
         write_json(output, report)
         if args.predictions_output:
-            write_json(args.predictions_output, dict(schema_version=1, split=args.split, classes=payload['classes'],
-                checkpoint_sha256=report['checkpoint_sha256'], manifest_sha256=metadata['manifest_sha256'], rows=predictions))
+            write_json(args.predictions_output,dict(**envelope,rows=predictions,
+                groups=report['group_metrics'].get('groups',[]),
+                image_mean_groups=report['patient_metrics'].get('groups',[])))
         print(json.dumps(report, indent=2))
         print(f'Report: {output}; configuration: {config_path}')
         return

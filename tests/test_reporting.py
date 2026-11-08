@@ -51,8 +51,8 @@ class ReportingTests(unittest.TestCase):
         self.assertEqual(result['specificity'], .5)
         self.assertAlmostEqual(result['macro']['recall'], .75)
         absent = classification_metrics([0], [0], ['benign', 'malignant'])
-        self.assertEqual(absent['per_class']['malignant']['f1'], 0)
-        self.assertEqual(absent['macro']['f1'], .5)
+        self.assertIsNone(absent['per_class']['malignant']['f1'])
+        self.assertIsNone(absent['macro']['f1'])
 
     def test_patient_probability_mean_gives_each_group_one_vote(self):
         from breakhis.reporting import grouped_patient_metrics
@@ -202,7 +202,8 @@ class ReportingTests(unittest.TestCase):
         loaders={split:DataLoader(dataset,batch_size=2) for split in ('train','validation','test')}
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder); manifest=root/'manifest.json'
-            manifest.write_text(json.dumps(dict(schema_version=1,roots={'cancer_binary':folder},rows=[])))
+            images=root/'images'; images.mkdir()
+            manifest.write_text(json.dumps(dict(schema_version=1,roots={'cancer_binary':str(images)},rows=[])))
             model=create()
             with t.no_grad(): model.weight.zero_(); model.bias.copy_(t.tensor([1.,0.]))
             metadata=dict(manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest(),source='cancer_binary',magnification='40X',preprocessing='resize-short-edge-256/crop224/ImageNet-normalization')

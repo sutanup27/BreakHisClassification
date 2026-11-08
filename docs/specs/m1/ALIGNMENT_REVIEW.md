@@ -99,3 +99,15 @@ baseline/pruning recipes remain unchanged. The current package tracker records
 original planning review above. M1.4 still owns bound final inference/comparison;
 M1.5 still owns complete public-workflow integration acceptance. Research
 novelty and converged experiments remain later-milestone work.
+
+## Implementation alignment after M1.4
+
+Explicit final inference now verifies fixed development selections before test
+access, needs only the evaluation device and does no fitting/pruning. Saved
+comparisons preserve phase/data/policy/measurement invariants while declaring
+supported experimental factors and budgets. Primary group aggregation remains
+equal magnification means, with image-mean grouping secondary. No threshold
+search, new pruning method or research novelty is inferred from these outputs.
+CPU/CUDA tests and generated-image VGG phase workflows are recorded in M1.4;
+M1.5 still owns integrated public-workflow acceptance. Later research milestones
+remain unchanged.
