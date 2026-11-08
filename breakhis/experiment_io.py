@@ -7,6 +7,19 @@ import tempfile
 from .paths import output_path
 
 
+def read_json(path):
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            if key in result: raise ValueError('Duplicate JSON field: '+key)
+            result[key]=value
+        return result
+    result=json.loads(Path(path).read_text(encoding='utf-8-sig'),object_pairs_hook=unique,
+        parse_constant=lambda value: (_ for _ in ()).throw(ValueError('Nonfinite JSON: '+value)))
+    json.dumps(result,allow_nan=False)
+    return result
+
+
 def json_bytes(value):
     return (json.dumps(value, indent=2, allow_nan=False)+'\n').encode('utf-8')
 

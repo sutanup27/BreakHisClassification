@@ -34,7 +34,7 @@ class PreparationTests(unittest.TestCase):
             rows.append(dict(source='cancer_binary',path=relative,filename=file.name,split=split,
                 label=label,subtype='adenosis' if label=='benign' else 'ductal_carcinoma',
                 patient_id=group,group_id=group,magnification='40X',width=8,height=8,
-                sha256=e.digest(file),pixel_sha256=hashlib.sha256(image.tobytes()).hexdigest()))
+                sha256=e.digest(file),pixel_sha256=hashlib.sha256(b'8x8:'+image.tobytes()).hexdigest()))
         self.manifest=self.root/'manifest.json'
         self.manifest.write_text(json.dumps(dict(schema_version=1,seed=101,
             roots={'cancer_binary':str(self.data)},rows=rows)))
@@ -71,7 +71,7 @@ class PreparationTests(unittest.TestCase):
         for request in requests:
             with self.subTest(request=request),self.assertRaises(ValueError): setup.validate_request(**request)
         with patch.object(e,'run_experiment',side_effect=AssertionError('Legacy fallback')),contextlib.redirect_stderr(io.StringIO()):
-            with self.assertRaises(SystemExit): e.main(['--config',str(self.file),'--run-id','x','--phase','development'])
+            with self.assertRaises(SystemExit): e.main(['--config',str(self.file),'--run-id','x','--phase','final'])
         self.assertFalse(self.runs.exists())
 
     def test_t01_malformed_scalars_and_overflow_fail_before_output(self):

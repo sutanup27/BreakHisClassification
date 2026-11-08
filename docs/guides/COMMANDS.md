@@ -92,7 +92,9 @@ Manual preview/pruning demonstrations run only when explicitly invoked.
 
 The compatibility two-loader API returns **training and validation**, not the
 reserved test set. Use `breakhis.data.get_split_loaders` for explicit access to
-all three named splits. Changing split fractions requires rebuilding the manifest.
+requested roles, for example `splits=('train', 'validation')` or `splits=('test',)`.
+The helpers retain an all-three default for compatibility; callers should request
+roles explicitly. Changing split fractions requires a new manifest output path.
 
 ## Checkpoints and limits
 

@@ -16,7 +16,7 @@ def main():
     args=parser.parse_args()
     from PIL import Image
     from breakhis.manifest import prepare_dataset
-    from breakhis.experiments import load_config,read_json,write_json,run_experiment,compare_runs
+    from breakhis.experiments import load_config,read_json,write_json,run_experiment
     from breakhis.checkpoints import read_checkpoint
     import torch
     identifier='simple-smoke-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')+'-'+uuid.uuid4().hex[:4]
@@ -41,21 +41,27 @@ def main():
         if config['pruning']: config['pruning']['finetune_epochs']=1
         file=work/f'{name}.json'; write_json(file,config)
         run=run_experiment(file,run_id=identifier+'-'+('dense' if config['pruning'] is None else 'channel'))
-        assert read_json(run/'run.json')['status']=='completed'
+        assert read_json(run/'run.json')['status']=='development_completed'
         assert read_json(run/'train.history.json')['epochs']
-        predictions=read_json(run/'dense.predictions.json')
+        predictions=read_json(run/'development/dense.predictions.json')
         assert len(predictions['rows'])==2
-        assert read_json(run/'dense.metrics.json')['group_metrics']['available']
+        assert read_json(run/'development/dense.metrics.json')['group_metrics']['available']
         runs.append(run)
-    comparison=compare_runs([str(run) for run in runs],work/'comparison.json')
     dense=[]
     for run in runs:
         state=read_json(run/'run.json')
-        dense.append(read_checkpoint(state['stages']['train']['output'])['state_dict'])
+        from breakhis.experiment_setup import verify_reference
+        inputs=read_json(run/'inputs.json')
+        checkpoint=verify_reference(state['stages']['train']['artifacts'][0],
+            roots={'checkpoint':Path(inputs['checkpoint_directory']),'run':run})
+        dense.append(read_checkpoint(checkpoint)['state_dict'])
+        assert state['phases']['final']['status']=='not_requested'
+        assert not (run/'final').exists()
+        assert read_json(run/'development/dense.predictions.json')['split']=='validation'
     assert dense[0].keys()==dense[1].keys()
     assert all(torch.equal(dense[0][key],dense[1][key]) for key in dense[0]), 'Identical fresh seeds/configs must reproduce the dense model'
     summary=dict(status='passed',synthetic=True,accuracy_claim=False,images=12,
-        runs=list(map(str,runs)),comparison=str(comparison),dense_weights_reproduced=True,
+        runs=list(map(str,runs)),phase='development',split='validation',dense_weights_reproduced=True,
         limitation='One-epoch generated-image execution check; two timing repeats do not establish performance.')
     write_json(work/'summary.json',summary)
     print(json.dumps(summary,indent=2))

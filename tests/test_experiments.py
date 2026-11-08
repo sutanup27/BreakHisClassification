@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from PIL import Image
 
 from breakhis import experiments as e
 
@@ -16,21 +17,25 @@ class ExperimentTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.config=e.read_json(ROOT/'configs/experiments/vgg_baseline.json')
-        self.config['data'].update(manifest=str(self.root/'manifest.json'),data_root=str(self.root))
+        self.images=self.root/'images'; self.images.mkdir()
+        self.config['data'].update(manifest=str(self.root/'manifest.json'),data_root=str(self.images))
         self.file=self.root/'config.json'
         self.rows=[]
         for split in ('train','validation','test'):
             for label in ('benign','malignant'):
-                name=split+'-'+label
-                (self.root/(name+'.png')).write_bytes(b'not-decoded-in-metadata-check')
-                self.rows.append(dict(source='cancer_binary',path=name+'.png',patient_id=name,group_id=name,
-                    split=split,label=label,magnification='40X',sha256=name,pixel_sha256=name))
+                from breakhis.manifest import inspect_image
+                code='B_A' if label=='benign' else 'M_DC'
+                file=self.images/f'40X/{label}/SOB_{code}-14-{1000+len(self.rows)}-40-001.png'
+                file.parent.mkdir(parents=True,exist_ok=True)
+                Image.new('RGB',(8,8),(len(self.rows)*30,10,20)).save(file)
+                row=inspect_image(('cancer_binary',self.images,file))
+                self.rows.append(dict(row,group_id=row['patient_id'],split=split))
         self.save()
 
     def save(self):
         self.file.write_text(json.dumps(self.config))
         (self.root/'manifest.json').write_text(json.dumps(dict(schema_version=1,
-            roots={'cancer_binary':str(self.root)},rows=self.rows)))
+            roots={'cancer_binary':str(self.images)},rows=self.rows)))
 
     def test_config_paths_and_overrides_are_resolved_and_recordable(self):
         config=e.load_config(self.file,seed=77,device='cpu')
@@ -59,7 +64,7 @@ class ExperimentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Duplicate'): e.validate_data(e.load_config(self.file))
 
     def test_missing_selected_class_cannot_silently_get_zero_recall(self):
-        self.rows[-1]['magnification']='100X'; self.save()
+        self.rows.pop(); self.save()
         with self.assertRaisesRegex(ValueError,'Both classes'): e.validate_data(e.load_config(self.file))
 
     def test_group_link_leakage_rejected(self):

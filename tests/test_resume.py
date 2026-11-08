@@ -25,7 +25,9 @@ class ResumeTests(unittest.TestCase):
             self.assertTrue(self.t.equal(left, right))
         elif isinstance(left, dict):
             self.assertEqual(left.keys(), right.keys())
-            for key in left: self.assert_state_equal(left[key], right[key])
+            for key in left:
+                if key not in ('training_seconds','validation_seconds'):
+                    self.assert_state_equal(left[key], right[key])
         elif isinstance(left, (tuple, list)):
             self.assertEqual(len(left), len(right))
             for a, b in zip(left, right): self.assert_state_equal(a, b)

@@ -88,3 +88,14 @@ Local document links, ID ownership and proposed/current command distinctions are
 checked before delivering the spec package. No model fit or new regression
 pass is claimed from this review. Existing test/experiment results remain baseline
 context only; the package tracker stays uncompleted until actual acceptance.
+
+## Implementation alignment after M1.3
+
+M1.1-M1.3 now cover frozen inputs, full-source linkage/role isolation and
+validation-only development with exact committed-epoch recovery. No test quality
+is computed implicitly, no scientific pruning mechanism is added, and the fixed
+baseline/pruning recipes remain unchanged. The current package tracker records
+108 CPU tests and generated-image fresh-process checks; this supplements the
+original planning review above. M1.4 still owns bound final inference/comparison;
+M1.5 still owns complete public-workflow integration acceptance. Research
+novelty and converged experiments remain later-milestone work.

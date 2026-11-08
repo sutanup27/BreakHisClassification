@@ -19,7 +19,7 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 | `training.num_workers` | `0` for reproducible epoch-boundary resume. |
 | `training.device` | `auto`, `cpu` or `cuda`; resolution saved in `inputs.json`. |
 | `training.seed` | Integer 0 through 4294967295; seeds Python, NumPy and PyTorch, including model initialization and data transforms. Split seed is separate. |
-| `training.deterministic` | Boolean; uses existing deterministic cuDNN settings. Device/runtime differences may still change numerical results. |
+| `training.deterministic` | Boolean; enables deterministic PyTorch algorithms and cuDNN settings, with cuBLAS workspace configuration when needed. Device/runtime differences may still change numerical results. |
 | `training.learning_rate` | Finite positive initial optimizer rate. |
 | `training.optimizer` | `adam` or `sgd`; SGD uses momentum 0.9. |
 | `training.weight_decay` | Finite nonnegative optimizer weight decay. |
@@ -38,12 +38,12 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 
 | Runner option | Use |
 | --- | --- |
-| `--config FILE` | Required for development/legacy runs; optional when validating a saved final-phase request. |
+| `--config FILE` | Required for development; optional when validating a saved final-phase request. |
 | `--run-id ID` | Explicit unique run ID; generated from the config label if omitted. Required for resume. |
 | `--seed N` | Override and save the fitting seed; does not resplit data. |
 | `--device cpu/cuda/auto` | Override and save training device; evaluation keeps its fixed config device. |
 | `--resume` | Continue the same interrupted run with identical inputs/code/runtime; never implicitly initializes a new experiment. |
-| `--phase development/final` | M1.1 phase validation only; requires `--prepare-only` until M1.3/M1.4 implement execution. No-phase runs retain the existing legacy workflow. |
+| `--phase development/final` | Development is the execution default, with validation reports only. Final execution remains M1.4; only final preparation validation is currently available. |
 | `--prepare-only` | Save schema-2 frozen inputs and expected-output contracts without training/inference. With `--resume`, revalidate an existing preparation read-only. Final preparation validation requires already completed development. |
 
 Preparation saves exact manifest bytes and SHA-256, a frozen effective config
@@ -55,7 +55,7 @@ and cannot be compared as scientific results.
 
 Run records save resolved settings, a frozen manifest, commit/dirty state,
 package source hashes, device/runtime, actual stage commands, checkpoint/report
-hashes and phase elapsed seconds. They do not create mandatory source archives
+hashes and per-stage elapsed seconds. They do not create mandatory source archives
 or claim independent provenance verification.
 
 For split seeds, use `prepare-data --seed N` with a new output directory. For

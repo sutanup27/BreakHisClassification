@@ -93,6 +93,13 @@ def save_checkpoint(path, model, architecture, metadata, epoch=0, *,
                    pruning=pruning_config,
                    runtime={'python': platform.python_version(), 'torch': str(torch.__version__),
                             'cuda': torch.version.cuda})
+    save_payload(path, payload)
+
+
+def save_payload(path, payload):
+    """Atomically publish a checkpoint payload, including recovered best weights."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + '.tmp')
     try:
         torch.save(payload, temp)

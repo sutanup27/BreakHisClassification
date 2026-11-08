@@ -1,7 +1,9 @@
 # Evaluation and efficiency reporting
 
 Stage 8 extends `evaluate` and adds `compare`. Reports use the selected manifest's
-reserved test split with deterministic validation/test preprocessing. Training,
+test split by default with deterministic validation/test preprocessing.
+Use `evaluate --split validation` for development reporting; `compare` uses test.
+Only the requested evaluation role is constructed. Training,
 pruning-ratio decisions, and checkpoint selection still use validation. Avoid
 using repeated test reports to choose models or ratios.
 

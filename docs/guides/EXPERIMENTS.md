@@ -5,19 +5,25 @@ one split, choose a config, run, inspect results and repeat.
 Technical checks for invalid inputs, duplicate/group leakage and missing classes
 remain active. Existing individual package commands remain supported.
 
-Milestone 1 is being implemented in packages. M1.1 now supports input preparation:
+**Development is the default:** the runner trains, selects weights and reports on
+validation. It never automatically evaluates test images. M1.4 will add the bound
+final-inference and phase-specific comparison commands; those are not available
+for the new schema-2 runs yet. Explicit low-level `evaluate --split test` remains
+available, but test reports must not guide development choices.
+
+Optional preparation without fitting:
 
 ```powershell
-python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id prepared-baseline --phase development --prepare-only
+python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id prepared-baseline --prepare-only
+# Execute that prepared run with its identical config:
+python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id prepared-baseline --resume
 ```
 
-This saves schema-2 config/manifest/identity records with status `prepared`; it
-does not fit or evaluate a model. Add `--resume` with the same config/overrides to
-revalidate that preparation without rewriting it. Phase execution is not yet
-implemented, so `--phase` without `--prepare-only` refuses instead of falling
-back to automatic testing. The no-phase commands below retain the legacy workflow
-and its automatic final test evaluation until M1.3. Use new IDs for those runs;
-a prepared schema-2 run cannot be resumed through legacy execution.
+Preparation checks full-source metadata and train/validation files only; test
+pixels are unnecessary. `--prepare-only --resume` revalidates without execution.
+Previously prepared runs require unchanged package source hashes; use a fresh ID
+after updating code. Old schema-1 runs remain readable and are never migrated or
+resumed through the new development runner.
 
 ## 1. Set up and prepare a split once
 
@@ -55,7 +61,7 @@ python run_experiment.py --config configs/experiments/vgg_channel.json --run-id 
 Both examples use the same saved split, initialization seed and dense-training
 recipe. The channel experiment trains its own reproducible dense reference,
 removes channels and fine-tunes the pruned network. It evaluates dense, pruned
-and fine-tuned checkpoints only after development phases finish. It does not
+and fine-tuned checkpoints on validation after fitting finishes. It does not
 search candidate sparsities using test results. Unstructured pruning can be
 selected by changing `pruning.method` to `unstructured` in a copied config.
 
@@ -86,10 +92,13 @@ artifacts/experiments/<run-id>/
   logs/                          individual train/prune/fine-tune/evaluate logs
   train.history.json             epoch losses and validation selection scores
   finetune.history.json          present for pruning runs
-  dense.metrics.json             image/group metrics, model size and latency
-  dense.predictions.json         ordered image identities, labels and probabilities
-  pruned.* / finetuned.*          present for pruning runs
-  results.json                   final result and all report references
+  development/
+    dense.metrics.json           validation metrics, size and resident-forward latency
+    dense.predictions.json       ordered validation image labels/probabilities
+    pruned.* / finetuned.*        present for pruning runs
+    selection.json               selected weight hashes/epochs and report bindings
+    results.json                 validation results and designated pipeline role
+  results.json                   phase references; final stays null
 ```
 
 Checkpoints stay outside the codebase:
@@ -114,32 +123,29 @@ python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id
 
 Use the same config and overrides as the original invocation. Config, manifest,
 source hashes and runtime/device must match; completed stage outputs must remain
-unchanged. Workers are fixed at zero to preserve the existing exact-resume
-contract. Partial-epoch weights are not used for exact resume. If pruning
-publication fails with a partially occupied destination, the runner refuses
-overwrite; preserve that run and start a new ID after inspecting the log.
+unchanged. Every required output, including histories, predictions and configs,
+is checked by hash before a completed stage is skipped. Workers are fixed at zero to preserve the existing exact-resume
+contract. Partial-epoch weights are not used for exact resume. Prune/report stages may be retried when not marked completed. Training retries
+must have a committed epoch-zero or completed-epoch boundary. A small epoch
+journal permits repair of interrupted best/history publication to that boundary;
+unexplained missing/corrupt files fail. Inspect the stage log for child errors.
+Histories record the learning rate used, next rate, optimizer steps, training and
+validation seconds, losses and selection score for each committed epoch.
 
 A **fresh rerun** uses a new ID without `--resume`. Completed runs are never
 silently overwritten or extended by changing their planned epoch count.
 
-## 5. Compare completed experiments
+## 5. Final evaluation and comparison
 
-```powershell
-python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/baseline-vs-channel.json
-```
+M1.4 implements final inference from saved development selections and phase-aware
+comparison tables. Until then, inspect each run's `development/results.json` and
+validation reports. The existing `compare_experiments.py` handles old schema-1
+completed runs only; it does not compare these new schema-2 development runs.
 
-This writes JSON and a CSV table. Split hash, preprocessing, optimizer/selection
-settings, evaluation device/protocol and runtime must match. The table includes
-all dense/pruned/fine-tuned roles, seed, model, training/fine-tuning epochs,
-group sensitivity/specificity/balanced accuracy, image accuracy, parameter count
-and median latency. Seeds, models and epoch budgets may differ and are displayed
-explicitly; this is descriptive comparison, not an automatic fairness verdict.
-
-Fine-tuning uses additional training time. Include an equal-total-budget dense
-control before attributing improvements to the pruning method. Report runtime,
-epoch budgets and seed variation. Repeated seeds are not independent patient
-samples. Compare speed on the same hardware; masked zeros do not automatically
-speed up dense operations. Do not choose settings from these final test tables.
+Fine-tuning adds epochs: include an equal-total-budget dense control before
+attributing improvements to pruning. Seed repeats are not independent patient
+samples. Match hardware and training budgets; masked zeros do not automatically
+speed up dense operations. Final test metrics must never select the best recipe.
 
 ## Minimal evaluation protocol
 
@@ -174,7 +180,7 @@ python -m unittest discover -s tests -v
 ```
 
 The smoke workflow generates 12 images, trains one-epoch dense/channel-pruned
-runs, saves predictions and histories, exports comparison JSON/CSV and checks
+runs, saves validation predictions, selection bindings and histories, and checks
 that matching seeds reproduce dense weights. Its scores and timing are not
 research results. Real experiments still need adequate training and replicated
 evaluation. See the [five-milestone plan](../research/EXPERIMENT_ROADMAP.md).

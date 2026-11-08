@@ -95,12 +95,20 @@ python -m breakhis train --dataset breakhis --source breakhis_v2 --magnification
 ```
 
 Use `--manifest` for a different saved manifest. `--data-root` relocates the selected
-source without changing its split. The loader verifies each image's file hash
-against the audit while loading; altered files fail with an instruction to rebuild.
+source without changing its split. The loader verifies each image's raw and
+decoded-pixel hashes against the audit while loading; changed/corrupt files fail
+with the affected role. Full-source metadata is checked before magnification
+filtering, including filename suffixes and transitive duplicate linkage. Stored
+group labels must describe exactly those components; labels may survive exclusion
+of their original representative during deduplication.
 Missing manifests fail clearly rather than falling back to image-level random splits.
 
 Training and fine-tuning select weights using **validation**. The `evaluate`
-command alone reads the reserved test split for final metrics. Repeated use of
+command uses `--split validation` for development or `--split test` (default)
+for final metrics. Train/fine-tune load train/validation, prune loads validation,
+and evaluate/compare load only their requested evaluation role. Development
+does not require test pixel files; test-only evaluation does not require training
+pixel files. Metadata integrity is still checked across the complete source. Repeated use of
 test results to tune experiments would still compromise that independence.
 
 The eight-class inventory is audited for comparison; primary commands remain

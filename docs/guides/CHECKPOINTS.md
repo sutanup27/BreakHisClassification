@@ -105,3 +105,26 @@ scheduler, and RNG states must match exactly. Separate actual VGG subprocess
 checks compare dense and pruned predictions using `atol=1e-6`, `rtol=1e-5`.
 GPU smoke checks validate actual checkpoint loading and finite inference; they
 do not establish full-dataset model quality or cross-device numerical equivalence.
+
+## Committed epochs and publication recovery (M1.3)
+
+New `*-last.pth` checkpoints also contain committed history, best weights,
+best score, tie-break loss and selected epoch. Best `.pth` files are portable
+selected weights, not exact-resume boundaries: always resume `*-last.pth`.
+`group_balanced_accuracy` selects score, lower validation loss, then earlier
+epoch; legacy `accuracy` keeps the earliest equal-accuracy epoch.
+
+Each epoch writes `*.epoch-pending.json`, atomically commits the new last file,
+then publishes best weights/history and removes the journal. If publication is
+interrupted, resume uses the last committed snapshot to finish or roll back that
+publication. Do not delete a pending journal manually. Without a journal,
+missing best weights, duplicate/stale history or inconsistent artifacts are
+errors. Pre-M1.3 last checkpoints lack this publication contract and require a
+fresh run; old weights remain loadable for inference/new fine-tuning.
+
+History records the rate actually used before scheduler stepping, next rate,
+optimizer steps and training/validation seconds. Numerical resume checks exclude
+wall-clock seconds; those naturally vary. Runtime, device, package source hashes,
+effective CPU threads and data root must match for exact resume. Deterministic
+mode enables deterministic PyTorch algorithms and records actual backend/RNG
+settings. Bitwise agreement across different hardware/runtime is not promised.

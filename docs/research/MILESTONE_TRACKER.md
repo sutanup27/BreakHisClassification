@@ -9,7 +9,7 @@ capabilities are not completed scientific experiments or established novelty.
 
 | Milestone | Status | Already available | Completion target | Next action |
 | --- | --- | --- | --- | --- |
-| 1. Reproducible experiment foundation | In progress; M1.1 reviewed, M1.2-M1.5 pending | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); phase-aware input preparation | Verify the complete contract, including development/final isolation and reproducible recovery | Implement M1.2 split/role isolation |
+| 1. Reproducible experiment foundation | In progress; M1.1-M1.3 reviewed, M1.4-M1.5 pending | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); validation-only development and exact epoch recovery | Verify the complete contract, including development/final isolation and reproducible recovery | Implement M1.4 evaluation/comparison |
 | 2. Dense and conventional pruning baselines | Not started; supporting tools available | Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports | Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier | Start after milestone 1 acceptance; specify the baseline matrix and training recipe |
 | 3. Malignant-group vulnerability analysis (O1) | Not started | Group metadata and prediction reporting can be reused | Controlled pruning probes establish whether conventional importance misses repeatable malignant-group damage | Define perturbations, per-group damage measurements and seed-stability analysis |
 | 4. Proposed method and decisive comparisons (O2) | Not started | Structural-pruning primitives can be reused | Implement the candidate mechanism and isolate its benefit from selection rules, class weighting, topology and training budget | Use milestone 3 findings to specify the method and decisive comparator/ablation matrix |
@@ -17,17 +17,17 @@ capabilities are not completed scientific experiments or established novelty.
 
 ## Current step
 
-**Milestone 1: start M1.2 split/role isolation.** The
+**Milestone 1: start M1.4 evaluation/comparison.** The
 [master spec](../specs/m1/M1_SPEC.md), [five-package tracker](../specs/m1/README.md)
 and [alignment review](../specs/m1/ALIGNMENT_REVIEW.md) are complete as planning
-documents. M1.1's implementation and acceptance are reviewed; its preparation
-checks do not execute phases. M1.2-M1.5 remain uncompleted. Existing code is reused;
+documents. M1.1-M1.3 implementation and acceptance are reviewed; default
+development executes fitting and validation reports only. M1.4-M1.5 remain uncompleted. Existing code is reused;
 completing one package is not completing the milestone.
 
 ## Existing verification
 
-- The current active CPU regression suite passed 77 tests after M1.1, including
-  14 new preparation/identity tests. Logs are referenced in the M1.1 checklist.
+- The active CPU suite passed 108 tests after M1.3, including 16 new execution/
+  resume/failure cases. Logs are referenced in the M1.3 checklist.
 - The generated-image workflow completed dense and channel-pruned/fine-tuned
   runs, exported results and reproduced dense weights for matching seeds.
 - The one-epoch real-data run `baseline-real-check-20261107` completed on 40X
@@ -50,3 +50,5 @@ Keep this tracker and each milestone's package checklist consistent.
 | 8 November 2026 | Established the five-milestone tracker and recorded existing capabilities | 63 active CPU tests passed; synthetic workflow and one-epoch real-data execution check available; no research novelty claimed |
 | 8 November 2026 | Re-specified milestone 1 against the current code and research plan | Master, five checklist packages and alignment review; 17 requirements/25 planned acceptance cases; no new code implementation or model fitting |
 | 8 November 2026 | Implemented/reviewed M1.1 config, storage and run identity | 77 CPU tests passed; real config preparation/revalidation succeeded without fitting or inference; next M1.2 |
+| 8 November 2026 | Implemented/reviewed M1.2 full-source split validation and requested-role loaders | 92 CPU tests passed; 15 new role/leakage tests; real preparation/revalidation passed without fitting; next M1.3 |
+| 8 November 2026 | Implemented/reviewed M1.3 development execution and committed-epoch recovery | 108 CPU tests passed; fresh-process VGG dense/channel development and seed reproduction passed; no automatic test inference; next M1.4 |

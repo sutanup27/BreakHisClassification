@@ -5,14 +5,15 @@ This project trains PyTorch models to classify breast histology images as **beni
 ## Start here
 
 **Recommended workflow:** [run and compare experiments](docs/guides/EXPERIMENTS.md).
-Use one saved config per experiment to train, evaluate and compare saved results.
+Use one saved config per experiment. The runner defaults to development and
+exports validation results. Bound final inference and phase-specific comparisons
+are the next package (M1.4).
 
 ```powershell
 # Activate your installed environment first; prepare the split only if missing.
 python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/data --seed 101
 python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id baseline-102
 python run_experiment.py --config configs/experiments/vgg_channel.json --run-id channel-102
-python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/baseline-vs-channel.json
 ```
 
 Reuse an existing manifest instead of rerunning preparation. Each experiment
@@ -248,11 +249,13 @@ Uses the same optimizer, scheduler, and validation selection as training. Withou
 
 ## Evaluate parameters
 
-`python -m breakhis evaluate` evaluates saved weights on the test split.
+`python -m breakhis evaluate` evaluates saved weights on test by default. Use
+`--split validation` for development reports. Only the requested role is loaded.
 
 | Parameter | Default / allowed values | Purpose |
 | --- | --- | --- |
 | `--checkpoint` | **Required**; file path | Model weights; architecture and pruning masks are reconstructed. |
+| `--split` | `test`; `validation` or `test` | Choose development validation or reserved final test reporting. |
 | `--output` | Experiment-directory `evaluate.json` | JSON report path. Example: `--output artifacts/final-test.json`. Parent folders are created. Evaluation saves no model weights. |
 
 The JSON report is printed and saved even without `--output`. It now includes

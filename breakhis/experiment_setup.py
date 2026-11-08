@@ -68,7 +68,8 @@ def expected_outputs(config, run, checkpoint):
             ('.pth','-last.pth','.config.json','.history.json')]
     for phase in PHASES:
         for role in roles:
-            outputs[phase+'-'+role] = [run/phase/f'{role}.metrics.json', run/phase/f'{role}.predictions.json']
+            outputs[phase+'-'+role] = [run/phase/f'{role}.metrics.json', run/phase/f'{role}.predictions.json',
+                *([run/phase/f'{role}.metrics.config.json'] if phase=='development' else [])]
     outputs['development-complete'] = [run/'development/selection.json',run/'development/results.json',
         *[run/f'{command}.history.json' for command in commands]]
     outputs['final-complete'] = [run/'final/results.json']
@@ -133,7 +134,7 @@ def prepare_run(config_file=None, *, run_id=None, phase='development', resume=Fa
     config_hash = e.digest(source_config)
     config = e.load_config(source_config, seed=seed, device=device)
     manifest_hash = e.digest(config['data']['manifest'])
-    _, counts = e.validate_data(config)  # Full role-isolation refinements belong to M1.2.
+    _, counts = e.validate_data(config,splits=('train','validation'))
     manifest_bytes = Path(config['data']['manifest']).read_bytes()
     if hashlib.sha256(manifest_bytes).hexdigest() != manifest_hash or e.digest(source_config) != config_hash:
         raise ValueError('Inputs changed during preparation')

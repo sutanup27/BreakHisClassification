@@ -83,7 +83,7 @@ def run_comparison(args, parser):
     except (ValueError, KeyError, OSError) as error:
         parser.error(str(error))
     loaders = get_split_loaders(args.manifest, args.source, args.magnification, root,
-                               args.batch_size, args.num_workers, device, deterministic=args.deterministic)
+                               args.batch_size, args.num_workers, device, deterministic=args.deterministic,splits=('test',))
     config = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
     config.update(manifest=str(args.manifest), data_root=str(root), output=str(output),
                   resolved_device=str(device), **{role: str(path) for role, path in paths.items()})

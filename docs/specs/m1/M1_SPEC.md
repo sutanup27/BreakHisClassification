@@ -2,7 +2,8 @@
 
 Specification: **M1-FOUNDATION-SPEC-001**, version 1.0. Date: 8 November 2026.
 Document status: Reviewed for implementation. Implementation: In progress;
-existing capabilities require verification and the gaps below require changes.
+M1.1-M1.3 are reviewed; M1.4-M1.5 remain pending. See the package tracker
+for current evidence; this master describes the full milestone target.
 
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md).
 Science: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md),
@@ -59,8 +60,9 @@ train/validation/test split remains supported; extra roles are not invented.
 
 ### 3.1 Existing commands
 
-The current `run_experiment.py --help` and `compare_experiments.py --help` were
-inspected. They do not yet support the phase options below. The existing
+At specification creation, runner/comparison commands lacked phase execution.
+M1.3 now executes development by default or explicit `--phase development`;
+final execution and phase-aware comparisons remain M1.4 targets. The existing
 six-section experiment JSON is documented in the [configuration guide](../../guides/EXPERIMENT_CONFIG.md).
 
 Keep config schema version 1 and its exact top-level fields:
@@ -80,7 +82,7 @@ Preserve existing transforms: resize shorter edge 256, crop 224, ImageNet
 normalization; random crop/horizontal flip only for training. Save this actual
 preprocessing contract, not the different settings in earlier discussions.
 
-### 3.2 Proposed command extensions: not implemented yet
+### 3.2 Command contract: development implemented; final/comparison pending
 
 ```powershell
 # Development is the new default; no test inference.
