@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "source_instance_id": null,
-  "history_root": null,
-  "events": [],
-  "history_coverage": null,
-  "equivalences": [],
-  "unknown_reason": "No real historical review supplied; empty events do not establish untouched groups"
-}

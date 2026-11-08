@@ -1,8 +1,7 @@
 # Run and compare experiments
 
 This is the main workflow for the university research project. Setup, prepare
-one split, choose a config, run, inspect results and repeat. G0 approvals,
-literature completion and milestone evidence archives are not prerequisites.
+one split, choose a config, run, inspect results and repeat.
 Technical checks for invalid inputs, duplicate/group leakage and missing classes
 remain active. Existing individual package commands remain supported.
 

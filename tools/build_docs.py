@@ -23,7 +23,6 @@ SOURCES = [
     ('evaluation', ROOT / 'docs/guides/EVALUATION.md', 'Evaluation & efficiency'),
     ('testing', ROOT / 'docs/guides/TESTING.md', 'Testing & operations'),
     ('research-index', ROOT / 'docs/research/README.md', 'Research index'),
-    ('archive-index', ROOT / 'docs/archive/README.md', 'Historical and optional references'),
 ]
 SOURCE_IDS = {path.resolve(): key for key, path, _ in SOURCES}
 
@@ -153,16 +152,12 @@ def render(source, key, label):
 def main():
     rendered = [render(path, key, label) for key, path, label in SOURCES]
     content = '\n'.join(body for body, _ in rendered)
-    groups = {name: [] for name in ('Start here', 'User and developer guides', 'Research plans', 'Milestone specifications', 'Historical archive')}
+    groups = {name: [] for name in ('Start here', 'User and developer guides', 'Research plans')}
     for (_, path, _), (_, nav) in zip(SOURCES, rendered):
         if path.is_relative_to(ROOT / 'docs/guides'):
             group = 'User and developer guides'
         elif path.is_relative_to(ROOT / 'docs/research'):
             group = 'Research plans'
-        elif path.is_relative_to(ROOT / 'docs/specs'):
-            group = 'Milestone specifications'
-        elif path.is_relative_to(ROOT / 'docs/archive'):
-            group = 'Historical archive'
         else:
             group = 'Start here'
         groups[group].append(nav)

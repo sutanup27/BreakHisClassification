@@ -1,6 +1,6 @@
 # Testing and operational acceptance
 
-Stage 9 supplies CPU regressions, a generated-image workflow, and a GitHub Actions
+The project supplies CPU regressions, generated-image checks and a GitHub Actions
 workflow. Synthetic checks establish execution correctness; full-data experimental
 acceptance and model quality remain separate tasks.
 
@@ -117,14 +117,13 @@ The workflow follows the official [GitHub Python testing guidance](https://docs.
 
 Supported: binary VGG/ResNet18 training, saved patient/slide splits, unstructured
 weight masks, sequential VGG channel pruning, validation selection, versioned
-checkpoint reconstruction, workers-zero completed-epoch resume, and Stage 8
+checkpoint reconstruction, workers-zero completed-epoch resume, and
 evaluation/comparison reports. The baseline platform is Windows x64/Python 3.13;
 other OS environments need separate verification.
 
 Experimental/unsupported: multiclass training, residual/depthwise channel surgery,
-mixed channel/mask models, historical architecture-specific helpers and CIFAR
-demonstrations. See [pruning limits](PRUNING.md) and
-[legacy experiments](../../experiments/cifar10/README.md).
+mixed channel/mask models and historical architecture-specific helpers.
+See [pruning limits](PRUNING.md).
 
 Filename IDs are slide/patient surrogates, not independently verified clinical
 identities. No full-dataset accuracy, clinical validity, end-to-end latency benefit
@@ -142,8 +141,8 @@ separately from implementation and synthetic regression acceptance.
 
 ## Full-data acceptance checklist
 
-Status: outstanding. Historical repair evidence remains in the
-[archived engineering roadmap](../archive/CODEBASE_FIX_ROADMAP.md).
+Status: full research experiments remain outstanding; the one-epoch real-data
+execution check is recorded in the [current roadmap](../research/EXPERIMENT_ROADMAP.md).
 Check items only when evidence for the actual declared experiment is recorded.
 
 - [ ] Install dependencies into a fresh virtual environment.

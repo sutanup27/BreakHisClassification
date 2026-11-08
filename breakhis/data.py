@@ -1,4 +1,4 @@
-"""BreaKHis image loading. CIFAR-10 lives in experiments/cifar10."""
+"""BreaKHis image loading from audited, group-separated manifests."""
 import random
 import hashlib
 import io
@@ -67,8 +67,7 @@ def get_datasets(path, train_transform=train_transform,
                  train_test_val_pecentage=None, *, dataset="breakhis", manifest=DEFAULT_MANIFEST):
     """Compatibility pair: training and validation (never the reserved test set)."""
     if dataset != "breakhis":
-        raise ValueError("This loader supports dataset='breakhis' only. "
-                         "Use experiments.cifar10.DataPreprocessing for CIFAR-10.")
+        raise ValueError("This loader supports dataset='breakhis' only.")
     if train_test_val_pecentage is not None:
         raise ValueError('Split fractions are saved in the manifest; rebuild it to change them')
     folder = Path(path).resolve()

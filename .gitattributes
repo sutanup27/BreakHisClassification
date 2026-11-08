@@ -1,4 +1,1 @@
 *.pth filter=lfs diff=lfs merge=lfs -text
-
-# This declaration is referenced by exact-byte SHA-256 in the optional G0 config.
-docs/research/UNIVERSITY_PILOT_PROTOCOL.md text eol=lf

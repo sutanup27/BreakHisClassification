@@ -5,8 +5,7 @@ This project trains PyTorch models to classify breast histology images as **beni
 ## Start here
 
 **Recommended workflow:** [run and compare experiments](docs/guides/EXPERIMENTS.md).
-Use one saved config per experiment; G0 approvals, review roles and literature
-completion are not required to run the normal training commands.
+Use one saved config per experiment to train, evaluate and compare saved results.
 
 ```powershell
 # Activate your installed environment first; prepare the split only if missing.
@@ -24,12 +23,9 @@ the original config/ID for interrupted runs.
 
 See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
 [five practical milestones](docs/research/EXPERIMENT_ROADMAP.md). The existing
-individual commands below remain supported as an advanced reference. M0/M1
-specifications and research gate archives describe earlier infrastructure and
-optional tools; they do not control everyday experiment execution.
+individual commands below remain supported as an advanced reference.
 
-See the [documentation map](docs/README.md) for guides, research plans, milestone
-specifications and historical archives.
+See the [documentation map](docs/README.md) for current guides and research plans.
 
 Read this guide from setup through training before running an experiment. An
 [offline HTML guide](docs/index.html) presents this README and the detailed
@@ -46,7 +42,6 @@ in a browser; no web server, installation, or internet connection is required.
 | Modify the implementation | [Working on the codebase](#working-on-the-codebase) |
 | Diagnose an error | [Troubleshooting](#troubleshooting-and-remaining-work) |
 | Plan the research experiments | [Simple experiment milestones](docs/research/EXPERIMENT_ROADMAP.md) |
-| Historical infrastructure and optional gate tools | [Archive/reference index](docs/archive/README.md) |
 
 ## First-run checklist
 
@@ -177,7 +172,7 @@ These arguments apply to **train, evaluate, prune, finetune, and compare**. Omit
 
 | Parameter | Default / allowed values | Purpose and usage |
 | --- | --- | --- |
-| `--dataset` | **Required**; `breakhis` only | Always supply `--dataset breakhis`. CIFAR-10 is a separate legacy workflow. |
+| `--dataset` | **Required**; `breakhis` only | Always supply `--dataset breakhis`. |
 | `--source` | `cancer_binary`; also `breakhis_v2` | Selects source records in the manifest. Use `cancer_binary` for v1. The v2 choice requires restoring or relocating its images. `cancer_multiclass` is not accepted by model commands yet. |
 | `--manifest` | `<codebase>/artifacts/data/manifest.json` | Saved image records, hashes, roots, and patient split assignments. Example: `--manifest artifacts/data/manifest.json`. |
 | `--magnification` | `40X`; `40X`, `100X`, `200X`, `400X`, `all` | Filters images by magnification. `all` combines all four into one run; it does not train four separate models. |
@@ -422,14 +417,12 @@ Example: `python Train.py --dataset breakhis --magnification 40X --model vgg`. W
 | Resume configuration differs | Keep the saved total epochs, learning rate, batch size, workers, deterministic mode, runtime/device, and original output. Omit options to inherit them. |
 | Run already completed | Start a new fine-tuning run from its weights; resume does not extend the saved schedule. |
 
-Stages 1-9 are implemented for the documented binary workflow, including v1-only
-audits, CPU CI configuration, and generated-image end-to-end tests. Full-dataset
-experimental acceptance, the first remote CI run, multiclass training and
-residual/depthwise channel pruning remain separate work. See the
-[fix roadmap](docs/archive/CODEBASE_FIX_ROADMAP.md), [testing guide](docs/guides/TESTING.md), and
-[command reference](docs/guides/COMMANDS.md).
+The binary workflow includes v1-only audits, CPU CI configuration and generated-image
+end-to-end tests. Full research experiments and the proposed pruning method remain
+in the [current roadmap](docs/research/EXPERIMENT_ROADMAP.md). See the
+[testing guide](docs/guides/TESTING.md) and [command reference](docs/guides/COMMANDS.md).
 
-CIFAR-10 experiments and mixed tutorials live under `experiments/cifar10/` as legacy reference material outside the supported command surface. Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
+Virtual environments and generated artifacts are excluded from Git; the parent checkpoint directory is outside this repository.
 
 ## Working on the codebase
 
@@ -452,7 +445,6 @@ module rather than adding another implementation to a compatibility wrapper.
 | `tests/` | CPU regressions and subprocess reload checks | Verify behavior affected by a code change |
 | `tools/check_environment.py` | Dependency/device verification | Diagnose environment setup |
 | `tools/smoke_workflow.py` | Generated-image fresh-process CPU workflow | Check the full pipeline without a dataset download or GPU |
-| `experiments/cifar10/` and legacy pruning helpers | Historical experiments | Consult reference code; these are outside the supported workflow |
 
 To change behavior, locate the canonical module, implement the change, run the
 relevant existing tests, then run the suite above. Keep training/validation/test

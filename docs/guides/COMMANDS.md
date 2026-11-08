@@ -127,11 +127,7 @@ Their original experiment split/provenance is unknown; keep them as historical
 artifacts until an explicit migration is implemented. Re-train with the patient
 manifest to obtain checkpoints suitable for the new workflow.
 
-The preserved `experiments/cifar10/` scripts and notebooks are legacy reference
-material. They are outside the supported command surface and may retain old
-`PruningNAS` names and unresolved logic.
-
-## Stage 6 configuration
+## Saved configuration and resume
 
 All model commands accept `--experiment-id`, generate distinct default run directories,
 and save resolved arguments beside their output as `.config.json`. Existing new-run
@@ -141,7 +137,7 @@ optimizer, scheduler and RNG state are restored. Exact resume requires workers z
 and the original schedule/runtime. See [CHECKPOINTS.md](CHECKPOINTS.md) and the
 [README parameter tables](../../README.md).
 
-## Stage 8 evaluation and comparison
+## Evaluation and comparison
 
 `evaluate` now reports precision, recall, F1, confusion matrices, filename patient/
 slide aggregates, effective mask-aware parameter counts, measured file/model-state
@@ -155,7 +151,7 @@ comparison with measured accuracy/size/latency deltas. Both commands accept
 and optional `--cpu-threads`. Report outputs must be `.json`.
 See [EVALUATION.md](EVALUATION.md) for complete definitions, scope and examples.
 
-## Stage 9 operational checks
+## Operational checks
 
 `prepare-data --sources cancer_binary` audits only the binary v1 source. Omit
 `--sources` to discover available configured folders. Explicit missing sources
