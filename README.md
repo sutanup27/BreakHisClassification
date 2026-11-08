@@ -22,7 +22,8 @@ metrics under `artifacts/experiments/<run-id>/`. Checkpoints remain in the paren
 the original config/ID for interrupted runs.
 
 See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
-[five practical milestones](docs/research/EXPERIMENT_ROADMAP.md). The existing
+[five practical milestones](docs/research/EXPERIMENT_ROADMAP.md) and
+[progress tracker](docs/research/MILESTONE_TRACKER.md). The existing
 individual commands below remain supported as an advanced reference.
 
 See the [documentation map](docs/README.md) for current guides and research plans.

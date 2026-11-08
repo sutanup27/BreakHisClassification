@@ -13,6 +13,7 @@ SOURCES = [
     ('experiments', ROOT / 'docs/guides/EXPERIMENTS.md', 'Run and compare experiments'),
     ('experiment-config', ROOT / 'docs/guides/EXPERIMENT_CONFIG.md', 'Experiment configuration'),
     ('experiment-roadmap', ROOT / 'docs/research/EXPERIMENT_ROADMAP.md', 'Simple experiment milestones'),
+    ('milestone-tracker', ROOT / 'docs/research/MILESTONE_TRACKER.md', 'Milestone progress tracker'),
     ('documentation-map', ROOT / 'docs/README.md', 'Documentation map'),
     ('guides-index', ROOT / 'docs/guides/README.md', 'Guide index'),
     ('environment', ROOT / 'docs/guides/ENVIRONMENT.md', 'Environment'),

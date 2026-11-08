@@ -23,6 +23,7 @@
 <details open><summary>Evaluation &amp; efficiency</summary><a href="#evaluation" data-section="evaluation">Evaluation and efficiency reporting</a><a href="#evaluation-evaluate-one-checkpoint" data-section="evaluation-evaluate-one-checkpoint">Evaluate one checkpoint</a><a href="#evaluation-compare-three-selected-checkpoints" data-section="evaluation-compare-three-selected-checkpoints">Compare three selected checkpoints</a><a href="#evaluation-arguments" data-section="evaluation-arguments">Arguments</a><a href="#evaluation-classification-definitions" data-section="evaluation-classification-definitions">Classification definitions</a><a href="#evaluation-filename-patientslide-metrics" data-section="evaluation-filename-patientslide-metrics">Filename patient/slide metrics</a><a href="#evaluation-size-accounting" data-section="evaluation-size-accounting">Size accounting</a><a href="#evaluation-compute-and-latency-protocol" data-section="evaluation-compute-and-latency-protocol">Compute and latency protocol</a><a href="#evaluation-reading-comparisons" data-section="evaluation-reading-comparisons">Reading comparisons</a></details>
 <details open><summary>Testing &amp; operations</summary><a href="#testing" data-section="testing">Testing and operational acceptance</a><a href="#testing-run-the-regression-suite" data-section="testing-run-the-regression-suite">Run the regression suite</a><a href="#testing-retain-a-reproducible-smoke-workflow" data-section="testing-retain-a-reproducible-smoke-workflow">Retain a reproducible smoke workflow</a><a href="#testing-v1-only-data-preparation" data-section="testing-v1-only-data-preparation">V1-only data preparation</a><a href="#testing-cpu-ci" data-section="testing-cpu-ci">CPU CI</a><a href="#testing-supported-surface-and-limits" data-section="testing-supported-surface-and-limits">Supported surface and limits</a><a href="#testing-full-data-acceptance-still-required" data-section="testing-full-data-acceptance-still-required">Full-data acceptance still required</a><a href="#testing-full-data-acceptance-checklist" data-section="testing-full-data-acceptance-checklist">Full-data acceptance checklist</a></details></details>
 <details class="documentation-group"><summary>Research plans</summary><details open><summary>Simple experiment milestones</summary><a href="#experiment-roadmap" data-section="experiment-roadmap">Research experiment milestones</a><a href="#experiment-roadmap-immediate-experiment-checklist" data-section="experiment-roadmap-immediate-experiment-checklist">Immediate experiment checklist</a><a href="#experiment-roadmap-implementation-verification" data-section="experiment-roadmap-implementation-verification">Implementation verification</a></details>
+<details open><summary>Milestone progress tracker</summary><a href="#milestone-tracker" data-section="milestone-tracker">Research milestone tracker</a><a href="#milestone-tracker-current-step" data-section="milestone-tracker-current-step">Current step</a><a href="#milestone-tracker-existing-verification" data-section="milestone-tracker-existing-verification">Existing verification</a><a href="#milestone-tracker-progress-updates" data-section="milestone-tracker-progress-updates">Progress updates</a></details>
 <details open><summary>Research index</summary><a href="#research-index" data-section="research-index">Research documents</a></details></details></nav>
 <div class="sidebar-footer">Offline documentation<br>Generated from repository Markdown</div></aside>
 <div class="workspace"><header class="topbar"><div class="search-wrap"><label for="search">Find a topic or parameter</label><div class="search-row"><input id="search" type="search" placeholder="Search --resume, CUDA, checkpoints…" autocomplete="off"><button id="clear" type="button">Clear</button></div></div><button id="print" type="button">Print guide</button></header>
@@ -42,7 +43,7 @@ python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id
 python run_experiment.py --config configs/experiments/vgg_channel.json --run-id channel-102
 python compare_experiments.py --runs baseline-102 channel-102 --output artifacts/comparisons/baseline-vs-channel.json</code></pre></div>
 <p>Reuse an existing manifest instead of rerunning preparation. Each experiment saves its resolved config, split, seed/code identity, histories, predictions and metrics under <code>artifacts/experiments/&lt;run-id&gt;/</code>. Checkpoints remain in the parent <code>checkpoint/binary</code> directory. Use a new ID for fresh runs; use <code>--resume</code> with the original config/ID for interrupted runs.</p>
-<p>See the <a href="#experiment-config">configuration reference</a> and <a href="#experiment-roadmap">five practical milestones</a>. The existing individual commands below remain supported as an advanced reference.</p>
+<p>See the <a href="#experiment-config">configuration reference</a> and <a href="#experiment-roadmap">five practical milestones</a> and <a href="#milestone-tracker">progress tracker</a>. The existing individual commands below remain supported as an advanced reference.</p>
 <p>See the <a href="#documentation-map">documentation map</a> for current guides and research plans.</p>
 <p>Read this guide from setup through training before running an experiment. An <a href="../docs/index.html">offline HTML guide</a> presents this README and the detailed documentation with navigation, search, and copy buttons. Open <code>docs/index.html</code> in a browser; no web server, installation, or internet connection is required.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Goal</th><th scope="col">Read next</th></tr></thead><tbody>
@@ -458,6 +459,7 @@ python -m unittest discover -s tests -v</code></pre></div>
 </section>
 <section class="doc-section" id="experiment-roadmap" data-guide="Simple experiment milestones">
 <p class="eyebrow">Simple experiment milestones</p><h1>Research experiment milestones</h1>
+<p>Progress and next actions: <a href="#milestone-tracker">milestone tracker</a>. Milestone 1 development contract: <a href="../docs/specs/m1/README.md">master spec and package tracker</a>.</p>
 <p>Active implementation path, updated 8 November 2026. Use the five milestones below for the current research project.</p>
 <p>The research objective remains studying classification quality and efficiency under pruning, including the proposed mechanism and appropriate controls. This plan simplifies the workflow, not the scientific questions or evidence.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Milestone</th><th scope="col">Deliverable</th><th scope="col">Current implementation status</th><th scope="col">Acceptance</th></tr></thead><tbody>
@@ -487,6 +489,39 @@ python -m unittest discover -s tests -v</code></pre></div>
 <p>The generated-image workflow completed dense and channel-pruned/fine-tuned runs, exported predictions and comparison JSON/CSV, and reproduced identical dense weights for matching seeds. Its local summary is <code>artifacts/simple-smoke-20261107T181341-f2a8/summary.json</code>.</p>
 <p>The real <code>baseline-real-check-20261107</code> run also completed: 1,326 training images in 57 filename groups, 332 validation images in 13 groups, and 303 test images in 11 groups. It trained one epoch on the RTX 5070 Ti and evaluated/benchmarked on CPU, saving the config, manifest, histories, predictions and metrics under <code>artifacts/experiments/baseline-real-check-20261107/</code>. This is an execution check, not evidence of convergence or final research performance. The example full experiments remain prespecified; do not tune them using this test report.</p>
 </section>
+<section class="doc-section" id="milestone-tracker" data-guide="Milestone progress tracker">
+<p class="eyebrow">Milestone progress tracker</p><h1>Research milestone tracker</h1>
+<p>Updated: 8 November 2026. Plan: <a href="#experiment-roadmap">experiment roadmap</a>. Scientific objectives: <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">research guide</a>.</p>
+<p>This is the progress record for the five current milestones. Existing software capabilities are not completed scientific experiments or established novelty.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Milestone</th><th scope="col">Status</th><th scope="col">Already available</th><th scope="col">Completion target</th><th scope="col">Next action</th></tr></thead><tbody>
+<tr><td>1. Reproducible experiment foundation</td><td>In progress; specification complete, acceptance pending</td><td>Existing workflow plus <a href="../docs/specs/m1/README.md">master spec and five checklists</a></td><td>Verify the complete contract, including development/final isolation and reproducible recovery</td><td>Start M1.1 config/storage/identity implementation and revalidation</td></tr>
+<tr><td>2. Dense and conventional pruning baselines</td><td>Not started; supporting tools available</td><td>Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports</td><td>Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier</td><td>Start after milestone 1 acceptance; specify the baseline matrix and training recipe</td></tr>
+<tr><td>3. Malignant-group vulnerability analysis (O1)</td><td>Not started</td><td>Group metadata and prediction reporting can be reused</td><td>Controlled pruning probes establish whether conventional importance misses repeatable malignant-group damage</td><td>Define perturbations, per-group damage measurements and seed-stability analysis</td></tr>
+<tr><td>4. Proposed method and decisive comparisons (O2)</td><td>Not started</td><td>Structural-pruning primitives can be reused</td><td>Implement the candidate mechanism and isolate its benefit from selection rules, class weighting, topology and training budget</td><td>Use milestone 3 findings to specify the method and decisive comparator/ablation matrix</td></tr>
+<tr><td>5. Final validation and reporting (O3)</td><td>Not started; basic reports available</td><td>Metrics, saved predictions and resident-forward timing</td><td>Frozen evaluation, paired uncertainty, selected seed/fold repeats, repeated timing and claims bounded by feasible replication</td><td>Finalize the evaluation matrix after development choices are established</td></tr>
+</tbody></table></div>
+</section>
+<section class="doc-section" id="milestone-tracker-current-step" data-guide="Milestone progress tracker">
+<p class="eyebrow">Milestone progress tracker</p><h2>Current step</h2>
+<p><strong>Milestone 1: start M1.1 implementation/revalidation.</strong> The <a href="../docs/specs/m1/M1_SPEC.md">master spec</a>, <a href="../docs/specs/m1/README.md">five-package tracker</a> and <a href="../docs/specs/m1/ALIGNMENT_REVIEW.md">alignment review</a> are complete as planning documents. All package acceptance checklists remain uncompleted. Existing code is reused; completing specifications is not completing the milestone.</p>
+</section>
+<section class="doc-section" id="milestone-tracker-existing-verification" data-guide="Milestone progress tracker">
+<p class="eyebrow">Milestone progress tracker</p><h2>Existing verification</h2>
+<ul>
+<li>The current active CPU regression suite passed 63 tests after cleanup.</li>
+<li>The generated-image workflow completed dense and channel-pruned/fine-tuned runs, exported results and reproduced dense weights for matching seeds.</li>
+<li>The one-epoch real-data run <code>baseline-real-check-20261107</code> completed on 40X data with GPU training and CPU evaluation. It is an execution check, not a converged baseline or evidence of the proposed method&#x27;s benefit.</li>
+<li>Full trained-baseline comparisons, vulnerability experiments, the proposed method, uncertainty analysis and final research conclusions remain pending.</li>
+</ul>
+</section>
+<section class="doc-section" id="milestone-tracker-progress-updates" data-guide="Milestone progress tracker">
+<p class="eyebrow">Milestone progress tracker</p><h2>Progress updates</h2>
+<p>Use <code>Not started -&gt; In progress -&gt; Tests passed -&gt; Complete</code>. For an experiment milestone, tests alone are insufficient: its declared scientific experiment outputs and analysis must also exist before completion. Record a concise summary of actual work, test/experiment results and remaining gaps here; link detailed checklist specs and ordinary run outputs when available. Keep this tracker and each milestone&#x27;s package checklist consistent.</p>
+<div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Date</th><th scope="col">Update</th><th scope="col">Evidence/result</th></tr></thead><tbody>
+<tr><td>8 November 2026</td><td>Established the five-milestone tracker and recorded existing capabilities</td><td>63 active CPU tests passed; synthetic workflow and one-epoch real-data execution check available; no research novelty claimed</td></tr>
+<tr><td>8 November 2026</td><td>Re-specified milestone 1 against the current code and research plan</td><td>Master, five checklist packages and alignment review; 17 requirements/25 planned acceptance cases; no new code implementation or model fitting</td></tr>
+</tbody></table></div>
+</section>
 <section class="doc-section" id="documentation-map" data-guide="Documentation map">
 <p class="eyebrow">Documentation map</p><h1>Documentation map</h1>
 <p>Start with the repository <a href="#readme">README</a>, or open the searchable offline <a href="../docs/index.html">HTML guide</a>. Documentation is grouped by purpose:</p>
@@ -496,10 +531,12 @@ python -m unittest discover -s tests -v</code></pre></div>
   index.html               # Generated offline guide
   guides/                  # Setup, commands, data, checkpoints and testing
   research/                # Current milestones and scientific objectives
+  specs/m1/                # Current milestone 1 master, checklists and alignment review
   assets/                  # HTML guide styles and scripts</code></pre></div>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Need</th><th scope="col">Start here</th></tr></thead><tbody>
 <tr><td>Install and operate the project</td><td><a href="#guides-index">User/developer guides</a></td></tr>
 <tr><td>Understand the research objective and implementation path</td><td><a href="#research-index">Research plans</a></td></tr>
+<tr><td>Implement and verify milestone 1</td><td><a href="../docs/specs/m1/README.md">Milestone 1 package tracker</a></td></tr>
 <tr><td>Check outstanding full-data experimental acceptance</td><td><a href="#testing-full-data-acceptance-checklist">Active testing checklist</a></td></tr>
 </tbody></table></div>
 <p>The experiment roadmap is the active development plan. The research guide defines the scientific questions. Planned experiments and proposed methods are not results.</p>
@@ -976,6 +1013,8 @@ python -m breakhis train --dataset breakhis --source cancer_binary --manifest ar
 <p class="eyebrow">Research index</p><h1>Research documents</h1>
 <p><a href="#documentation-map">Documentation map</a></p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Active document</th><th scope="col">Purpose</th></tr></thead><tbody>
+<tr><td><a href="#milestone-tracker">Milestone tracker</a></td><td>Current status, completion targets, next actions and verification</td></tr>
+<tr><td><a href="../docs/specs/m1/README.md">Milestone 1 specification package</a></td><td>Master contract, five ordered checklists and experiment-plan alignment review</td></tr>
 <tr><td><a href="#experiment-roadmap">Simple experiment milestones</a></td><td>Current implementation progress and experiment checklist</td></tr>
 <tr><td><a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">End-to-end research guide</a></td><td>Scientific objectives, proposed mechanism, baselines and research questions</td></tr>
 </tbody></table></div>

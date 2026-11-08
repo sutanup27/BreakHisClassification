@@ -1,5 +1,8 @@
 # Research experiment milestones
 
+Progress and next actions: [milestone tracker](MILESTONE_TRACKER.md).
+Milestone 1 development contract: [master spec and package tracker](../specs/m1/README.md).
+
 Active implementation path, updated 8 November 2026. Use the five milestones
 below for the current research project.
 
