@@ -159,7 +159,8 @@ Check items only when evidence for the actual declared experiment is recorded.
 ## M1.4 phase evaluation checks
 
 At M1.4 acceptance the CPU suite had 131 cases; M1.5 adds four integration cases
-for a current total of 135 (133 pass, two CUDA-only cases skip on CPU).
+for the M1 final total of 135 (133 passed, two CUDA-only skips). M2.1 adds
+planning coverage; see its current verification section below.
 Run `python -m unittest discover -s tests -p test_m1_evaluation.py` with a CUDA
 installation to exercise all 23 focused phase/report/comparison cases, including
 actual CUDA training with subsequent CPU final inference and synchronized GPU
@@ -205,3 +206,25 @@ seconds. Retained public smoke: `artifacts/m1-5-public-smoke/summary.json`;
 full log: `artifacts/m1-5-tests.log`. The unchanged package's separate M1.4 CUDA
 checks passed all 23 focused cases. Hosted CI has not been claimed from these
 local results; the workflow will run on a subsequent push.
+
+## M2.1 planning checks
+
+```powershell
+python -m unittest discover -s tests -p test_baseline_plan.py -v
+python run_baselines.py --study configs/baselines/m2_study.json --stage prepare
+```
+
+The 20 focused tests check strict inputs, stable recipe/job identity, long-study
+name isolation, exact matrix counts, explicit parent/topology dependencies,
+unchanged splits and planning without test pixels/loaders/models/CUDA queries.
+They inject failed publication and occupied/unsafe outputs, cost overflow and
+missing/insufficient capacity. Replay overhead and parent deduplication have
+hand-counted fixtures. Planning does not validate compact-model execution or
+claim any hardware timings/baseline quality. Future stage/resume requests refuse.
+
+Current M2.1 full suite: 155 cases in 197.753 seconds; 153 passed and two CUDA-only
+cases skipped. Focused planner tests: 20 passed. Logs: `artifacts/m2-1-tests.log`
+and `artifacts/m2-1-regression-reviewed.log`. The real metadata-only preparation
+`m2-1-planning-reviewed-20261108` has verified graph/artifact/source hashes and
+created no checkpoints.
+M1 GPU-specific evidence remains historical; M2.1 does no device probing or fitting.

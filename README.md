@@ -31,6 +31,10 @@ See the [configuration reference](docs/guides/EXPERIMENT_CONFIG.md) and
 [progress tracker](docs/research/MILESTONE_TRACKER.md). The existing
 individual commands below remain supported as an advanced reference.
 
+M2.1 also supports planning without training:
+`python run_baselines.py --study configs/baselines/m2_study.json --stage prepare`.
+See [baseline study planning](docs/guides/EXPERIMENTS.md#m21-prepare-a-baseline-study-without-fitting); generated configs are drafts until later M2 packages.
+
 See the [documentation map](docs/README.md) for current guides and research plans.
 
 Read this guide from setup through training before running an experiment. An

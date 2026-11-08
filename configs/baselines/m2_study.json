@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "study_id": "m2-baselines-001",
+  "experiment_template": "../experiments/vgg_baseline.json",
+  "pilot_magnification": "40X",
+  "main_magnification": "all",
+  "primary_seed": 102,
+  "repeat_seed": 103,
+  "ranking_seed": 202,
+  "ratios": [0.25, 0.5, 0.75],
+  "repeat_ratio": 0.5,
+  "dense_epochs": 20,
+  "recovery_epochs": 5,
+  "compact_model": "mobilenet_v3_small",
+  "recipe_candidates": [
+    {"optimizer": "adam", "learning_rate": 0.0001, "weight_decay": 0.0001, "scheduler": "none"},
+    {"optimizer": "adam", "learning_rate": 0.0001, "weight_decay": 0.0001, "scheduler": "cosine"}
+  ],
+  "evaluation_profiles": [
+    {"profile_id": "cpu-b1", "device": "cpu", "cpu_threads": 2, "batch_size": 1, "warmup": 50, "repeats": 200},
+    {"profile_id": "cuda-b1", "device": "cuda", "cpu_threads": 2, "batch_size": 1, "warmup": 50, "repeats": 200}
+  ],
+  "max_fit_jobs": null,
+  "available_wall_hours": null
+}

@@ -68,3 +68,44 @@ Comparison options: `--runs` (at least two completed requested phases), `--outpu
 `development`) and repeatable `--vary training.selection_metric` for a deliberate
 selection-policy study. No data, split or benchmark invariant can be overridden.
 Comparison reads saved outputs only; it does not evaluate models.
+
+## M2.1 study and cost inputs
+
+`configs/baselines/m2_study.json` is a separate baseline-study schema, not an
+experiment config. Its complete fields/defaults are documented in
+[M2 master section 4](../specs/m2/M2_SPEC.md#4-study-matrix-and-configuration-contract).
+`run_baselines.py --stage prepare` implements this plan schema now; experiment
+config-2 execution remains M2.2-M2.4 work. Config-1 parsing has not changed.
+
+The sample declares a 40X pilot, pooled main data, fitting seeds 102/103, ranking
+seed 202, ratios 0.25/0.50/0.75, B=20/F=5, two bounded Adam recipes and separate CPU/
+CUDA profile descriptions. Declaring CUDA does not require CUDA merely to prepare.
+It does not establish that 20 epochs converge or that 31 jobs fit available time.
+
+Cost input (optional `--cost-estimates FILE`) has exactly:
+
+| Field | Type / contract |
+| --- | --- |
+| `schema_version` | Integer 1 |
+| `plan_sha256` | Result of `breakhis.baseline_plan.sha(plan)` for the exact `jobs.json` plan |
+| `estimates` | Object keyed by the plan's `cost_key` values; unknown keys refuse |
+| Each entry's `epoch_seconds` | Finite positive supplied estimate for that model/operation/shape |
+| Each entry's `fixed_seconds` | Finite nonnegative preparation/pruning/reporting allowance |
+| Each entry's `basis` | Nonempty explanation of measurement or conservative bound; the planner does not measure/verify hardware timings |
+
+Partial estimates are retained as incomplete, never interpreted as zero costs.
+Complete maximum-plan time sums `fit_epochs * epoch_seconds + fixed_seconds`
+for every unique fitting job: required matrix, optional recipes and pilots. Shared
+parents occur once. Cost buckets reused across seeds/recipes need a conservative
+basis covering all those jobs, not an unmarked extrapolation from another model. Unknown resource limits or estimates keep capacity unready;
+limits cannot truncate the plan. Capacity is checked against both max fit jobs
+and available wall hours.
+
+Developer helpers `estimate_cost(plan, estimates, retries)` and
+`require_capacity(plan, estimates, retries)` accept optional replay overhead entries
+with exactly `job_id`, `extra_fit_jobs`, `extra_seconds`, `basis`. Restarting from
+epoch zero may charge another fit; replaying a partial epoch can charge seconds
+without inventing a new parent fit. Actual execution/accounting is M2.4 work.
+The helpers report `execution_supported=false` even when capacity is sufficient.
+Use the exact current plan hash; changing study inputs requires fresh estimates/
+revision. Example cost numbers must not be treated as measured facts.

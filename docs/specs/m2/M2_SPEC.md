@@ -1,7 +1,8 @@
 # M2: Dense and conventional pruning baselines
 
 Specification: **M2-BASELINES-SPEC-001**, version 1.0. Date: 8 November 2026.
-Document status: Reviewed for implementation. Implementation/experiments: Not started.
+Document status: Reviewed for implementation. M2.1 planning implemented;
+M2.2-M2.5 execution/model/control work and scientific experiments remain pending.
 Tracker: [README.md](README.md). Assessment: [alignment review](ALIGNMENT_REVIEW.md).
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md), milestone 2.
 Scientific source: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md),
@@ -83,7 +84,8 @@ or Git operation is authorized merely by this specification.
 
 ### 4.1 Small study plan, not a second protocol platform
 
-Proposed file: `configs/baselines/m2_study.json`, schema 1, with exact fields below.
+Implemented M2.1 plan file: `configs/baselines/m2_study.json`, schema 1, with exact
+fields below. This does not enable experiment config-2 fitting yet.
 Reject unknown/duplicate fields, bool-as-int, nonfinite values, duplicate job IDs,
 ratios/seeds outside range, invalid dependencies and unsafe/occupied outputs.
 Resolve input paths relative to the study file; freeze effective inputs before
@@ -230,10 +232,15 @@ Current, verified via help: `run_experiment.py --config ... [--resume]`, explici
 `--phase final`, `compare_experiments.py --phase development|final`, and individual
 `python -m breakhis train/evaluate/prune/finetune` commands.
 
-**Proposed, not runnable yet:**
+**Implemented in M2.1 (planning only):**
 
 ```powershell
 python run_baselines.py --study configs/baselines/m2_study.json --stage prepare
+```
+
+**Later stages remain proposed and currently refuse execution:**
+
+```powershell
 python run_baselines.py --study configs/baselines/m2_study.json --stage pilot
 python run_baselines.py --study configs/baselines/m2_study.json --stage parents
 python run_baselines.py --study configs/baselines/m2_study.json --stage candidates
@@ -368,7 +375,8 @@ bound; verified parent-as-new-input lineage is a distinct operation.
 
 ## 8. Acceptance matrix
 
-These are planned checks, not passed tests or already implemented commands.
+M2-T01-M2-T04 now have focused implementation evidence in M2.1; later cases
+remain planned. See each package and tracker for actual regression/review status.
 
 | ID | Requirements | Fixture/experiment and observable outcome | Owner |
 | --- | --- | --- | --- |
@@ -411,3 +419,21 @@ benchmark profiles. If resources cannot support all controls or baseline strengt
 record the limitation and an explicit revision; do not invent a schedule, clinical
 margin, literature superiority or completed novelty. A second dataset and broad
 architecture surgery are not prerequisites for this within-BreaKHis M2 study.
+
+### M2.1 concrete planning handoff
+
+`jobs.json` stores a prospective fit graph and explicit recipe selection nodes.
+Default counts: 22 required main cells, three conditional second-recipe parents
+and six one-epoch pilot cells. Shared parents are actual single nodes, not copied
+fit charges. Each `configs/<job-id>.json` is an envelope with document type
+`m2-experiment-draft`, `runnable=false`, a proposed config-2 payload and unresolved
+parent/recipe/topology bindings. It cannot be passed directly to M1 execution.
+Draft data points to the frozen study manifest; no guessed parent is executed.
+
+`cost_estimate.json` reports all missing/short capacity reasons without trimming
+jobs. Optional cost input is bound to the canonical plan digest via
+`breakhis.baseline_plan.sha`. A cost bucket reused across seeds/recipes requires
+a stated conservative basis covering every such job; the planner itself measures
+nothing. Unknown costs remain null. Capacity eligibility is distinct from execution
+support, which is false until later packages implement it. See the
+[implemented input guide](../../guides/EXPERIMENT_CONFIG.md#m21-study-and-cost-inputs).

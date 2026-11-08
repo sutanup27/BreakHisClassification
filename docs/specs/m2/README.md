@@ -6,13 +6,13 @@ Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md).
 Global progress: [milestone tracker](../../research/MILESTONE_TRACKER.md).
 Assessment: [alignment review](ALIGNMENT_REVIEW.md).
 
-**Specification package reviewed; implementation and scientific experiments have
-not started.** Reuse M1, which is complete. No baseline strength, frontier, resource
+**Specification package reviewed; M2.1 planning is implemented and reviewed.
+Later implementation/scientific experiments have not started.** Reuse M1, which is complete. No baseline strength, frontier, resource
 measurement or research novelty is claimed from these documents.
 
 | Package | Purpose / completion target | Owns | Acceptance | Depends on | Implementation status | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| [M2.1 Matrix and recipes](M2_1_MATRIX_RECIPES.md) | Strict study compiler, frozen job graph and honest capacity accounting | M2-R01-M2-R03 | M2-T01-M2-T04 | M1 | Not started | Inspected current config/runner; new study interface proposed |
+| [M2.1 Matrix and recipes](M2_1_MATRIX_RECIPES.md) | Strict study compiler, frozen job graph and honest capacity accounting | M2-R01-M2-R03 | M2-T01-M2-T04 | M1 | Reviewed | 20 focused tests; CPU 153 passed/2 skipped; real metadata-only preparation |
 | [M2.2 Initialization and models](M2_2_INITIALIZATION_MODELS.md) | Bound parent reuse, fresh continuation/scratch and compact model | M2-R04-M2-R06 | M2-T05-M2-T09 | M2.1 | Not started | VGG widths/checkpoint primitives exist; new modes not implemented |
 | [M2.3 Pruning controls](M2_3_PRUNING_CONTROLS.md) | Matched-width random/L1 surgery, masks and fair recovery through phase artifacts | M2-R07-M2-R09 | M2-T10-M2-T13 | M2.1-M2.2 | Not started | Existing L1 surgery reused; random/control integration proposed |
 | [M2.4 Execution and budgets](M2_4_EXECUTION_BUDGETS.md) | Tested public executor, measured pilot and complete real core/repeat matrix | M2-R10-M2-R12 | M2-T14-M2-T18 | M2.1-M2.3 | Not started | No M2 fitting/profile performed |
@@ -27,7 +27,7 @@ matrix/recipes -> initialization/models -> pruning controls
              -> development frontier/quality review -> M3 handoff
 ```
 
-Start with **M2.1**. Build reporting/integration code from small fixtures before
+Next: **M2.2 initialization and models**. Build reporting/integration code from small fixtures before
 long fits to avoid source-drift interruption of active runs. M2.4/M2.5 acceptance
 requires real experiments; their implementation can be tested earlier. A verified
 parent input is distinct from exact resume of the original parent.
@@ -58,6 +58,18 @@ owning checklist, this tracker and the global tracker together. No mandatory
 review owner, source archive or human approval gate is added.
 
 Planning checks: sources/current CLI reviewed; master requirement/test ownership,
-package dependencies, links and policy/budget consistency checked. New commands
-are labeled proposed. Existing M1 worktree changes are preserved. No training,
-code implementation, test execution or Git mutation is performed by this package.
+package dependencies, links and policy/budget consistency checked. Preparation is now implemented; remaining execution commands are labeled
+proposed. Planning-document acceptance did not execute experiments. M2.1 now
+has software/test evidence; real pilot/fitting/frontier work remains pending.
+
+## M2.1 implemented behavior
+
+Run `python run_baselines.py --study configs/baselines/m2_study.json --stage prepare`.
+The default plan contains 22 required, three optional recipe and six pilot fits;
+maximum 31 before replay overhead. Every generated config is a non-runnable draft
+with explicit bindings. Missing test pixels do not block metadata preparation;
+missing train/validation support or unsafe/occupied outputs refuse. Cost capacity
+and execution support remain separate: no study execution is enabled yet.
+See M2.1 and the [user guide](../../guides/EXPERIMENTS.md#m21-prepare-a-baseline-study-without-fitting)
+for output paths, current limits and review evidence. Final CPU suite: 155 cases
+(153 passed, two CUDA-only skips), log `artifacts/m2-1-regression-reviewed.log`.

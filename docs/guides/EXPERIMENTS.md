@@ -252,3 +252,49 @@ from the config directory. Completed phases cannot be overwritten. An integrity
 failure requires restoring the original bytes or starting an intentional new
 manifest/run, never silently accepting changed images. Logs identify the failed
 child under `artifacts/experiments/<run-id>/logs/`.
+
+## M2.1: prepare a baseline study without fitting
+
+```powershell
+python run_baselines.py --study configs/baselines/m2_study.json --stage prepare
+```
+
+Copy the study JSON and choose a new `study_id` for another preparation. Paths in
+that JSON resolve from its own directory; keep `experiment_template` valid if
+moving the file. Existing study output refuses overwrite, including an interrupted
+preparation. `--resume` is not a preparation operation.
+
+The current command only compiles a plan and checks the full saved source metadata
+and train/validation paths. It opens no image pixels, creates no model/loaders,
+queries no CUDA availability, fits nothing and reserves no checkpoint directory.
+Missing test pixel files do not prevent preparation. It does not resplit data.
+
+Default counts: **22 required fits**, **3 optional alternate-recipe fits** and
+**6 one-epoch pilot fits** = **31 prospective fitting jobs** before retry overhead.
+Every candidate refers to the same declared parent's selection; parents are not
+counted again for each ratio. Repeated VGG recipe choice and scratch topology are
+unresolved dependencies, never guessed from a future result.
+
+Outputs under `artifacts/baselines/<study-id>/`:
+
+| File | Meaning |
+| --- | --- |
+| `study.json` | Effective study inputs and resource limits |
+| `jobs.json` | Stable job IDs, pilot/main roles, dependencies, counts, policies and input/source hashes |
+| `manifest.json`, `template.json` | Exact original input bytes; template source path is in `jobs.json` |
+| `configs/<job-id>.json` | Non-runnable draft envelope, config-2 proposal and unresolved bindings |
+| `cost_estimate.json` | Unknown costs/capacity reasons, or supplied plan-bound estimates |
+| `cost_inputs.json` | Optional copied cost inputs when supplied |
+| `status.json` | Preparing/prepared/failed state, no-fitting flag and complete output hashes |
+
+Drafts are deliberately not accepted by `run_experiment.py`. M2.2-M2.4 will
+implement config-2 model/init support, resolve parent/topology/recipe bindings and
+execute jobs. `pilot`, `parents`, `candidates`, `report` currently refuse clearly;
+preparation is the only implemented study stage. Existing M1 experiment commands
+remain supported and unchanged.
+
+Resource limits may remain null while planning. No hardware throughput or fit time
+is measured by this command. Optional `--cost-estimates FILE` accepts the strict
+plan-bound JSON documented in the [config reference](EXPERIMENT_CONFIG.md#m21-study-and-cost-inputs).
+Even a sufficient capacity estimate does not enable unimplemented execution.
+A shortfall never silently removes jobs. M2.4 owns actual cost profiling/launch.

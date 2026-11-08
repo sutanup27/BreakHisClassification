@@ -2,7 +2,8 @@
 
 Date: 8 November 2026. Outcome: **Aligned for implementation**.
 This is a specification assessment, not scientific approval or evidence of a novel
-method. Implementation and experiments are Not started.
+method. M2.1 planning is implemented and reviewed; later implementation
+and scientific experiments remain Not started.
 Master: [M2_SPEC.md](M2_SPEC.md). Packages: [tracker](README.md).
 
 ## Reviewed sources and interpretation
@@ -93,3 +94,18 @@ These are experimental settings to settle during the bounded pilot, not blockers
 to implementing M2.1-M2.3. No literature superiority, effect size, clinical margin,
 novel method or final test result is invented. No model fitting, regression run,
 code implementation or Git commit/push was performed by this specification task.
+
+## M2.1 implementation alignment
+
+The implemented planner preserves frozen split bytes, 40X-versus-pooled role
+identity, bounded matrix counts and explicit unresolved parent/topology bindings.
+It creates no model or CUDA dependency and reads no test pixels. Draft config-2
+envelopes are not represented as runnable configs; future stages refuse. Cost
+capacity is conservative and includes optional/pilot/replay work without claiming
+measurements or permitting a hidden subset. The full experiment/novelty boundaries
+above remain unchanged; M2.1 software acceptance does not complete M2.
+
+M2.1 final evidence: 20 focused tests passed; full CPU suite ran 155 cases
+(153 passed, two CUDA-only skips). Real metadata-only preparation, source/artifact
+hashes, help and documentation checks passed. See the owning checklist for logs.
+No M2 real fitting, cost measurement or scientific baseline claim was made.
