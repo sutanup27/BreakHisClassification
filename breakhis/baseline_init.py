@@ -8,6 +8,7 @@ BASELINE_FIELDS={'kind','parent_selection','channels','topology_checkpoint','ran
 
 def kind(config): return config.get('baseline',{}).get('kind','standard')
 def continuation(config): return kind(config)=='dense_continue'
+def inherited_dense(config): return kind(config) in ('dense_continue','prune_from_parent')
 def commands(config): return ['finetune'] if kind(config) in ('dense_continue','prune_from_parent') else ['train',*(['finetune'] if config['pruning'] else [])]
 def roles(config): return ['dense','finetuned'] if continuation(config) else ['dense',*(['pruned','finetuned'] if config['pruning'] else [])]
 def designated(config): return 'finetuned' if continuation(config) or config['pruning'] else 'dense'
@@ -56,7 +57,8 @@ def reference_roots(run,inputs):
 
 def fit_contract(config,manifest_sha256):
     t=config['training']
-    return dict(architecture=t['model'].replace('resnet18','resnet'),seed=t['seed'],learning_rate=t['learning_rate'],optimizer_name=t['optimizer'],
+    return dict(epochs=config['pruning']['finetune_epochs'] if kind(config)=='prune_from_parent' else t['epochs'],
+        architecture=t['model'].replace('resnet18','resnet'),seed=t['seed'],learning_rate=t['learning_rate'],optimizer_name=t['optimizer'],
         weight_decay=t['weight_decay'],scheduler_name=t['scheduler'],selection_metric=t['selection_metric'],
         batch_size=t['batch_size'],deterministic=t['deterministic'],manifest_sha256=manifest_sha256,
         source=config['data']['source'],magnification=config['data']['magnification'],preprocessing=e.PREPROCESSING)
@@ -67,8 +69,9 @@ def inspect_initialization(config,manifest_sha256):
     from . import experiment_setup as s
     from .reporting import CLASSES
     from .checkpoints import read_checkpoint
-    record=dict(schema_version=1,kind=kind(config),contract=fit_contract(config,manifest_sha256),
-        channels=config['baseline']['channels'],roots={},references=[],parent=None,topology=None)
+    record=dict(schema_version=2,kind=kind(config),contract=fit_contract(config,manifest_sha256),
+        channels=config['baseline']['channels'],roots={},references=[],parent=None,topology=None,
+        pruning=config['pruning'],ranking=config['baseline']['ranking'],ranking_seed=config['baseline']['ranking_seed'])
     if kind(config)=='standard': return record
     selection_path=Path(config['baseline']['parent_selection'])
     if selection_path.name!='selection.json' or selection_path.parent.name!='development':
@@ -86,6 +89,8 @@ def inspect_initialization(config,manifest_sha256):
         if pc['training'][field]!=config['training'][field]: raise ValueError('Parent recipe/seed differs: '+field)
     if pc['training']['model'].replace('resnet18','resnet')!=config['training']['model'].replace('resnet18','resnet'):
         raise ValueError('Parent model differs')
+    if kind(config)=='prune_from_parent' and config['training']['epochs']!=pc['training']['epochs']:
+        raise ValueError('Parent epoch allowance differs from frozen baseline')
     roots=dict(parent_run=str(parent_run.resolve()),parent_checkpoint=str(Path(pi['checkpoint_directory']).resolve()))
     record['roots']=roots
     # Bind immutable completed development artifacts, not mutable final-phase state.
@@ -141,8 +146,10 @@ def inspect_initialization(config,manifest_sha256):
 
 def verify_record(record):
     from .experiment_setup import verify_reference
-    e.exact(record,{'schema_version','kind','contract','channels','roots','references','parent','topology'},'initialization record')
-    if type(record.get('schema_version')) is not int or record.get('schema_version')!=1 or record.get('kind') not in ('standard','prune_from_parent','dense_continue','narrow_scratch'):
+    version=record.get('schema_version')
+    fields={'schema_version','kind','contract','channels','roots','references','parent','topology'}
+    e.exact(record,fields | ({'pruning','ranking','ranking_seed'} if version==2 else set()),'initialization record')
+    if type(version) is not int or version not in (1,2) or record.get('kind') not in ('standard','prune_from_parent','dense_continue','narrow_scratch'):
         raise ValueError('Unsupported initialization record')
     if set(record['roots'])-{'parent_run','parent_checkpoint','topology_checkpoint'}:
         raise ValueError('Unknown initialization roots')
@@ -162,24 +169,70 @@ def parent_path(record):
     return verify_reference(record['parent']['checkpoint'],roots=record['roots'])
 
 
+def verify_pruned(record,payload):
+    expected=record['pruning']; saved=payload['config']
+    if (saved.get('parent_checkpoint_sha256')!=record['parent']['checkpoint']['sha256'] or
+        Path(saved.get('parent_checkpoint','')).resolve()!=parent_path(record).resolve() or
+        saved.get('method')!=expected['method'] or saved.get('sparsity')!=expected['sparsity'] or
+        saved.get('ranking')!=record['ranking'] or saved.get('ranking_seed')!=record['ranking_seed']):
+        raise ValueError('Pruned checkpoint parent/ranking/ratio binding differs')
+    pruning=payload['pruning']
+    if expected['method']=='channel':
+        cfg=pruning.get('channel_config',{})
+        if (pruning['type']!='channel' or cfg.get('method')!=record['ranking']+'-output-channel' or
+            cfg.get('ranking_seed')!=record['ranking_seed'] or
+            any(v['requested_sparsity']!=expected['sparsity'] for v in cfg.get('layers',{}).values())):
+            raise ValueError('Pruned channel topology differs from frozen control')
+    elif pruning['type']!='unstructured': raise ValueError('Expected L1 masked checkpoint')
+
+
 def verify_cli(record,config,metadata,*,resume=False,input_path=None):
     verify_record(record)
-    expected=record['contract']
-    for k,v in expected.items():
+    shared=record['kind']=='prune_from_parent'
+    if shared and record['schema_version']!=2: raise ValueError('Regenerate shared-parent initialization with current ranking contract')
+    pruning_command=shared and config['command']=='prune'
+    for k,v in record['contract'].items():
+        if pruning_command and k not in ('architecture','manifest_sha256','source','magnification','preprocessing'): continue
         actual=metadata.get(k) if k in ('manifest_sha256','source','magnification','preprocessing') else config.get(k)
         if k=='architecture' and isinstance(actual,str): actual=actual.replace('resnet18','resnet')
         if actual!=v: raise ValueError('Initialization fit contract differs: '+k)
-    command='finetune' if record['kind']=='dense_continue' else 'train'
+    if pruning_command:
+        p=record['pruning']
+        if (Path(input_path)!=parent_path(record) or config.get('layer_sparsities') is not None or
+            config['method']!=p['method'] or config['sparsity']!=p['sparsity'] or
+            config['ranking']!=record['ranking'] or config['ranking_seed']!=record['ranking_seed']):
+            raise ValueError('Pruning command differs from frozen parent/ranking/ratio')
+        return
+    command='finetune' if record['kind'] in ('dense_continue','prune_from_parent') else 'train'
     if config['command']!=command or config.get('pretrained',False): raise ValueError('Initialization command/pretraining differs')
-    if record['kind']=='prune_from_parent': raise ValueError('Parent pruning execution requires M2.3')
-    if not resume and command=='finetune' and Path(input_path)!=parent_path(record):
+    if not resume and shared:
+        from .checkpoints import read_checkpoint
+        verify_pruned(record,read_checkpoint(input_path))
+    elif not resume and command=='finetune' and Path(input_path)!=parent_path(record):
         raise ValueError('Continuation must initialize the bound parent')
 
 
 def fresh_model(record,classes,device):
     from .checkpoints import create_model, load_checkpoint
     verify_record(record)
-    if record['kind']=='prune_from_parent': raise ValueError('Parent pruning execution requires M2.3')
+    if record['kind']=='prune_from_parent': raise ValueError('Parent pruning uses bound prune/finetune commands, not a fresh model')
     if record['kind']=='dense_continue': return load_checkpoint(parent_path(record),device)[0]
     options={'channels':record['channels']} if record['kind']=='narrow_scratch' else {}
     return create_model(record['contract']['architecture'],classes=classes,pretrained=False,**options).to(device)
+
+
+def budget_summary(config,record,histories):
+    parent=record['parent'] or {}
+    inherited=kind(config) in ('dense_continue','prune_from_parent')
+    discovery=kind(config)=='narrow_scratch'
+    own_epochs=sum(len(rows) for rows in histories.values())
+    parent_epochs=parent.get('executed_epochs',0)
+    return dict(kind=kind(config),parent_selected_epoch=parent.get('selected_epoch'),
+        parent_executed_epochs=parent_epochs,parent_optimizer_steps=parent.get('optimizer_steps',0),
+        child_completed_epochs=own_epochs,
+        child_optimizer_steps=sum(r['optimizer_steps'] for rows in histories.values() for r in rows),
+        shared_parent_fit_epochs=parent_epochs if inherited else 0,
+        topology_discovery_parent_epochs=parent_epochs if discovery else 0,
+        full_lifecycle_fit_epochs=own_epochs+(parent_epochs if inherited else 0),
+        including_topology_discovery_epochs=own_epochs+(parent_epochs if inherited or discovery else 0),
+        note='Parent work is shared, not refitted in the child. Equal data passes are not equal FLOPs or wall time.')

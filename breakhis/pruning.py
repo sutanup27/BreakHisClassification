@@ -39,8 +39,16 @@ def validate_independent_weights(layers):
 
 
 def validate_channel_config(configuration, channels):
-    if not isinstance(configuration, dict) or configuration.get('method') != 'l1-output-channel' or configuration.get('channels') != channels:
+    if not isinstance(configuration, dict) or configuration.get('method') not in ('l1-output-channel','random-output-channel') or configuration.get('channels') != channels:
         raise ValueError('Invalid channel pruning configuration')
+    expected={'method','channels','layers'}
+    generator=None
+    if configuration['method']=='random-output-channel':
+        expected.add('ranking_seed')
+        seed=configuration.get('ranking_seed')
+        if type(seed) is not int or not 0<=seed<2**32: raise ValueError('Invalid random channel seed')
+        generator=torch.Generator(device='cpu').manual_seed(seed)
+    if set(configuration)!=expected: raise ValueError('Unknown channel configuration fields')
     layers = configuration.get('layers', {})
     if not isinstance(layers, dict) or set(layers) != {f'backbone.conv{index}' for index in range(8)}:
         raise ValueError('Channel configuration must specify all eight VGG convolutions')
@@ -53,6 +61,9 @@ def validate_channel_config(configuration, channels):
             raise ValueError('Invalid original or retained channel count')
         if len(retained) != width or any(isinstance(value, bool) or not isinstance(value, int) or not 0 <= value < original for value in retained) or retained != sorted(set(retained)):
             raise ValueError('Invalid retained channel indices')
+        if generator is not None:
+            expected_indices=torch.randperm(original,generator=generator)[:width].sort().values.tolist()
+            if retained!=expected_indices: raise ValueError('Random retained indices differ from recorded seed')
         ratio = validate_sparsity(settings.get('requested_sparsity'), channel=True)
         if max(1, original - round(original * ratio)) != width:
             raise ValueError('Channel count differs from the recorded pruning ratio')
@@ -124,44 +135,76 @@ def prune_weights(model, sparsity=.5, settings=None):
     return model
 
 
-@torch.no_grad()
-def prune_vgg_channels(model, sparsity=.5, settings=None):
+def vgg_channel_layers(model):
     if type(model) is not VGG:
         raise ValueError('Channel pruning supports sequential VGG only; residual/depthwise architectures are unsupported')
     if any(hasattr(module, 'weight_mask') for module in model.modules()):
         raise ValueError('Channel pruning requires an unmasked VGG checkpoint')
-    layers = [(name, module) for name, module in model.named_modules() if isinstance(module, nn.Conv2d)]
-    ratios = layer_settings(layers, sparsity, settings, channel=True)
+    layers=[(name,module) for name,module in model.named_modules() if isinstance(module,nn.Conv2d)]
+    if len(layers)!=8 or any(module.groups!=1 for _,module in layers):
+        raise ValueError('Eight independent ordinary VGG convolutions are required')
     validate_independent_weights(layers)
-    selections = []
-    for name, module in layers:
-        if module.groups != 1:
-            raise ValueError('Grouped/depthwise convolutions are unsupported for channel pruning')
-        keep = max(1, module.out_channels - round(module.out_channels * ratios[name]))
-        importance = module.weight.abs().flatten(1).sum(1)
-        indices = torch.argsort(importance, descending=True, stable=True)[:keep].sort().values
+    return layers
+
+
+@torch.no_grad()
+def select_vgg_channels(model,sparsity=.5,settings=None,*,ranking='l1',ranking_seed=None):
+    layers=vgg_channel_layers(model)
+    ratios=layer_settings(layers,sparsity,settings,channel=True)
+    if ranking not in ('l1','random'): raise ValueError('Unknown channel ranking')
+    if ranking=='random':
+        if type(ranking_seed) is not int or not 0<=ranking_seed<2**32:
+            raise ValueError('Random channel ranking requires a uint32 seed')
+        generator=torch.Generator(device='cpu').manual_seed(ranking_seed)
+    elif ranking_seed is not None: raise ValueError('L1 ranking seed must be omitted')
+    selections=[]
+    for name,module in layers:
+        keep=max(1,module.out_channels-round(module.out_channels*ratios[name]))
+        if ranking=='l1':
+            importance=module.weight.abs().flatten(1).sum(1)
+            indices=torch.argsort(importance,descending=True,stable=True)[:keep].sort().values
+        else:
+            indices=torch.randperm(module.out_channels,generator=generator)[:keep].sort().values
         selections.append(indices)
-    channels = [len(indices) for indices in selections]
-    reference = next(model.parameters())
-    rebuilt = VGG(classes=model.fc2.out_features, channels=channels).to(device=reference.device, dtype=reference.dtype)
-    previous = torch.arange(3, device=reference.device)
-    configuration = {}
-    for index, ((name, old), retained) in enumerate(zip(layers, selections)):
-        new = rebuilt.get_submodule(name)
-        new.weight.copy_(old.weight[retained][:, previous])
-        old_bn = model.backbone.get_submodule(f'bn{index}')
-        new_bn = rebuilt.backbone.get_submodule(f'bn{index}')
-        new_bn.weight.copy_(old_bn.weight[retained])
-        new_bn.bias.copy_(old_bn.bias[retained])
-        new_bn.running_mean.copy_(old_bn.running_mean[retained])
-        new_bn.running_var.copy_(old_bn.running_var[retained])
+    return selections,ratios
+
+
+@torch.no_grad()
+def rebuild_vgg_channels(model,selections,ratios,*,ranking='l1',ranking_seed=None):
+    layers=vgg_channel_layers(model)
+    if len(selections)!=8: raise ValueError('Select every VGG layer')
+    channels=[len(indices) for indices in selections]
+    configuration=dict(method='l1-output-channel' if ranking=='l1' else 'random-output-channel',
+        channels=channels,layers={name:dict(original_channels=old.out_channels,
+            retained_indices=indices.cpu().tolist(),requested_sparsity=ratios[name])
+            for (name,old),indices in zip(layers,selections)})
+    if ranking not in ('l1','random'): raise ValueError('Unknown channel ranking')
+    if ranking=='random': configuration['ranking_seed']=ranking_seed
+    elif ranking_seed is not None: raise ValueError('L1 ranking seed must be omitted')
+    validate_channel_config(configuration,channels)
+    reference=next(model.parameters())
+    # Construction initializes discarded random tensors. Preserve global fitting
+    # RNG even for the L1 path; actual retained values are copied below.
+    with torch.random.fork_rng(devices=[]), torch.device('cpu'):
+        rebuilt=VGG(classes=model.fc2.out_features,channels=channels)
+    rebuilt=rebuilt.to(device=reference.device,dtype=reference.dtype)
+    previous=torch.arange(3,device=reference.device)
+    for index,((name,old),indices) in enumerate(zip(layers,selections)):
+        retained=indices.to(device=reference.device,dtype=torch.long)
+        new=rebuilt.get_submodule(name)
+        new.weight.copy_(old.weight[retained][:,previous])
+        old_bn=model.backbone.get_submodule(f'bn{index}');new_bn=rebuilt.backbone.get_submodule(f'bn{index}')
+        for field in ('weight','bias','running_mean','running_var'):
+            getattr(new_bn,field).copy_(getattr(old_bn,field)[retained])
         new_bn.num_batches_tracked.copy_(old_bn.num_batches_tracked)
-        new_bn.eps, new_bn.momentum = old_bn.eps, old_bn.momentum
-        configuration[name] = dict(original_channels=old.out_channels, retained_indices=retained.cpu().tolist(),
-                                   requested_sparsity=ratios[name])
-        previous = retained
-    rebuilt.fc2.weight.copy_(model.fc2.weight[:, previous])
-    rebuilt.fc2.bias.copy_(model.fc2.bias)
-    rebuilt.train(model.training)
-    rebuilt.channel_pruning = dict(method='l1-output-channel', channels=channels, layers=configuration)
+        new_bn.eps,new_bn.momentum=old_bn.eps,old_bn.momentum
+        previous=retained
+    rebuilt.fc2.weight.copy_(model.fc2.weight[:,previous]);rebuilt.fc2.bias.copy_(model.fc2.bias)
+    rebuilt.train(model.training);rebuilt.channel_pruning=configuration
     return rebuilt
+
+
+@torch.no_grad()
+def prune_vgg_channels(model,sparsity=.5,settings=None,*,ranking='l1',ranking_seed=None):
+    selections,ratios=select_vgg_channels(model,sparsity,settings,ranking=ranking,ranking_seed=ranking_seed)
+    return rebuild_vgg_channels(model,selections,ratios,ranking=ranking,ranking_seed=ranking_seed)

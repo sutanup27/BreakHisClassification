@@ -78,6 +78,8 @@ def main(argv=None):
         command.add_argument('--output', type=Path, help='Checkpoint filename/path inside checkpoint/binary, or evaluation JSON path')
         if name == 'evaluate':
             add_benchmark_options(command)
+        if name == 'prune':
+            command.add_argument('--initialization',type=Path,help='Frozen shared-parent pruning contract')
         if name in ('train', 'finetune'):
             command.add_argument('--initialization',type=Path,help='Frozen config-2 fresh-fit initialization record')
             command.add_argument('--seed', type=int, help='Fresh-run RNG seed; inherited on resume')
@@ -99,6 +101,8 @@ def main(argv=None):
             command.add_argument('--predictions-output', type=Path, help='Save ordered per-image predictions as JSON')
             command.add_argument('--split',choices=['validation','test'],default='test',help='Explicit evaluation role; validation for development reporting')
         if name == 'prune':
+            command.add_argument('--ranking',choices=['l1','random'],default='l1')
+            command.add_argument('--ranking-seed',type=int)
             command.add_argument('--sparsity', type=float, default=.5)
             command.add_argument('--method', choices=['unstructured', 'channel'], default='unstructured')
             command.add_argument('--layer-sparsities', type=Path, help='JSON object specifying every eligible layer name and ratio')
@@ -191,6 +195,11 @@ def main(argv=None):
         if args.command == 'prune' and not 0 <= args.sparsity <= 1:
             raise ValueError('sparsity must be between zero and one')
         if args.command == 'prune':
+            if args.initialization: args.initialization=resolve_input(args.initialization,'Initialization')
+            if args.ranking=='random':
+                if args.method!='channel' or args.ranking_seed is None or not 0<=args.ranking_seed<2**32:
+                    raise ValueError('Random ranking requires channel pruning and a uint32 ranking seed')
+            elif args.ranking_seed is not None: raise ValueError('L1 ranking seed must be omitted')
             from .pruning import validate_sparsity
             validate_sparsity(args.sparsity, channel=args.method == 'channel')
             if args.layer_sparsities:
@@ -274,7 +283,7 @@ def main(argv=None):
                 optimizer={'name': args.optimizer, 'momentum': .9 if args.optimizer == 'sgd' else None, 'weight_decay': args.weight_decay},
                 scheduler={'name': args.scheduler, 'T_max': args.epochs})
         initialization=None
-        if args.command in ('train','finetune') and args.initialization:
+        if args.command in ('train','finetune','prune') and args.initialization:
             from .baseline_init import verify_cli
             from .experiment_io import read_json
             initialization=read_json(args.initialization)
@@ -336,6 +345,8 @@ def main(argv=None):
             experiment_config=read_json(args.experiment_config)
             if experiment_config.get('baseline'):
                 envelope['baseline_kind']=experiment_config['baseline']['kind']
+                if experiment_config['baseline']['kind']=='prune_from_parent':
+                    envelope.update(ranking=experiment_config['baseline']['ranking'],ranking_seed=experiment_config['baseline']['ranking_seed'])
                 envelope['checkpoint_initialization_sha256']=payload.get('config',{}).get('initialization_sha256')
         report.update(envelope)
         write_json(output, report)
@@ -350,7 +361,8 @@ def main(argv=None):
         from .pruning import prune_weights, prune_vgg_channels
         try:
             settings = json.loads(args.layer_sparsities.read_text(encoding='utf-8-sig')) if args.layer_sparsities else None
-            model = (prune_vgg_channels if args.method == 'channel' else prune_weights)(model, args.sparsity, settings)
+            model = (prune_vgg_channels(model,args.sparsity,settings,ranking=args.ranking,ranking_seed=args.ranking_seed)
+                if args.method=='channel' else prune_weights(model,args.sparsity,settings))
         except (ValueError, OSError) as error:
             parser.error(str(error))
         config['layer_sparsities_resolved'] = settings
@@ -358,7 +370,8 @@ def main(argv=None):
         accuracy, loss = evaluate(model, loaders['validation'], criterion)
         write_json(output.with_suffix('.validation.json'), dict(split='validation', accuracy=accuracy,
                    accuracy_unit='percent', loss=loss, method=args.method, sparsity=args.sparsity,
-                   layer_sparsities=settings, experiment_id=args.experiment_id, checkpoint=str(input_path),
+                   layer_sparsities=settings,ranking=args.ranking,ranking_seed=args.ranking_seed,
+                   experiment_id=args.experiment_id, checkpoint=str(input_path),
                    source=args.source, magnification=args.magnification))
         save_checkpoint(output, model, architecture, metadata, classes=payload['classes'], config=config)
         print(f'Validation accuracy after pruning: {accuracy:.4f}%; saved {output}')

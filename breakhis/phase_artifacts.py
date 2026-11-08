@@ -20,7 +20,7 @@ def development(run, *, check_source=True):
     run=Path(run).resolve(); config,state,inputs=setup._read_prepared(run,check_source=check_source)
     if state['phases']['development']['status']!='completed':
         raise ValueError('Final/comparison requires completed development')
-    from .baseline_init import roles as baseline_roles, commands, continuation, designated, kind
+    from .baseline_init import roles as baseline_roles, commands, continuation, inherited_dense, designated, kind
     roles=baseline_roles(config)
     stages=[*commands(config),*(['prune'] if config['pruning'] else []),
         *(['initialization'] if config.get('baseline') else []),
@@ -39,7 +39,7 @@ def development(run, *, check_source=True):
     roots=reference_roots(run,inputs)
     for role,binding in selection['roles'].items():
         command={'dense':'train','pruned':'prune','finetuned':'finetune'}[role]
-        inherited=continuation(config) and role=='dense'
+        inherited=inherited_dense(config) and role=='dense'
         inherited_parent=inputs['initialization']['parent'] if inherited else None
         expected=dict(checkpoint=(setup.verify_reference(inherited_parent['checkpoint'],roots=roots) if inherited else Path(inputs['checkpoint_directory'])/f'{command}.pth'),
             report=run/'development'/f'{role}.metrics.json',predictions=run/'development'/f'{role}.predictions.json')
@@ -61,6 +61,10 @@ def development(run, *, check_source=True):
             chosen=max(history,key=lambda r:(r['selection_score_percent'],
                 -r['validation_loss'] if criterion=='group_balanced_accuracy' else 0,-r['epoch']))
             if chosen['epoch']!=binding['epoch']: raise ValueError('Selection epoch is not the development choice')
+        if kind(config)=='prune_from_parent' and role=='pruned':
+            from .baseline_init import verify_pruned
+            from .checkpoints import read_checkpoint
+            verify_pruned(inputs['initialization'],read_checkpoint(expected['checkpoint']))
         validate_report(run,config,inputs,selection,role,'development')
     return config,state,inputs,selection
 
@@ -79,7 +83,10 @@ def validate_report(run,config,inputs,selection,role,phase):
         aggregation=AGGREGATION,threshold=THRESHOLD,threshold_probability=.5,tie_class='benign',
         source=config['data']['source'],magnification=config['data']['magnification'],
         preprocessing=inputs['identity']['preprocessing'])
-    if config.get('baseline'): fields['baseline_kind']=config['baseline']['kind']
+    if config.get('baseline'):
+        fields['baseline_kind']=config['baseline']['kind']
+        if config['baseline']['kind']=='prune_from_parent':
+            fields.update(ranking=config['baseline']['ranking'],ranking_seed=config['baseline']['ranking_seed'])
     for document in (report,predictions):
         if any(document.get(k)!=v for k,v in fields.items()): raise ValueError('Report/prediction phase or identity differs')
         if document.get('evaluation_runtime')!=report['benchmark']['runtime']:

@@ -76,7 +76,7 @@ experiment config. Its complete fields/defaults are documented in
 [M2 master section 4](../specs/m2/M2_SPEC.md#4-study-matrix-and-configuration-contract).
 `run_baselines.py --stage prepare` implements this plan schema now; experiment
 config-2 standard/continuation/scratch fits are implemented in M2.2; study job
-resolution/execution remains M2.3-M2.4 work. Config-1 parsing has not changed.
+study resolution/execution remains M2.4 work. Config-1 parsing has not changed.
 
 The sample declares a 40X pilot, pooled main data, fitting seeds 102/103, ranking
 seed 202, ratios 0.25/0.50/0.75, B=20/F=5, two bounded Adam recipes and separate CPU/
@@ -136,9 +136,11 @@ experiment config directory. Existing config-1 semantics remain unchanged.
   ranking fields null. Starts all numerical weights/classifier/BN state fresh.
   Set `training.epochs` to the declared B+F budget. Parent lineage is topology
   discovery provenance; no parent tensor/optimizer/RNG is inherited.
-- `prune_from_parent`: parsing/preparation validates the parent and ranking fields,
-  but fitting is refused until M2.3 implements the conventional controls. This
-  package does not claim random-channel pruning is executable yet.
+- `prune_from_parent`: reuses the verified selected dense parent, applies uniform
+  L1 masks or L1/random VGG channel pruning, then fits a fresh optimizer for
+  `pruning.finetune_epochs` (F). Keep `training.epochs` equal to the parent
+  allowance B. Random ranking requires channel pruning and a separate uint32 seed.
+  Per-layer overrides are excluded from this matched uniform control.
 
 Parent fitting seed, optimizer/LR/decay/schedule, batch size, deterministic and
 selection settings, model, data/magnification/manifest/classes must match. Epoch
@@ -159,4 +161,4 @@ roots/references in child inputs. `parent.json` records acquisition with zero
 child parent-fitting steps; the original histories and selected/executed epochs
 remain attributable by immutable reference. Do not move/change these inputs while
 using child resume/final. The runner passes advanced `--initialization FILE` to
-train/fine-tune automatically; manual use must match its complete fit contract.
+train/prune/fine-tune automatically; manual use must match its complete fit contract.

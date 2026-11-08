@@ -15,10 +15,7 @@ def now():
 
 
 def run_development(config_file, *, run_id=None, resume=False, seed=None, device=None):
-    from .baseline_init import kind, continuation, commands, designated, parent_path, reference_roots
-    requested=e.load_config(config_file,seed=seed,device=device)
-    if kind(requested)=='prune_from_parent':
-        raise ValueError('Shared-parent pruning execution requires M2.3; preparation is supported')
+    from .baseline_init import kind, continuation, inherited_dense, commands, designated, parent_path, reference_roots
     prepared=setup.prepare_run(config_file,run_id=run_id,resume=resume,seed=seed,device=device)
     run,config,state,inputs=(prepared[k] for k in ('run','config','state','inputs'))
     training=config['training']; evaluation=config['evaluation']; identity=inputs['identity']
@@ -91,6 +88,16 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
                 args=[args[0],*common,'--resume',str(latest)]
             elif any(Path(p).exists() for p in expected[stage]):
                 raise ValueError('Training artifacts exist without a committed restart boundary: '+stage)
+        if stage=='prune' and record.get('status') in ('failed','interrupted','running'):
+            # These uncommitted, deterministic products are regenerated from the
+            # same frozen parent. Never clear a committed stage or any parent file.
+            from .paths import output_path
+            owned={checkpoint/'prune.pth',checkpoint/'prune.config.json',checkpoint/'prune.validation.json'}
+            if {Path(p) for p in expected[stage]}!=owned:
+                raise ValueError('Unrecognized incomplete pruning destinations')
+            for path in owned:
+                output_path(path,root=checkpoint,protected=[dense])
+                path.unlink(missing_ok=True)
         log=run/'logs'/f'{stage}.log'; log.parent.mkdir(exist_ok=True)
         argv=[sys.executable,'-m','breakhis',*map(str,args)]
         record=dict(status='running',argv=argv,log=str(log),started_at=now())
@@ -135,6 +142,8 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
             execute('finetune',['finetune',*common,*fit,'--checkpoint',str(dense),'--epochs',str(training['epochs']),
                 '--output',str(finetuned)],epochs=training['epochs'])
             models=dict(dense=dense,finetuned=finetuned)
+        elif kind(config)=='prune_from_parent':
+            dense=parent_path(inputs['initialization']);models=dict(dense=dense)
         else:
             dense=checkpoint/'train.pth'
             execute('train',['train',*common,*fit,'--model',training['model'],'--epochs',str(training['epochs']),
@@ -142,8 +151,13 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
             models=dict(dense=dense)
         if config['pruning']:
             pruning=config['pruning']; pruned=checkpoint/'prune.pth'; finetuned=checkpoint/'finetune.pth'
-            execute('prune',['prune',*common,'--checkpoint',str(dense),'--method',pruning['method'],
-                '--sparsity',str(pruning['sparsity']),'--output',str(pruned)])
+            prune_args=['prune',*common,'--checkpoint',str(dense),'--method',pruning['method'],
+                '--sparsity',str(pruning['sparsity']),'--output',str(pruned)]
+            if kind(config)=='prune_from_parent':
+                prune_args += ['--initialization',str(run/'initialization.json'),'--ranking',config['baseline']['ranking']]
+                if config['baseline']['ranking_seed'] is not None:
+                    prune_args += ['--ranking-seed',str(config['baseline']['ranking_seed'])]
+            execute('prune',prune_args)
             execute('finetune',['finetune',*common,*fit,'--checkpoint',str(pruned),
                 '--epochs',str(pruning['finetune_epochs']),'--output',str(finetuned)],epochs=pruning['finetune_epochs'])
             models.update(pruned=pruned,finetuned=finetuned)
@@ -185,6 +199,10 @@ def run_development(config_file, *, run_id=None, resume=False, seed=None, device
             identity=identity,reports=reports,predictions=predictions,designated_role=designated_role,
             designated_metrics=e.read_json(reports[designated_role]),
             note='Validation development results; final evaluation has not run.')
+        if config.get('baseline'):
+            from .baseline_init import budget_summary
+            result['baseline_budget']=budget_summary(config,inputs['initialization'],
+                {command:e.read_json(run/f'{command}.history.json')['epochs'] for command in commands(config)})
         e.write_json(run/'development/results.json',result)
         state['stages']['development-complete']=dict(status='completed',artifacts=references('development-complete'))
         overall=e.read_json(run/'results.json'); overall['phases']['development']=str(run/'development/results.json')

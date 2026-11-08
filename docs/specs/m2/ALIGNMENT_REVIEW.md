@@ -117,9 +117,21 @@ versus exact child resume semantics. Scratch copies topology only and resets all
 numerical/BN state; continuation resets optimizer/schedule and preserves parent
 weights. Mode-specific artifacts expose zero child parent-fitting steps and bound
 external origins. Existing config-1 behavior and phase isolation pass regressions.
-Parent random/L1 control execution remains M2.3; baseline-control comparison remains
+Parent random/L1 control execution was deferred to M2.3 and is now implemented; baseline-control comparison remains
 M2.5, so no unsafe matched-cost table is exposed prematurely. CPU suite: 174 cases
 (171 passed, three CUDA-only skips); all 19 focused cases passed in the CUDA
 environment, plus fresh public VGG/continuation/scratch/compact phases. No O1/O2/O3
 scientific finding or real baseline quality is inferred from these implementation
 checks. See the owning M2.2 checklist for exact logs and remaining boundaries.
+
+
+## M2.3 implementation alignment
+
+The shared-parent controls preserve M1 role isolation, fixed selection and immutable
+lineage. Random ranking is a conventional control, not the malignant-group method.
+L1/random physical widths match; masks retain dense compute shapes. Fresh F fitting,
+continuation, scratch/compact budgets and selected/executed parent work are explicit.
+Generated-image execution/recovery/final and CUDA-origin portability tests exercise
+these contracts. No real study fitting, quality conclusion or speedup is claimed.
+Measured pilot/matrix execution remains M2.4; comparison/frontier review remains M2.5.
+See the M2.3 checklist for retained verification evidence.

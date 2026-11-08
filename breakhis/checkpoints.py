@@ -152,7 +152,7 @@ def read_checkpoint(path):
         expected_pruning = {'type': 'unstructured' if masks else 'dense', 'masked_modules': masks}
         if pruning_config.get('type') == 'channel':
             channel_config = pruning_config.get('channel_config', {})
-            if masks or channels is None or channel_config.get('channels') != channels or channel_config.get('method') != 'l1-output-channel':
+            if masks or channels is None or channel_config.get('channels') != channels or channel_config.get('method') not in ('l1-output-channel','random-output-channel'):
                 raise ValueError('Inconsistent channel pruning metadata')
             from .pruning import validate_channel_config
             validate_channel_config(channel_config, channels)

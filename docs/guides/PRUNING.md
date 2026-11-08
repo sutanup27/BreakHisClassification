@@ -72,3 +72,17 @@ Fine-tuning passes the actual epoch and steps its supplied/configured scheduler.
 Canonical `prune_weights` and `prune_vgg_channels` return the resulting model. Shared `train` returns sample-averaged loss; `evaluate` returns percent accuracy and loss. Compatibility fine-grained helpers delegate to validated masks. `TrainingPrunned` retains `(best_accuracy, best_model, accuracies)` while correctly passing callbacks/epochs, stepping the supplied scheduler, and retaining the first valid epoch even at zero accuracy. Its second loader must be validation despite the historical `test_dataloader` name. `Training` retains its four-item tuple.
 
 Tests cover ties/boundaries, masks and momentum, missing layer settings, tied-weight rejection, legacy callbacks/schedulers, VGG BN/classifier surgery, ResNet masked forward/backward, and fresh-process channel reload (`atol=1e-6`, `rtol=1e-5`). Real v1 GPU smoke runs confirm channel pruning, fine-tuning and fresh-process resume. These checks establish execution correctness, not full-dataset quality or guaranteed speed improvements.
+
+
+## Seeded random VGG channels
+
+Use `--method channel --ranking random --ranking-seed 202` on the prune command.
+The default ranking is `l1` and accepts no ranking seed. Random ranking is not
+supported for masks, residual or depthwise surgery. Both channel rules retain
+`max(1, C - round(C * ratio))` outputs per layer and use the same checked rebuild.
+A local CPU generator selects sorted retained IDs without advancing fitting RNG.
+Saved random metadata records `random-output-channel`, seed and IDs; loading
+checks that the IDs agree with the recorded seed. BN state, downstream inputs and
+classifier columns follow the selected channels. Channel reconstruction preserves
+the source model and RNG. See the [shared-parent workflow](EXPERIMENTS.md#m23-shared-parent-pruning-controls)
+for fair recovery and epoch accounting. Masks preserve dense shapes and MACs.

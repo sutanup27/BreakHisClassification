@@ -288,7 +288,7 @@ Outputs under `artifacts/baselines/<study-id>/`:
 | `status.json` | Preparing/prepared/failed state, no-fitting flag and complete output hashes |
 
 Drafts are deliberately not accepted by `run_experiment.py`. M2.2 now supports
-resolved standard/continuation/scratch config-2 fits; M2.3-M2.4 still need to resolve
+resolved config-2 fits, including shared-parent pruning; M2.4 still needs to resolve
 job bindings and execute the study matrix. `pilot`, `parents`, `candidates`, `report` currently refuse clearly;
 preparation is the only implemented study stage. Existing M1 experiment commands
 remain supported and unchanged.
@@ -352,6 +352,45 @@ kinds clearly rather than inventing cost/role equivalence. Standard compact runs
 remain compatible with supported saved comparisons when their invariants match.
 
 `run_baselines.py` still implements prepare only. Shared-parent pruning execution
-is M2.3; the complete real matrix, cost profiling and quality review are M2.4-M2.5.
+is supported; the complete real matrix, cost profiling and quality review are M2.4-M2.5.
 These initialization features and generated-image checks establish no convergence,
 pruning novelty or statistically significant deployment advantage.
+
+
+## M2.3: shared-parent pruning controls
+
+Copy a schema-2 config and keep the completed parent's data, seed, recipe,
+batch and `training.epochs` (B). For random channel pruning, use:
+
+```json
+"baseline": {
+  "kind": "prune_from_parent",
+  "parent_selection": "../../artifacts/experiments/parent-102/development/selection.json",
+  "channels": null,
+  "topology_checkpoint": null,
+  "ranking": "random",
+  "ranking_seed": 202
+},
+"pruning": {"method": "channel", "sparsity": 0.5, "finetune_epochs": 5}
+```
+
+The fragments belong inside a complete experiment config; replace the parent ID.
+Run `python run_experiment.py --config YOUR_CONFIG.json --run-id YOUR_CHILD_ID`.
+For matched L1 channels, change ranking to `l1` and ranking seed to null. For L1
+masks, also change method to `unstructured`. Hold parent, ratio, batch, recovery
+recipe and F fixed. Dense continuation uses that same parent and F; scratch and
+compact controls use B+F. Equal epochs/data passes do not imply equal FLOPs or time.
+
+Children acquire the parent without retraining it, then prune and fine-tune with
+fresh optimizer/scheduler state. L1/random channel widths match exactly. Random
+selection uses its own generator and records retained IDs and seed. Source weights
+and fitting RNG are preserved. Pruned and finetuned roles are saved; finetuned is
+the designated selection, with validation-only development. Use `--resume` for the
+same child after interruption. Incomplete prune publication is regenerated from
+the frozen parent; changed completed artifacts refuse. Explicit `--phase final`
+uses test only and remains separate from development.
+
+`development/results.json` includes `baseline_budget`: actual child epochs/steps,
+parent selected versus executed epochs, shared parent fitting, and separate scratch
+topology-discovery work. It does not certify equal compute or baseline convergence.
+M2.4 still owns study execution and measured budgets; M2.5 owns control comparisons.

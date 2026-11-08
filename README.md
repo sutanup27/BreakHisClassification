@@ -516,3 +516,9 @@ Start-Process docs/index.html
 The builder uses only the Python standard library. Keep CLI parameter tables and
 examples aligned with `python -m breakhis <command> --help`. The page embeds its
 styles and scripts, so it can be opened directly or printed to PDF from a browser.
+
+
+Shared-parent L1/random channel and L1 mask controls are available through
+experiment config 2, with fresh recovery and saved parent/child epoch accounting.
+See the [M2.3 workflow](docs/guides/EXPERIMENTS.md#m23-shared-parent-pruning-controls).
+Study execution/profiling and scientific baseline comparisons remain M2.4-M2.5.

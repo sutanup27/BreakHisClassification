@@ -62,7 +62,11 @@ convolution and linear layers. Masks are saved and reconstructed, and remain
 effective during fine-tuning. `--method channel` physically removes VGG channels
 and adjusts batch normalization, downstream inputs and classifier columns.
 Residual/depthwise channel models remain unsupported. Complete per-layer ratios
-can be supplied with `--layer-sparsities`. See [PRUNING.md](PRUNING.md).
+can be supplied with `--layer-sparsities`. For seeded random VGG channels, add
+`--ranking random --ranking-seed 202`; the default is `--ranking l1` with no seed.
+The random seed controls channel selection independently of fitting RNG.
+Shared-parent experiment runs supply `--initialization FILE` automatically to bind
+parent, ratio, ranking and recovery allowance. See [PRUNING.md](PRUNING.md).
 
 Common options include `--manifest`, `--source`, `--magnification`, `--data-root`,
 `--batch-size`, `--num-workers`, `--device`, and `--deterministic`.

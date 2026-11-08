@@ -1,8 +1,8 @@
 # M2: Dense and conventional pruning baselines
 
 Specification: **M2-BASELINES-SPEC-001**, version 1.0. Date: 8 November 2026.
-Document status: Reviewed for implementation. M2.1-M2.2 are implemented/reviewed;
-M2.3-M2.5 pruning/control execution and scientific experiments remain pending.
+Document status: Reviewed for implementation. M2.1-M2.3 are implemented/reviewed;
+M2.4-M2.5 execution, reporting and scientific experiments remain pending.
 Tracker: [README.md](README.md). Assessment: [alignment review](ALIGNMENT_REVIEW.md).
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md), milestone 2.
 Scientific source: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md),
@@ -175,7 +175,7 @@ acceptance incomplete. A larger B/new recipe is an explicit bounded replan, not
 exact resume with a changed schedule. The fixed B/F numbers are adjustable pilot
 starting values; they must be frozen for each scientific matrix revision.
 
-### 4.3 Experiment config-2 extension (M2.2 implemented; parent pruning execution M2.3)
+### 4.3 Experiment config-2 extension (M2.2-M2.3 implemented)
 
 Keep existing experiment schema 1 and M1 commands unchanged. **Implemented config schema 2**
 adds exactly one top-level `baseline` object to the six existing fields; existing
@@ -446,6 +446,17 @@ declared. Config-2 standard, continuation and scratch execute with M1 histories,
 epoch publication and explicit final binding. MobileNetV3-Small has no-download
 initialization and portable strict reconstruction. Parent origins remain truthful
 across code revisions for new inputs; exact child resume/final stays source-bound.
-Shared-parent pruning execution remains M2.3, full study execution M2.4 and baseline
+Shared-parent pruning is implemented in M2.3; full study execution remains M2.4 and baseline
 control comparison/budget extensions M2.5. See the M2.2 checklist for measured test
 and generated-image evidence; no real-data convergence or novelty is claimed.
+
+
+### M2.3 implementation handoff
+
+L1/random selectors share checked physical VGG rebuilding and identical retained
+counts. Seed-local random metadata reconstructs and verifies exactly. Shared-parent
+L1 channels, random channels and masks run through development, fresh F recovery,
+committed-epoch resume and explicit final. Parent weights stay immutable. Saved
+budgets distinguish executed/selected parent epochs, child fitting and scratch
+topology-discovery work; they do not equate passes with compute. M2.4/M2.5 measured
+costs, study execution and empirical baseline/frontier review remain pending.

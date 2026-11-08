@@ -270,12 +270,13 @@ class InitializationTests(unittest.TestCase):
         self.assertTrue(torch.allclose(expected,actual,atol=1e-4,rtol=1e-3))
         self.assertTrue(torch.isfinite(actual).all()); self.assertEqual(next(loaded.parameters()).device.type,'cpu')
 
-    def test_parent_pruning_prepares_but_execution_waits_for_m23(self):
-        run,selection=self.parent(); self.config['pruning']=dict(method='channel',sparsity=.5,finetune_epochs=1)
-        self.v2('prune_from_parent',parent_selection=str(selection),ranking='random',ranking_seed=202)
-        s.prepare_run(self.file,run_id='prepared-prune')
-        with self.assertRaisesRegex(ValueError,'M2.3'): self.run_dev('blocked')
-        self.assertFalse((self.root/'runs/blocked').exists())
+    def test_parent_pruning_prepares_and_executes_with_m23_controls(self):
+        with patch.object(c,'create_model',side_effect=self.tiny_vgg):
+            run,selection=self.parent(); self.config['pruning']=dict(method='channel',sparsity=.5,finetune_epochs=1)
+            self.v2('prune_from_parent',parent_selection=str(selection),ranking='random',ranking_seed=202)
+            s.prepare_run(self.file,run_id='prepared-prune')
+            child=self.run_dev('random');a.development(child)
+        self.assertFalse((self.directory('random')/'train-last.pth').exists())
 
 
 if __name__=='__main__': unittest.main()

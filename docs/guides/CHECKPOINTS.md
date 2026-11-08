@@ -160,3 +160,16 @@ identity and origin code/runtime are checked. The child records selected and
 executed parent epochs/steps without synthesizing parent optimizer/history files.
 Compatible older origins can be inputs to a new fit; this does not relax source
 checks for resuming/finalizing the child itself. Keep referenced origin files.
+
+
+## Shared-parent pruning lineage
+
+Config-2 parent-pruning runs bind the parent's selected dense checkpoint, ratio,
+ranking and recovery budget in `initialization.json`. Random channel checkpoints
+store validated ranking seed/retained IDs; both L1 and random reconstruct their
+physical widths before loading tensors. Fine-tuning starts a fresh optimizer,
+then child resume restores the child's own committed state. External parent
+references remain hash-checked during development/final, including CPU evaluation
+of CUDA-origin weights. Do not move or modify referenced inputs. Epoch accounting
+is in `development/results.json` under `baseline_budget`, with scratch topology
+cost separated from its own fresh training. Final evaluation never resumes fitting.

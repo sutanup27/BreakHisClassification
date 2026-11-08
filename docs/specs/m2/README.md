@@ -6,15 +6,15 @@ Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md).
 Global progress: [milestone tracker](../../research/MILESTONE_TRACKER.md).
 Assessment: [alignment review](ALIGNMENT_REVIEW.md).
 
-**Specification package reviewed; M2.1-M2.2 are implemented and reviewed.
-M2.3-M2.5 and scientific experiments remain pending.** Reuse M1, which is complete. No baseline strength, frontier, resource
+**Specification package reviewed; M2.1-M2.3 are implemented and reviewed.
+M2.4-M2.5 and scientific experiments remain pending.** Reuse M1, which is complete. No baseline strength, frontier, resource
 measurement or research novelty is claimed from these documents.
 
 | Package | Purpose / completion target | Owns | Acceptance | Depends on | Implementation status | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | [M2.1 Matrix and recipes](M2_1_MATRIX_RECIPES.md) | Strict study compiler, frozen job graph and honest capacity accounting | M2-R01-M2-R03 | M2-T01-M2-T04 | M1 | Reviewed | 20 focused tests; CPU 153 passed/2 skipped; real metadata-only preparation |
 | [M2.2 Initialization and models](M2_2_INITIALIZATION_MODELS.md) | Bound parent reuse, fresh continuation/scratch and compact model | M2-R04-M2-R06 | M2-T05-M2-T09 | M2.1 | Reviewed | CPU 171 passed/3 skipped; CUDA 19 focused cases passed; public initialization smoke passed |
-| [M2.3 Pruning controls](M2_3_PRUNING_CONTROLS.md) | Matched-width random/L1 surgery, masks and fair recovery through phase artifacts | M2-R07-M2-R09 | M2-T10-M2-T13 | M2.1-M2.2 | Not started | Existing L1 surgery reused; random/control integration proposed |
+| [M2.3 Pruning controls](M2_3_PRUNING_CONTROLS.md) | Matched-width random/L1 surgery, masks and fair recovery through phase artifacts | M2-R07-M2-R09 | M2-T10-M2-T13 | M2.1-M2.2 | Reviewed | 11 focused cases: CPU 10 passed/1 skipped; CUDA all passed; CPU 181 passed/4 skipped; public controls verified |
 | [M2.4 Execution and budgets](M2_4_EXECUTION_BUDGETS.md) | Tested public executor, measured pilot and complete real core/repeat matrix | M2-R10-M2-R12 | M2-T14-M2-T18 | M2.1-M2.3 | Not started | No M2 fitting/profile performed |
 | [M2.5 Frontier and handoff](M2_5_FRONTIER_HANDOFF.md) | Verified comparisons, baseline-strength review and M3 inputs | M2-R13-M2-R15 | M2-T19-M2-T22 | M2.4 executor for code; real runs for final review | Not started | No real frontier/quality review produced |
 
@@ -27,7 +27,7 @@ matrix/recipes -> initialization/models -> pruning controls
              -> development frontier/quality review -> M3 handoff
 ```
 
-Next: **M2.3 pruning controls**. Build reporting/integration code from small fixtures before
+Next: **M2.4 execution and budgets**. Build reporting/integration code from small fixtures before
 long fits to avoid source-drift interruption of active runs. M2.4/M2.5 acceptance
 requires real experiments; their implementation can be tested earlier. A verified
 parent input is distinct from exact resume of the original parent.
@@ -79,6 +79,17 @@ for output paths, current limits and review evidence. Final CPU suite: 155 cases
 Experiment config-2 standard/compact, fresh continuation and fresh narrow scratch
 now run through the existing development/resume/final entry points. Parent lineage
 is immutable and distinct from exact child resume; no fake parent optimizer or
-child train history is created. Parent pruning prepares but waits for M2.3 fitting;
+child train history is created. Parent pruning is now implemented in M2.3;
 control-comparison extensions wait for M2.5. See the M2.2 checklist for 174-case
 CPU regression, 19-case CUDA and fresh-process public execution evidence.
+
+
+## M2.3 implemented behavior
+
+Shared-parent L1/random channels and L1 masks now execute fresh F recovery and
+explicit final with immutable parent references. Local random selection preserves
+fitting RNG and matches L1 widths. Saved budgets distinguish parent work, child
+fitting and scratch topology discovery. CPU regression: 185 cases, 181 passed/four
+CUDA-only skips (226.692s); focused CUDA: all 11 passed (14.416s). Public generated
+parent plus six control development/final workflows passed. Detailed commands/logs
+are listed in the M2.3 checklist. Next M2.4; real studies remain unrun.
