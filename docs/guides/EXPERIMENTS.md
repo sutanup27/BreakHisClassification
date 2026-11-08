@@ -5,6 +5,20 @@ one split, choose a config, run, inspect results and repeat.
 Technical checks for invalid inputs, duplicate/group leakage and missing classes
 remain active. Existing individual package commands remain supported.
 
+Milestone 1 is being implemented in packages. M1.1 now supports input preparation:
+
+```powershell
+python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id prepared-baseline --phase development --prepare-only
+```
+
+This saves schema-2 config/manifest/identity records with status `prepared`; it
+does not fit or evaluate a model. Add `--resume` with the same config/overrides to
+revalidate that preparation without rewriting it. Phase execution is not yet
+implemented, so `--phase` without `--prepare-only` refuses instead of falling
+back to automatic testing. The no-phase commands below retain the legacy workflow
+and its automatic final test evaluation until M1.3. Use new IDs for those runs;
+a prepared schema-2 run cannot be resumed through legacy execution.
+
 ## 1. Set up and prepare a split once
 
 Open PowerShell at the repository root and activate your existing environment:

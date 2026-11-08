@@ -313,9 +313,10 @@ Use run/report schema version 2 for the new phase-aware format; experiment confi
 and prepared manifest stay version 1. `run.json` records `active_phase`, phase
 statuses, stage argv/log/time/return code and complete artifact references/hashes.
 Top status distinguishes `development_complete` from `final_complete`, alongside
-`running`, `failed`, `interrupted`. Each phase has its own `not_requested`,
-`running`, `completed`, `failed`, `interrupted` status; development starts running
-and final starts not_requested. A failed final phase does not invalidate completed
+`prepared`, `running`, `failed`, `interrupted`. Each phase has its own `not_requested`,
+`running`, `completed`, `failed`, `interrupted` status. Preparation alone leaves
+both phases not_requested; execution starts development running in M1.3.
+A failed final phase does not invalidate completed
 development outputs for development comparisons.
 
 Old schema-1 runs/reports remain readable as JSON and their supported checkpoints
@@ -369,6 +370,13 @@ These are planned cases, not tests already implemented/passed under these IDs.
 | M1-T25 | M1-R17 | CLI help, example dry checks, documentation links/build and trackers | Examples match implemented options; completion reflects actual evidence | M1.5 |
 
 ## 8. Milestone acceptance and next scientific work
+
+M1.1 implementation binding: `--prepare-only` creates schema-2 records with status
+`prepared` and no fitting/inference. `--phase` is accepted for preparation/validation
+but phase execution remains M1.3/M1.4. The existing no-phase runner still uses its
+legacy schema-1 workflow, including automatic test evaluation, until M1.3 replaces
+that default. It cannot resume a schema-2 prepared run. This staged compatibility
+does not mark M1-R06/M1-R10/M1-R11 complete.
 
 Complete the 25 cases, relevant existing regressions and generated-image
 fresh-process dense/mask/channel workflows. CPU is the required correctness

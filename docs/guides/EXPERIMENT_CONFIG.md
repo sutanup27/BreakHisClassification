@@ -38,11 +38,20 @@ Unknown/duplicate fields, invalid values and nonfinite numbers are rejected.
 
 | Runner option | Use |
 | --- | --- |
-| `--config FILE` | Required JSON configuration. |
+| `--config FILE` | Required for development/legacy runs; optional when validating a saved final-phase request. |
 | `--run-id ID` | Explicit unique run ID; generated from the config label if omitted. Required for resume. |
 | `--seed N` | Override and save the fitting seed; does not resplit data. |
 | `--device cpu/cuda/auto` | Override and save training device; evaluation keeps its fixed config device. |
 | `--resume` | Continue the same interrupted run with identical inputs/code/runtime; never implicitly initializes a new experiment. |
+| `--phase development/final` | M1.1 phase validation only; requires `--prepare-only` until M1.3/M1.4 implement execution. No-phase runs retain the existing legacy workflow. |
+| `--prepare-only` | Save schema-2 frozen inputs and expected-output contracts without training/inference. With `--resume`, revalidate an existing preparation read-only. Final preparation validation requires already completed development. |
+
+Preparation saves exact manifest bytes and SHA-256, a frozen effective config
+and its SHA-256, split/fitting seeds, actual runtime, commit/dirty availability
+and package source hashes. Missing Git is recorded with null commit/dirty values,
+not a fabricated clean state. Pending stage contracts list histories, predictions
+and reports as well as primary weights. Prepared records are not completed runs
+and cannot be compared as scientific results.
 
 Run records save resolved settings, a frozen manifest, commit/dirty state,
 package source hashes, device/runtime, actual stage commands, checkpoint/report

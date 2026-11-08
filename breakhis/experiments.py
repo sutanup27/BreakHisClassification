@@ -27,12 +27,14 @@ def read_json(path):
             if key in result: raise ValueError('Duplicate JSON field: '+key)
             result[key] = value
         return result
-    return json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=unique,
+    result = json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=unique,
         parse_constant=lambda value: (_ for _ in ()).throw(ValueError('Nonfinite JSON: '+value)))
+    json.dumps(result, allow_nan=False)  # Also catches overflow such as 1e999.
+    return result
 
 
 def write_json(path, value):
-    from .cli import write_json as save
+    from .experiment_io import write_json as save
     save(Path(path), value)
 
 
@@ -145,11 +147,15 @@ def validate_data(config):
 
 def revision():
     def git(*args):
-        result = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True)
+        try:
+            result = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True)
+        except OSError:
+            return None
         return result.stdout.strip() if result.returncode == 0 else None
     source = {str(path.relative_to(ROOT)).replace('\\','/'):digest(path)
               for path in sorted((ROOT/'breakhis').rglob('*.py'))}
-    return dict(commit=git('rev-parse','HEAD'), dirty=bool(git('status','--porcelain')),
+    commit, status = git('rev-parse','HEAD'), git('status','--porcelain')
+    return dict(commit=commit, dirty=None if status is None else bool(status), git_available=commit is not None,
         source_sha256=source, note='Source hashes and dirty state recorded; no approval/archive required')
 
 
@@ -169,6 +175,9 @@ def run_experiment(config_file, *, run_id=None, resume=False, seed=None, device=
     identity = dict(manifest_sha256=digest(config['data']['manifest']), preprocessing=PREPROCESSING,
         resolved_device=resolved_device, runtime=dict(python=sys.version.split()[0],torch=str(torch.__version__),cuda=torch.version.cuda))
     if resume:
+        saved_state = read_json(run/'run.json')
+        if saved_state.get('schema_version') != 1:
+            raise ValueError('Schema-2 preparation cannot use legacy execution; phase execution requires M1.3/M1.4')
         previous = read_json(run/'config.json')
         if previous != config or read_json(run/'inputs.json')['identity'] != identity:
             raise ValueError('Resume requires identical config, manifest and runtime/device; use a new run ID for changes')
@@ -326,13 +335,28 @@ def compare_runs(runs, output):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--config',type=Path,required=True)
+    parser.add_argument('--config',type=Path)
     parser.add_argument('--run-id')
     parser.add_argument('--resume',action='store_true',help='Continue an interrupted run at completed-epoch/stage boundaries')
     parser.add_argument('--seed',type=int,help='Override and record the training seed; split seed remains in the manifest')
     parser.add_argument('--device',choices=['auto','cpu','cuda'])
+    parser.add_argument('--phase',choices=['development','final'],help='M1 phase contract; execution is added in M1.3/M1.4')
+    parser.add_argument('--prepare-only',action='store_true',help='Validate and save schema-2 inputs without training or inference')
     args=parser.parse_args(argv)
-    try: run_experiment(args.config,run_id=args.run_id,resume=args.resume,seed=args.seed,device=args.device)
+    try:
+        if args.prepare_only or args.phase is not None:
+            from .experiment_setup import prepare_run, validate_request
+            phase=args.phase or 'development'
+            validate_request(config_file=args.config,run_id=args.run_id,phase=phase,
+                resume=args.resume,seed=args.seed,device=args.device)
+            if not args.prepare_only:
+                raise ValueError('Phase execution is not implemented yet (M1.3/M1.4); use --prepare-only for M1.1')
+            prepared=prepare_run(args.config,run_id=args.run_id,phase=phase,resume=args.resume,seed=args.seed,device=args.device)
+            print('Prepared/validated inputs only; no training or inference: '+str(prepared['run']))
+        else:
+            if args.config is None:
+                raise ValueError('Development requires --config')
+            run_experiment(args.config,run_id=args.run_id,resume=args.resume,seed=args.seed,device=args.device)
     except (ValueError,OSError,RuntimeError,InterruptedError) as error: parser.exit(1,str(error)+'\n')
     except KeyboardInterrupt: parser.exit(130,'Interrupted; use the same config/run ID with --resume.\n')
 

@@ -36,10 +36,24 @@ def resolve_input(path, label, directory=False):
 
 
 def write_json(path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + '.tmp')
-    temporary.write_text(json.dumps(payload, indent=2, allow_nan=False) + '\n', encoding='utf-8')
-    temporary.replace(path)
+    from .experiment_io import write_json as save
+    return save(path, payload)
+
+
+def report_paths(output, predictions=None, *, protected=()):
+    """Validate report/sidecar destinations before loading pixels or writing."""
+    from .paths import output_path
+    candidates = dict(report=Path(output), config=Path(output).with_suffix('.config.json'))
+    if predictions is not None:
+        candidates['predictions'] = Path(predictions)
+    resolved = {}
+    for name,path in candidates.items():
+        if path.suffix.lower() != '.json':
+            raise ValueError('Report and prediction destinations must end in .json')
+        resolved[name] = output_path(path,root=path.absolute().parent,protected=protected)
+    if len(set(resolved.values())) != len(resolved):
+        raise ValueError('Report, predictions and config outputs must be distinct')
+    return resolved
 
 
 def add_benchmark_options(parser):
@@ -216,11 +230,15 @@ def main(argv=None):
         if args.command == 'prune' and args.method == 'channel' and architecture != 'vgg':
             raise ValueError('Channel pruning supports VGG only; residual/depthwise architectures are unsupported')
         if args.command == 'evaluate':
-            output = args.output.resolve() if args.output else checkpoint_output(
+            output = args.output.absolute() if args.output else checkpoint_output(
                 args.source, args.magnification, architecture, args.command,
                 experiment_id=args.experiment_id).with_suffix('.json')
             if output.suffix.lower() != '.json':
                 raise ValueError('Evaluation report output must end in .json')
+            destinations = report_paths(output,args.predictions_output,protected=[args.manifest,input_path])
+            output = destinations['report']
+            if args.predictions_output is not None:
+                args.predictions_output = destinations['predictions']
         else:
             output = checkpoint_output(args.source, args.magnification, architecture, args.command,
                 args.output or (previous.get('output') if resume else None), args.experiment_id)

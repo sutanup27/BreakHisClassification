@@ -342,6 +342,9 @@ Start-Process docs/index.html</code></pre></div>
 <section class="doc-section" id="experiments" data-guide="Run and compare experiments">
 <p class="eyebrow">Run and compare experiments</p><h1>Run and compare experiments</h1>
 <p>This is the main workflow for the university research project. Setup, prepare one split, choose a config, run, inspect results and repeat. Technical checks for invalid inputs, duplicate/group leakage and missing classes remain active. Existing individual package commands remain supported.</p>
+<p>Milestone 1 is being implemented in packages. M1.1 now supports input preparation:</p>
+<div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy" aria-label="Copy code block">Copy</button></div><pre><code>python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id prepared-baseline --phase development --prepare-only</code></pre></div>
+<p>This saves schema-2 config/manifest/identity records with status <code>prepared</code>; it does not fit or evaluate a model. Add <code>--resume</code> with the same config/overrides to revalidate that preparation without rewriting it. Phase execution is not yet implemented, so <code>--phase</code> without <code>--prepare-only</code> refuses instead of falling back to automatic testing. The no-phase commands below retain the legacy workflow and its automatic final test evaluation until M1.3. Use new IDs for those runs; a prepared schema-2 run cannot be resumed through legacy execution.</p>
 </section>
 <section class="doc-section" id="experiments-1-set-up-and-prepare-a-split-once" data-guide="Run and compare experiments">
 <p class="eyebrow">Run and compare experiments</p><h2>1. Set up and prepare a split once</h2>
@@ -448,12 +451,15 @@ python -m unittest discover -s tests -v</code></pre></div>
 <tr><td><code>evaluation.repeats</code></td><td>Positive measured forwards. Examples use 200.</td></tr>
 </tbody></table></div>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Runner option</th><th scope="col">Use</th></tr></thead><tbody>
-<tr><td><code>--config FILE</code></td><td>Required JSON configuration.</td></tr>
+<tr><td><code>--config FILE</code></td><td>Required for development/legacy runs; optional when validating a saved final-phase request.</td></tr>
 <tr><td><code>--run-id ID</code></td><td>Explicit unique run ID; generated from the config label if omitted. Required for resume.</td></tr>
 <tr><td><code>--seed N</code></td><td>Override and save the fitting seed; does not resplit data.</td></tr>
 <tr><td><code>--device cpu/cuda/auto</code></td><td>Override and save training device; evaluation keeps its fixed config device.</td></tr>
 <tr><td><code>--resume</code></td><td>Continue the same interrupted run with identical inputs/code/runtime; never implicitly initializes a new experiment.</td></tr>
+<tr><td><code>--phase development/final</code></td><td>M1.1 phase validation only; requires <code>--prepare-only</code> until M1.3/M1.4 implement execution. No-phase runs retain the existing legacy workflow.</td></tr>
+<tr><td><code>--prepare-only</code></td><td>Save schema-2 frozen inputs and expected-output contracts without training/inference. With <code>--resume</code>, revalidate an existing preparation read-only. Final preparation validation requires already completed development.</td></tr>
 </tbody></table></div>
+<p>Preparation saves exact manifest bytes and SHA-256, a frozen effective config and its SHA-256, split/fitting seeds, actual runtime, commit/dirty availability and package source hashes. Missing Git is recorded with null commit/dirty values, not a fabricated clean state. Pending stage contracts list histories, predictions and reports as well as primary weights. Prepared records are not completed runs and cannot be compared as scientific results.</p>
 <p>Run records save resolved settings, a frozen manifest, commit/dirty state, package source hashes, device/runtime, actual stage commands, checkpoint/report hashes and phase elapsed seconds. They do not create mandatory source archives or claim independent provenance verification.</p>
 <p>For split seeds, use <code>prepare-data --seed N</code> with a new output directory. For new training seeds, use <code>run_experiment.py --seed N</code> and a new run ID. For additional sparsities, copy a config and change <code>pruning.sparsity</code>; pick a prespecified set or perform selection on development data, never on test metrics.</p>
 </section>
@@ -494,7 +500,7 @@ python -m unittest discover -s tests -v</code></pre></div>
 <p>Updated: 8 November 2026. Plan: <a href="#experiment-roadmap">experiment roadmap</a>. Scientific objectives: <a href="../docs/research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md">research guide</a>.</p>
 <p>This is the progress record for the five current milestones. Existing software capabilities are not completed scientific experiments or established novelty.</p>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Milestone</th><th scope="col">Status</th><th scope="col">Already available</th><th scope="col">Completion target</th><th scope="col">Next action</th></tr></thead><tbody>
-<tr><td>1. Reproducible experiment foundation</td><td>In progress; specification complete, acceptance pending</td><td>Existing workflow plus <a href="../docs/specs/m1/README.md">master spec and five checklists</a></td><td>Verify the complete contract, including development/final isolation and reproducible recovery</td><td>Start M1.1 config/storage/identity implementation and revalidation</td></tr>
+<tr><td>1. Reproducible experiment foundation</td><td>In progress; M1.1 reviewed, M1.2-M1.5 pending</td><td>Existing workflow plus <a href="../docs/specs/m1/README.md">master spec and package tracker</a>; phase-aware input preparation</td><td>Verify the complete contract, including development/final isolation and reproducible recovery</td><td>Implement M1.2 split/role isolation</td></tr>
 <tr><td>2. Dense and conventional pruning baselines</td><td>Not started; supporting tools available</td><td>Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports</td><td>Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier</td><td>Start after milestone 1 acceptance; specify the baseline matrix and training recipe</td></tr>
 <tr><td>3. Malignant-group vulnerability analysis (O1)</td><td>Not started</td><td>Group metadata and prediction reporting can be reused</td><td>Controlled pruning probes establish whether conventional importance misses repeatable malignant-group damage</td><td>Define perturbations, per-group damage measurements and seed-stability analysis</td></tr>
 <tr><td>4. Proposed method and decisive comparisons (O2)</td><td>Not started</td><td>Structural-pruning primitives can be reused</td><td>Implement the candidate mechanism and isolate its benefit from selection rules, class weighting, topology and training budget</td><td>Use milestone 3 findings to specify the method and decisive comparator/ablation matrix</td></tr>
@@ -503,12 +509,12 @@ python -m unittest discover -s tests -v</code></pre></div>
 </section>
 <section class="doc-section" id="milestone-tracker-current-step" data-guide="Milestone progress tracker">
 <p class="eyebrow">Milestone progress tracker</p><h2>Current step</h2>
-<p><strong>Milestone 1: start M1.1 implementation/revalidation.</strong> The <a href="../docs/specs/m1/M1_SPEC.md">master spec</a>, <a href="../docs/specs/m1/README.md">five-package tracker</a> and <a href="../docs/specs/m1/ALIGNMENT_REVIEW.md">alignment review</a> are complete as planning documents. All package acceptance checklists remain uncompleted. Existing code is reused; completing specifications is not completing the milestone.</p>
+<p><strong>Milestone 1: start M1.2 split/role isolation.</strong> The <a href="../docs/specs/m1/M1_SPEC.md">master spec</a>, <a href="../docs/specs/m1/README.md">five-package tracker</a> and <a href="../docs/specs/m1/ALIGNMENT_REVIEW.md">alignment review</a> are complete as planning documents. M1.1&#x27;s implementation and acceptance are reviewed; its preparation checks do not execute phases. M1.2-M1.5 remain uncompleted. Existing code is reused; completing one package is not completing the milestone.</p>
 </section>
 <section class="doc-section" id="milestone-tracker-existing-verification" data-guide="Milestone progress tracker">
 <p class="eyebrow">Milestone progress tracker</p><h2>Existing verification</h2>
 <ul>
-<li>The current active CPU regression suite passed 63 tests after cleanup.</li>
+<li>The current active CPU regression suite passed 77 tests after M1.1, including 14 new preparation/identity tests. Logs are referenced in the M1.1 checklist.</li>
 <li>The generated-image workflow completed dense and channel-pruned/fine-tuned runs, exported results and reproduced dense weights for matching seeds.</li>
 <li>The one-epoch real-data run <code>baseline-real-check-20261107</code> completed on 40X data with GPU training and CPU evaluation. It is an execution check, not a converged baseline or evidence of the proposed method&#x27;s benefit.</li>
 <li>Full trained-baseline comparisons, vulnerability experiments, the proposed method, uncertainty analysis and final research conclusions remain pending.</li>
@@ -520,6 +526,7 @@ python -m unittest discover -s tests -v</code></pre></div>
 <div class="table-wrap" tabindex="0" aria-label="Scrollable reference table"><table><thead><tr><th scope="col">Date</th><th scope="col">Update</th><th scope="col">Evidence/result</th></tr></thead><tbody>
 <tr><td>8 November 2026</td><td>Established the five-milestone tracker and recorded existing capabilities</td><td>63 active CPU tests passed; synthetic workflow and one-epoch real-data execution check available; no research novelty claimed</td></tr>
 <tr><td>8 November 2026</td><td>Re-specified milestone 1 against the current code and research plan</td><td>Master, five checklist packages and alignment review; 17 requirements/25 planned acceptance cases; no new code implementation or model fitting</td></tr>
+<tr><td>8 November 2026</td><td>Implemented/reviewed M1.1 config, storage and run identity</td><td>77 CPU tests passed; real config preparation/revalidation succeeded without fitting or inference; next M1.2</td></tr>
 </tbody></table></div>
 </section>
 <section class="doc-section" id="documentation-map" data-guide="Documentation map">
