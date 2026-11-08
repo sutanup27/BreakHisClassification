@@ -1,9 +1,9 @@
 # Milestone 1: Reproducible experiment foundation
 
 Specification: **M1-FOUNDATION-SPEC-001**, version 1.0. Date: 8 November 2026.
-Document status: Reviewed for implementation. Implementation: In progress;
-M1.1-M1.4 are reviewed; M1.5 remains pending. See the package tracker
-for current evidence; this master describes the full milestone target.
+Document status: Reviewed. Implementation acceptance: Complete; all five
+packages and M1-T01-M1-T25 are reviewed. See the package tracker and M1.5
+for the final verification evidence. Scientific experiments remain milestones 2-5.
 
 Plan: [current roadmap](../../research/EXPERIMENT_ROADMAP.md).
 Science: [research guide](../../research/Breast_Histopathology_Pruning_End_to_End_Research_Guide.md),
@@ -341,60 +341,62 @@ in the high-level runner.
 
 ## 7. Acceptance matrix
 
-These are planned cases, not tests already implemented/passed under these IDs.
+All cases below have implementation evidence in their owning checklist and
+the tests linked below. M1.5 acceptance: 135 CPU cases, 133 passed and two
+CUDA-only skips. The separate M1.4 CUDA run passed all 23 focused cases.
 
-| ID | Requirements | Fixture/action | Expected observable outcome | Owner |
-| --- | --- | --- | --- | --- |
-| M1-T01 | M1-R01 | Valid config/overrides; unknown fields, duplicate keys, bool-as-int, nonfinite values and unsupported phase | Correct resolved settings; invalid inputs fail before run creation | M1.1 |
-| M1-T02 | M1-R02 | Occupied ID, traversal, escaping link and report/input aliases | No overwritten run/data/config/checkpoint or escaped output | M1.1 |
-| M1-T03 | M1-R02 | Inject publication failure | No truncated successful artifact; failure retained, stage incomplete | M1.1 |
-| M1-T04 | M1-R03 | Change manifest/config/source; Git unavailable | Drift refused where required; unavailable Git recorded honestly | M1.1 |
-| M1-T05 | M1-R04 | Prepare two small inventories with same seed; alter fitting seed | Same split, no overwrite; fitting seed does not resplit | M1.2 |
-| M1-T06 | M1-R04 | Cross-magnification filename, raw/pixel and transitive-component leakage | Rejected even if the chosen magnification hides the collision | M1.2 |
-| M1-T07 | M1-R05 | Conflicting labels, malformed hashes, missing class/path or changed bytes | Relevant-role failure before use; no silent repair or missing-class metric | M1.2 |
-| M1-T08 | M1-R06 | Spy on role factories and test-pixel reads during development | Test dataset construction/iteration/pixel access never occurs | M1.2 |
-| M1-T09 | M1-R07 | Fresh identical tiny CPU fits and a changed seed | Same settings/seed reproduce state; changed seed is attributable | M1.3 |
-| M1-T10 | M1-R08 | Interrupt/resume SGD/cosine and Adam/constant, including group-score ties | Weights, optimizer, scheduler, RNG and selected epoch match uninterrupted fits | M1.3 |
-| M1-T11 | M1-R08 | Drift settings/runtime, missing best or partial-epoch checkpoint | Actionable refusal; no partial-epoch exact-resume claim | M1.3 |
-| M1-T12 | M1-R10 | Run default development pipeline with a test-adapter tripwire | Validation outputs only; no test metrics/probabilities or final execution | M1.3 |
-| M1-T13 | M1-R09 | Ctrl+C/child failure and interrupted publication boundaries | Non-success state with logs; resume only completed boundaries | M1.3 |
-| M1-T14 | M1-R09 | Stale/duplicate history, changed predictions or missing secondary output | Deterministic history recovery; stage not silently skipped as complete | M1.3 |
-| M1-T15 | M1-R11 | Final without development; changed checkpoint/config/selection binding | Refused before test iteration; no replacement selection | M1.4 |
-| M1-T16 | M1-R11 | Valid CPU final from CUDA-origin weights; tripwires on fit/prune/optimizer | Test-only inference succeeds without CUDA training or fitting | M1.4 |
-| M1-T17 | M1-R12 | Hand-computable image/group/magnification examples, ties and missing support | Correct scores, denominators, units, null/reason where undefined | M1.4 |
-| M1-T18 | M1-R13 | Ordered uneven batches; shuffle/drop/duplicate/missing rows; unsafe export path | Complete attributed predictions or clear refusal; existing inputs protected | M1.4 |
-| M1-T19 | M1-R14 | Compare phases, missing/corrupt reports, differing split or timing protocol | No cross-phase fallback, inference or invalid matched-latency table | M1.4 |
-| M1-T20 | M1-R14 | Different seeds/models/epochs/pruning; declared versus undeclared selection difference | Differences and budgets listed; invariants cannot be varied away | M1.4 |
-| M1-T21 | M1-R15 | CPU timing and conditional GPU synchronization; zero gain/slowdown | Scoped valid measurements; negative results retained, no unmeasured speedup claim | M1.4 |
-| M1-T22 | M1-R16 | Fresh-process generated-image dense development -> explicit final -> comparison | All outputs validate; no test access before explicit final | M1.5 |
-| M1-T23 | M1-R16 | Existing mask/channel pipelines through development/final and reload | Topology/masks preserved; all roles, histories and phases attributable | M1.5 |
-| M1-T24 | M1-R16 | Read old run/report/checkpoint; request phase promotion or incompatible resume | Compatible reading or actionable refusal; no historical mutation | M1.5 |
-| M1-T25 | M1-R17 | CLI help, example dry checks, documentation links/build and trackers | Examples match implemented options; completion reflects actual evidence | M1.5 |
+| ID | Requirements | Fixture/action | Expected observable outcome | Owner | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| M1-T01 | M1-R01 | Valid config/overrides; unknown fields, duplicate keys, bool-as-int, nonfinite values and unsupported phase | Correct resolved settings; invalid inputs fail before run creation | M1.1 | [test_m1_setup.py](../../../tests/test_m1_setup.py) |
+| M1-T02 | M1-R02 | Occupied ID, traversal, escaping link and report/input aliases | No overwritten run/data/config/checkpoint or escaped output | M1.1 | [test_m1_setup.py](../../../tests/test_m1_setup.py) |
+| M1-T03 | M1-R02 | Inject publication failure | No truncated successful artifact; failure retained, stage incomplete | M1.1 | [test_m1_setup.py](../../../tests/test_m1_setup.py) |
+| M1-T04 | M1-R03 | Change manifest/config/source; Git unavailable | Drift refused where required; unavailable Git recorded honestly | M1.1 | [test_m1_setup.py](../../../tests/test_m1_setup.py) |
+| M1-T05 | M1-R04 | Prepare two small inventories with same seed; alter fitting seed | Same split, no overwrite; fitting seed does not resplit | M1.2 | [test_m1_roles.py](../../../tests/test_m1_roles.py) |
+| M1-T06 | M1-R04 | Cross-magnification filename, raw/pixel and transitive-component leakage | Rejected even if the chosen magnification hides the collision | M1.2 | [test_m1_roles.py](../../../tests/test_m1_roles.py) |
+| M1-T07 | M1-R05 | Conflicting labels, malformed hashes, missing class/path or changed bytes | Relevant-role failure before use; no silent repair or missing-class metric | M1.2 | [test_m1_roles.py](../../../tests/test_m1_roles.py) |
+| M1-T08 | M1-R06 | Spy on role factories and test-pixel reads during development | Test dataset construction/iteration/pixel access never occurs | M1.2 | [test_m1_roles.py](../../../tests/test_m1_roles.py) |
+| M1-T09 | M1-R07 | Fresh identical tiny CPU fits and a changed seed | Same settings/seed reproduce state; changed seed is attributable | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T10 | M1-R08 | Interrupt/resume SGD/cosine and Adam/constant, including group-score ties | Weights, optimizer, scheduler, RNG and selected epoch match uninterrupted fits | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T11 | M1-R08 | Drift settings/runtime, missing best or partial-epoch checkpoint | Actionable refusal; no partial-epoch exact-resume claim | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T12 | M1-R10 | Run default development pipeline with a test-adapter tripwire | Validation outputs only; no test metrics/probabilities or final execution | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T13 | M1-R09 | Ctrl+C/child failure and interrupted publication boundaries | Non-success state with logs; resume only completed boundaries | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T14 | M1-R09 | Stale/duplicate history, changed predictions or missing secondary output | Deterministic history recovery; stage not silently skipped as complete | M1.3 | [test_m1_execution.py](../../../tests/test_m1_execution.py) |
+| M1-T15 | M1-R11 | Final without development; changed checkpoint/config/selection binding | Refused before test iteration; no replacement selection | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T16 | M1-R11 | Valid CPU final from CUDA-origin weights; tripwires on fit/prune/optimizer | Test-only inference succeeds without CUDA training or fitting | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T17 | M1-R12 | Hand-computable image/group/magnification examples, ties and missing support | Correct scores, denominators, units, null/reason where undefined | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T18 | M1-R13 | Ordered uneven batches; shuffle/drop/duplicate/missing rows; unsafe export path | Complete attributed predictions or clear refusal; existing inputs protected | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T19 | M1-R14 | Compare phases, missing/corrupt reports, differing split or timing protocol | No cross-phase fallback, inference or invalid matched-latency table | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T20 | M1-R14 | Different seeds/models/epochs/pruning; declared versus undeclared selection difference | Differences and budgets listed; invariants cannot be varied away | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T21 | M1-R15 | CPU timing and conditional GPU synchronization; zero gain/slowdown | Scoped valid measurements; negative results retained, no unmeasured speedup claim | M1.4 | [test_m1_evaluation.py](../../../tests/test_m1_evaluation.py) |
+| M1-T22 | M1-R16 | Fresh-process generated-image dense development -> explicit final -> comparison | All outputs validate; no test access before explicit final | M1.5 | [test_m1_integration.py](../../../tests/test_m1_integration.py) |
+| M1-T23 | M1-R16 | Existing mask/channel pipelines through development/final and reload | Topology/masks preserved; all roles, histories and phases attributable | M1.5 | [test_m1_integration.py](../../../tests/test_m1_integration.py) |
+| M1-T24 | M1-R16 | Read old run/report/checkpoint; request phase promotion or incompatible resume | Compatible reading or actionable refusal; no historical mutation | M1.5 | [test_m1_integration.py](../../../tests/test_m1_integration.py) |
+| M1-T25 | M1-R17 | CLI help, example dry checks, documentation links/build and trackers | Examples match implemented options; completion reflects actual evidence | M1.5 | [test_m1_integration.py](../../../tests/test_m1_integration.py) |
 
 ## 8. Milestone acceptance and next scientific work
 
-M1.1 implementation binding: `--prepare-only` creates schema-2 records with status
-`prepared` and no fitting/inference. `--phase` is accepted for preparation/validation
-but phase execution remains M1.3/M1.4. The existing no-phase runner still uses its
-legacy schema-1 workflow, including automatic test evaluation, until M1.3 replaces
-that default. It cannot resume a schema-2 prepared run. This staged compatibility
-does not mark M1-R06/M1-R10/M1-R11 complete.
+Current implementation: development is the default and never implicitly tests.
+Optional `--prepare-only` saves schema-2 records without fitting/inference.
+Explicit final inference verifies completed development selections and requests
+test only; saved comparisons verify one chosen phase and do no inference.
+Schema-1 records remain readable but cannot be silently resumed/promoted into
+this contract. Config/manifest schema remains 1; phase run/report schema is 2.
 
-Complete the 25 cases, relevant existing regressions and generated-image
-fresh-process dense/mask/channel workflows. CPU is the required correctness
+All 25 cases, relevant existing regressions and generated-image fresh-process
+dense/mask/channel workflows are verified; see M1.5 for final logs. CPU is the required correctness
 platform; CUDA-only checks are conditional and explicitly reported. A GPU skip
 does not invalidate CPU correctness, but cannot establish GPU behavior. Do not
 require another costly real-data fit just to approve this infrastructure;
 existing real-data execution is context, not proof of the new phase contract.
 
-Each package must be reviewed against its outputs and tests; milestone completion
-requires integration and accurate docs, not just five finished specification files.
+Each package is reviewed against its outputs and tests; integration and
+documentation acceptance are recorded in M1.5.
 Keep ordinary test logs/run outputs and a concise completion note. No synthetic
 accuracy, timing noise or test count establishes novelty or competitive quality.
 
 Milestone 2 trains competitive controls and budgets; milestone 3 measures
 vulnerability; milestone 4 implements the mechanism, constrained selection and
 decisive comparisons; milestone 5 adds final-study folds, uncertainty, repeated
-timing and feasible replication. No material scientific decision blocks starting
-M1.1. Numerical scientific margins, method weights and study-wide fold counts are
+timing and feasible replication. No infrastructure prerequisite remains for specifying the milestone 2
+baseline/control experiment matrix after acceptance. Numerical scientific margins, method weights and study-wide fold counts are
 deliberately not invented or made prerequisites for this foundation.

@@ -21,7 +21,8 @@ Reuse an existing manifest instead of rerunning preparation. Each experiment
 saves its resolved config, split, seed/code identity, histories, predictions and
 metrics under `artifacts/experiments/<run-id>/`. Checkpoints remain in the parent
 `checkpoint/binary` directory. Use a new ID for fresh runs; use `--resume` with
-the original config/ID for interrupted development runs. For explicit final test
+the original config/ID for interrupted development runs. The complete operation
+table is in the [experiment guide](docs/guides/EXPERIMENTS.md#daily-operation-reference). For explicit final test
 inference: `python run_experiment.py --run-id baseline-102 --phase final`.
 Final uses saved development selections and never retrains.
 

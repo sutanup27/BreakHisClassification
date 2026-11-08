@@ -128,3 +128,16 @@ wall-clock seconds; those naturally vary. Runtime, device, package source hashes
 effective CPU threads and data root must match for exact resume. Deterministic
 mode enables deterministic PyTorch algorithms and records actual backend/RNG
 settings. Bitwise agreement across different hardware/runtime is not promised.
+
+## Phase and legacy compatibility
+
+The experiment runner defaults to development, saves best/last weights in the
+parent checkpoint directory and reports validation. Explicit final inference
+binds those selected weights; it does not need a resumable training state or the
+original training GPU. It needs only the configured evaluation device and test
+pixels. Saved comparison reads no model or image pixels.
+
+Old schema-1 run/report JSON stays readable. Supported version-1 state-dictionary
+weights remain usable for inference or a fresh fine-tuning run through individual
+commands. Old runs cannot be promoted to schema-2 phases or compared/resumed as
+phase-aware runs. Preserve the originals and use a new ID for the current workflow.

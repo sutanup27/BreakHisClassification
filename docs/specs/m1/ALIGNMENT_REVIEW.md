@@ -111,3 +111,20 @@ search, new pruning method or research novelty is inferred from these outputs.
 CPU/CUDA tests and generated-image VGG phase workflows are recorded in M1.4;
 M1.5 still owns integrated public-workflow acceptance. Later research milestones
 remain unchanged.
+
+## Milestone 1 integration alignment
+
+M1.5 verifies the existing foundation through public fresh-process dense,
+unstructured and channel-pruning workflows, including genuine failures/retries,
+unavailable-role images, fixed final weights and saved phase comparisons. It does
+not change the experiment's split, aggregation, threshold, backbone scope or
+research objectives. Legacy records are read or refused without rewriting them.
+The 25-case master matrix now links implementation tests; package/global trackers
+record actual acceptance and next scientific work. No new approval gate or archive
+system is introduced. Competitive baselines, vulnerability analysis, the proposed
+mechanism and final-study inference remain milestones 2-5.
+
+Final M1 acceptance: all five packages reviewed; 135 CPU cases (133 passed, two
+CUDA-only skips) and the retained public workflow passed. Documentation and the
+master/package/global trackers agree. No M1 acceptance case remains outstanding;
+scientific milestones 2-5 remain unchanged and uncompleted.

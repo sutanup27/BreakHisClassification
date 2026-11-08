@@ -2,6 +2,8 @@
 
 Progress and next actions: [milestone tracker](MILESTONE_TRACKER.md).
 Milestone 1 development contract: [master spec and package tracker](../specs/m1/README.md).
+Milestone 2 baseline/control contract: [master spec and package tracker](../specs/m2/README.md);
+specifications reviewed, implementation/experiments not started.
 
 Active implementation path, updated 8 November 2026. Use the five milestones
 below for the current research project.
@@ -12,7 +14,7 @@ This plan simplifies the workflow, not the scientific questions or evidence.
 
 | Milestone | Deliverable | Current implementation status | Acceptance |
 | --- | --- | --- | --- |
-| 1. Reproducible experiment foundation | Config-driven runs, saved group-separated splits, leakage checks, histories, predictions, metrics and explicit resume | Mostly implemented | Repeatable setup/run/evaluate/compare workflow; scientific quality remains separate. |
+| 1. Reproducible experiment foundation | Config-driven runs, saved group-separated splits, leakage checks, histories, predictions, metrics and explicit resume | Complete; all five M1 packages reviewed | Repeatable setup/run/evaluate/compare workflow; scientific quality remains separate. |
 | 2. Dense and conventional pruning baselines | Competitive dense model, conventional pruning, compact/scratch controls and matched training budgets | Basic workflow implemented; trained baselines and controls pending | Establish the development-set detection/latency frontier and measured costs. |
 | 3. Malignant-group vulnerability analysis (O1) | Controlled channel-removal probes, per-group damage and stability across fits | Not implemented | Determine whether conventional importance hides concentrated malignant-group harm. |
 | 4. Proposed method and decisive comparisons (O2) | Group-balanced vulnerability-aware pruning; selection-only, malignant-weighted and established competitors; targeted ablations | Not implemented | Isolate any improvement attributable to the proposed mechanism, or report a negative finding. |
@@ -49,3 +51,10 @@ on CPU, saving the config, manifest, histories, predictions and metrics under
 `artifacts/experiments/baseline-real-check-20261107/`. This is an execution check,
 not evidence of convergence or final research performance. The example full
 experiments remain prespecified; do not tune them using this test report.
+
+Milestone 1 acceptance (8 November 2026): 135 CPU cases (133 passed, two CUDA-only
+skips), fresh public CLI dense/mask/channel development and explicit final runs,
+real failure/resume checks, phase comparisons without pixel access, compatibility
+and documentation verified. Separate M1.4 CUDA checks passed all 23 focused cases.
+See [M1.5 acceptance](../specs/m1/M1_5_INTEGRATION.md). The next work is milestone 2
+baseline/control specifications and scientific runs, not more foundation gates.

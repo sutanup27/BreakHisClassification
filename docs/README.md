@@ -13,7 +13,8 @@ docs/
   index.html               # Generated offline guide
   guides/                  # Setup, commands, data, checkpoints and testing
   research/                # Current milestones and scientific objectives
-  specs/m1/                # Current milestone 1 master, checklists and alignment review
+  specs/m1/                # Completed foundation contract and acceptance evidence
+  specs/m2/                # Baseline/control master, ordered checklists and tracker
   assets/                  # HTML guide styles and scripts
 ```
 
@@ -21,7 +22,8 @@ docs/
 | --- | --- |
 | Install and operate the project | [User/developer guides](guides/README.md) |
 | Understand the research objective and implementation path | [Research plans](research/README.md) |
-| Implement and verify milestone 1 | [Milestone 1 package tracker](specs/m1/README.md) |
+| Review completed foundation acceptance | [Milestone 1 package tracker](specs/m1/README.md) |
+| Implement the baseline/control milestone | [Milestone 2 package tracker](specs/m2/README.md) |
 | Check outstanding full-data experimental acceptance | [Active testing checklist](guides/TESTING.md#full-data-acceptance-checklist) |
 
 The experiment roadmap is the active development plan. The research guide defines

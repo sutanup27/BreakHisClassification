@@ -9,27 +9,35 @@ capabilities are not completed scientific experiments or established novelty.
 
 | Milestone | Status | Already available | Completion target | Next action |
 | --- | --- | --- | --- | --- |
-| 1. Reproducible experiment foundation | In progress; M1.1-M1.4 reviewed, M1.5 pending | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); validation-only development and exact epoch recovery | Verify the complete contract, including development/final isolation and reproducible recovery | Implement M1.5 integration/docs |
-| 2. Dense and conventional pruning baselines | Not started; supporting tools available | Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports | Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier | Start after milestone 1 acceptance; specify the baseline matrix and training recipe |
+| 1. Reproducible experiment foundation | Complete; M1.1-M1.5 reviewed | Existing workflow plus [master spec and package tracker](../specs/m1/README.md); validation-only development and exact epoch recovery | Verify the complete contract, including development/final isolation and reproducible recovery | Implement M2.1 matrix/recipe planning |
+| 2. Dense and conventional pruning baselines | Specification reviewed; implementation/experiments not started | Dense VGG/ResNet18 training, VGG channel pruning, weight masks, fine-tuning and comparison exports | Competitive trained baselines, relevant compact/scratch controls, matched budgets and a development-set detection/latency frontier | Implement [M2.1 matrix/recipes](../specs/m2/M2_1_MATRIX_RECIPES.md) |
 | 3. Malignant-group vulnerability analysis (O1) | Not started | Group metadata and prediction reporting can be reused | Controlled pruning probes establish whether conventional importance misses repeatable malignant-group damage | Define perturbations, per-group damage measurements and seed-stability analysis |
 | 4. Proposed method and decisive comparisons (O2) | Not started | Structural-pruning primitives can be reused | Implement the candidate mechanism and isolate its benefit from selection rules, class weighting, topology and training budget | Use milestone 3 findings to specify the method and decisive comparator/ablation matrix |
 | 5. Final validation and reporting (O3) | Not started; basic reports available | Metrics, saved predictions and resident-forward timing | Frozen evaluation, paired uncertainty, selected seed/fold repeats, repeated timing and claims bounded by feasible replication | Finalize the evaluation matrix after development choices are established |
 
 ## Current step
 
-**Milestone 1: start M1.5 integration/docs.** The
-[master spec](../specs/m1/M1_SPEC.md), [five-package tracker](../specs/m1/README.md)
-and [alignment review](../specs/m1/ALIGNMENT_REVIEW.md) are complete as planning
-documents. M1.1-M1.4 implementation and acceptance are reviewed. Development
-uses validation; explicit final inference uses bound weights and test only.
-Saved comparisons verify the requested phase. M1.5 integration remains pending. Existing code is reused;
-completing one package is not completing the milestone.
+**Milestone 1 is Complete. M2 specifications are reviewed; next: implement M2.1.**
+The [master spec](../specs/m1/M1_SPEC.md), [five-package tracker](../specs/m1/README.md)
+and [alignment review](../specs/m1/ALIGNMENT_REVIEW.md) agree with the implemented
+public workflow. All 25 acceptance cases have evidence: development uses
+validation, final explicitly uses bound weights and test only, and comparisons
+read saved phases without inference. Fresh-process dense, mask and channel
+pipelines, failure/resume behavior and documentation are verified. Completion
+is for the experiment foundation, not converged models or research novelty.
+
+The [M2 package](../specs/m2/README.md) defines 15 requirements/22 planned
+acceptance cases across matrix/recipes, initialization/models, pruning controls,
+execution/budgets and frontier/handoff. Its documents are reviewed; no M2
+implementation, pilot measurement or scientific fitting has run.
 
 ## Existing verification
 
-- The CPU suite ran 131 cases after M1.4 (129 passed, 2 CUDA-only skips); all
-  23 focused cases passed in the CUDA environment. Actual CUDA-fit/CPU-final
-  portability and synchronized CUDA timing passed. See the M1.4 checklist.
+- The final M1 CPU suite ran 135 cases (133 passed, 2 CUDA-only skips). Four new
+  integration cases and a retained public dense/mask/channel workflow passed,
+  including actual CLI failures/resumes and unavailable-role files. See M1.5.
+- M1.4 separately passed all 23 focused cases in the CUDA environment, including
+  actual CUDA-fit/CPU-final portability and synchronized CUDA timing.
 - The generated-image workflow completed dense and channel-pruned/fine-tuned
   runs, exported results and reproduced dense weights for matching seeds.
 - The one-epoch real-data run `baseline-real-check-20261107` completed on 40X
@@ -55,3 +63,5 @@ Keep this tracker and each milestone's package checklist consistent.
 | 8 November 2026 | Implemented/reviewed M1.2 full-source split validation and requested-role loaders | 92 CPU tests passed; 15 new role/leakage tests; real preparation/revalidation passed without fitting; next M1.3 |
 | 8 November 2026 | Implemented/reviewed M1.3 development execution and committed-epoch recovery | 108 CPU tests passed; fresh-process VGG dense/channel development and seed reproduction passed; no automatic test inference; next M1.4 |
 | 8 November 2026 | Implemented/reviewed M1.4 bound final inference, prediction attribution and saved phase comparisons | CPU: 129 passed/2 CUDA-only skips; CUDA: 23 passed; fresh-process VGG dense/channel both phases and JSON/CSV comparisons passed; next M1.5 |
+| 8 November 2026 | Completed/reviewed M1.5 and Milestone 1 | 135 CPU cases: 133 passed/2 CUDA-only skips; public dense/mask/channel both phases, comparisons and real retries passed; legacy records unchanged; docs/help/links/HTML verified; next milestone 2 specs |
+| 8 November 2026 | Specified M2 dense/conventional baseline/control milestone | Master, five ordered checklist packages, tracker and alignment review; 15 requirements/22 planned acceptance cases; no implementation/fitting; next M2.1 |

@@ -220,9 +220,35 @@ python tools/smoke_experiments.py
 python -m unittest discover -s tests -v
 ```
 
-The smoke workflow generates 12 images, trains one-epoch dense/channel-pruned
-runs, checks matching-seed dense weights, explicitly evaluates both fixed final
-selections and exports development/final comparison JSON/CSV. It retains phase
-reports, ordered predictions, selection bindings and histories. Its scores and timing are not
+The smoke workflow generates 12 images and uses fresh public CLI processes for
+dense, masked and channel-pruned/fine-tuned runs. Test images are unavailable
+during development; fitting images are unavailable during final inference. Saved
+comparison also succeeds with all pixel files unavailable. Matching seeds
+reproduce dense weights, and masks/channel selections survive fine-tuning/reload.
+The tool checks real training/final failures followed by valid `--resume` calls.
+`development-failure`, `final-failure` and `completed-final-refusal` are expected
+nonzero checks, printed as PASS when the refusal works. It retains commands,
+logs, phase reports, histories, selections and development/final JSON/CSV tables. Its scores and timing are not
 research results. Real experiments still need adequate training and replicated
 evaluation. See the [five-milestone plan](../research/EXPERIMENT_ROADMAP.md).
+
+## Daily operation reference
+
+| Action | Command pattern | Result |
+| --- | --- | --- |
+| Prepare once | `python -m breakhis prepare-data --dataset-root ../Dataset --sources cancer_binary --output artifacts/data --seed 101` | Frozen group-separated manifest; existing output refuses overwrite |
+| Fresh experiment | `python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id baseline-102` | Training and validation-only development outputs |
+| Fresh seed/rerun | `python run_experiment.py --config configs/experiments/vgg_baseline.json --seed 103 --run-id baseline-103` | New fitting randomness; unchanged split |
+| Resume development | `python run_experiment.py --config configs/experiments/vgg_baseline.json --run-id baseline-102 --resume` | Same inputs/code/runtime; last committed epoch or verified completed stage |
+| Compare development | `python compare_experiments.py --runs baseline-102 baseline-103 --output artifacts/comparisons/dev-seeds.json` | Saved validation results only; no inference |
+| Explicit final | `python run_experiment.py --run-id baseline-102 --phase final` | Test-only inference using bound development selections |
+| Resume final | `python run_experiment.py --run-id baseline-102 --phase final --resume` | Retry incomplete final outputs; never fitting |
+| Compare final | `python compare_experiments.py --runs baseline-102 baseline-103 --phase final --output artifacts/comparisons/final-seeds.json` | Both runs must already have completed final phases |
+
+Give every fresh experiment and comparison output a new ID/path. For final
+seed comparison, explicitly finalize each listed run first. Copy configs within
+`configs/experiments/` to keep their existing relative paths valid; paths resolve
+from the config directory. Completed phases cannot be overwritten. An integrity
+failure requires restoring the original bytes or starting an intentional new
+manifest/run, never silently accepting changed images. Logs identify the failed
+child under `artifacts/experiments/<run-id>/logs/`.

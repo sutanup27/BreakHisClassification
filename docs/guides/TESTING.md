@@ -14,9 +14,10 @@ python -m unittest discover -s tests -v
 ```
 
 The suite requires no downloaded dataset, pretrained weights, network calls, or
-GPU. The end-to-end test generates twelve small PNGs, audits them, and starts
-fresh Python interpreters for actual VGG training, weight/channel pruning,
-fine-tuning, and comparison. Each subprocess has a four-minute timeout; captured
+GPU. Two end-to-end tests each generate twelve small PNGs and use fresh Python
+interpreters. The individual-command check covers VGG training, weight/channel
+pruning, fine-tuning and test comparison; the experiment-runner check covers all
+three pipelines, both phases, saved comparisons and real failure/resume paths. Each subprocess has a four-minute timeout; captured
 logs identify failed steps. Use a CPU environment to independently verify the
 CPU dependency selection. The GPU environment can also run these CPU tests.
 
@@ -157,7 +158,8 @@ Check items only when evidence for the actual declared experiment is recorded.
 
 ## M1.4 phase evaluation checks
 
-The active CPU suite has 131 cases (129 pass, two CUDA-only cases skip on CPU).
+At M1.4 acceptance the CPU suite had 131 cases; M1.5 adds four integration cases
+for a current total of 135 (133 pass, two CUDA-only cases skip on CPU).
 Run `python -m unittest discover -s tests -p test_m1_evaluation.py` with a CUDA
 installation to exercise all 23 focused phase/report/comparison cases, including
 actual CUDA training with subsequent CPU final inference and synchronized GPU
@@ -168,3 +170,38 @@ pruning and fine-tuning on generated images. It checks dense seed reproduction,
 explicit final inference, both saved comparison phases and JSON/CSV outputs.
 It leaves ordinary run artifacts/checkpoints; it does not establish research
 accuracy, statistical significance or end-to-end deployment performance.
+
+## Milestone 1 public-workflow acceptance
+
+```powershell
+python tools/smoke_experiments.py --work-dir artifacts/my-phase-smoke
+python -m unittest discover -s tests -p test_m1_integration.py -v
+```
+
+The public smoke uses only `prepare-data`, `run_experiment.py` and
+`compare_experiments.py` for workflow actions. It generates 12 fixture images,
+checks dense/mask/channel development without test images, explicitly evaluates
+all bound roles without training images and compares saved results without any
+image files. Real corrupt-image child failures are restored to the exact original
+bytes and resumed; a completed final phase refuses to run again. Numerical
+SGD/Adam resume and publication interruption tests remain in the full suite.
+
+Retained output contains `commands.json`, `logs/`, configs, prepared data,
+`development.comparison.json/.csv`, `final.comparison.json/.csv` and `summary.json`.
+Normal run records remain in `artifacts/experiments/<id>/`; checkpoints remain in
+`../checkpoint/binary/40X/vgg/<id>/`. Unit tests remove their own temporary run/
+checkpoint directories after verification. The standalone tool retains its runs.
+CI also retains `artifacts/ci-phase-smoke/` and test output. Hosted CI status is
+separate from successful local checks.
+
+Legacy schema-1 JSON remains readable and supported state-dictionary checkpoints
+can be loaded for inference/new fine-tuning. Phase-aware resume, final promotion
+and saved comparison reject old run formats without modifying them. These are
+compatibility boundaries, not automatic historical-data migration.
+
+Milestone 1 final local acceptance: 135 CPU cases in 200.089 seconds, 133 passed
+and two CUDA-only skips. Four focused M1.5 cases passed separately in 126.612
+seconds. Retained public smoke: `artifacts/m1-5-public-smoke/summary.json`;
+full log: `artifacts/m1-5-tests.log`. The unchanged package's separate M1.4 CUDA
+checks passed all 23 focused cases. Hosted CI has not been claimed from these
+local results; the workflow will run on a subsequent push.

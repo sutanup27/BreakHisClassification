@@ -23,6 +23,7 @@ jobs:
       MPLBACKEND: Agg
       PYTHONUTF8: "1"
       BREAKHIS_SMOKE_EVIDENCE: artifacts/ci-smoke
+      BREAKHIS_PHASE_SMOKE_EVIDENCE: artifacts/ci-phase-smoke
     defaults:
       run:
         shell: pwsh
@@ -66,5 +67,6 @@ jobs:
           path: |
             artifacts/ci-environment.json
             artifacts/ci-smoke/
+            artifacts/ci-phase-smoke/
           retention-days: 7
           if-no-files-found: warn
